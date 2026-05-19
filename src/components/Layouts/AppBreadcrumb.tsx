@@ -83,7 +83,7 @@ export default function AppBreadcrumb({
               <Fragment key={`${item.href ?? item.label}-${index}`}>
                 <BreadcrumbItem className="text-tiny">
                   {isLast || !item.href ? (
-                    <BreadcrumbPage className="font-medium border-b border-transparent">
+                    <BreadcrumbPage className="font-medium border-b border-transparent text-text-primary">
                       {item.label}
                     </BreadcrumbPage>
                   ) : (

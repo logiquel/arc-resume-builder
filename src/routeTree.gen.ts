@@ -13,6 +13,7 @@ import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as GatewayIndexRouteImport } from './routes/_gateway/index'
 import { Route as AppEnhanceResumeIndexRouteImport } from './routes/_app/enhance-resume/index'
 import { Route as AppDashboardIndexRouteImport } from './routes/_app/dashboard/index'
+import { Route as AppAnalysisReportIdRouteImport } from './routes/_app/analysis/$reportId'
 
 const AppRouteRoute = AppRouteRouteImport.update({
   id: '/_app',
@@ -33,14 +34,21 @@ const AppDashboardIndexRoute = AppDashboardIndexRouteImport.update({
   path: '/dashboard/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppAnalysisReportIdRoute = AppAnalysisReportIdRouteImport.update({
+  id: '/analysis/$reportId',
+  path: '/analysis/$reportId',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof GatewayIndexRoute
+  '/analysis/$reportId': typeof AppAnalysisReportIdRoute
   '/dashboard/': typeof AppDashboardIndexRoute
   '/enhance-resume/': typeof AppEnhanceResumeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof GatewayIndexRoute
+  '/analysis/$reportId': typeof AppAnalysisReportIdRoute
   '/dashboard': typeof AppDashboardIndexRoute
   '/enhance-resume': typeof AppEnhanceResumeIndexRoute
 }
@@ -48,18 +56,20 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteRouteWithChildren
   '/_gateway/': typeof GatewayIndexRoute
+  '/_app/analysis/$reportId': typeof AppAnalysisReportIdRoute
   '/_app/dashboard/': typeof AppDashboardIndexRoute
   '/_app/enhance-resume/': typeof AppEnhanceResumeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard/' | '/enhance-resume/'
+  fullPaths: '/' | '/analysis/$reportId' | '/dashboard/' | '/enhance-resume/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/enhance-resume'
+  to: '/' | '/analysis/$reportId' | '/dashboard' | '/enhance-resume'
   id:
     | '__root__'
     | '/_app'
     | '/_gateway/'
+    | '/_app/analysis/$reportId'
     | '/_app/dashboard/'
     | '/_app/enhance-resume/'
   fileRoutesById: FileRoutesById
@@ -99,15 +109,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/analysis/$reportId': {
+      id: '/_app/analysis/$reportId'
+      path: '/analysis/$reportId'
+      fullPath: '/analysis/$reportId'
+      preLoaderRoute: typeof AppAnalysisReportIdRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
   }
 }
 
 interface AppRouteRouteChildren {
+  AppAnalysisReportIdRoute: typeof AppAnalysisReportIdRoute
   AppDashboardIndexRoute: typeof AppDashboardIndexRoute
   AppEnhanceResumeIndexRoute: typeof AppEnhanceResumeIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppAnalysisReportIdRoute: AppAnalysisReportIdRoute,
   AppDashboardIndexRoute: AppDashboardIndexRoute,
   AppEnhanceResumeIndexRoute: AppEnhanceResumeIndexRoute,
 }
