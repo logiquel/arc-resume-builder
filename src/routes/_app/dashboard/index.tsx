@@ -8,6 +8,11 @@ import { Icon } from "@iconify/react";
 import { useRef, useState, useEffect } from "react";
 import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";
 import FileFolderIcon from "#/components/common/Icons/FileFolderIcon";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "#/components/addons/tooltip";
 
 const mockImages = [resumeMock1, resumeMock2, resumeMock3, resumeMock4];
 export const Route = createFileRoute("/_app/dashboard/")({
@@ -44,6 +49,12 @@ const dummyResumes = [
     name: "Frontend_React_2026.pdf",
     size: "118.45 KB",
     image: resumeMock3,
+  },
+  {
+    id: 4,
+    name: "Mobile_KMP_2026.pdf",
+    size: "126.12 KB",
+    image: resumeMock4,
   },
 ];
 
@@ -99,26 +110,31 @@ function RouteComponent() {
       <div className="w-full flex-1 min-h-0 flex">
         <main className="flex-1 h-full overflow-y-scroll hide-scrollbar pb-10">
           <section className="w-full flex flex-col gap-x-2 p-4">
-            <SectionHeading label="TAILOR RESUME" />
+            {/* <SectionHeading label="TAILOR RESUME" /> */}
             <div className="flex-1">
-              <div className="w-[34vw] aspect-21/9 flex border border-black/10 rounded-[2rem] bg-linear-to-br from-white to-[#F5F7F9] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] cursor-pointer hover:border-brand hover:-translate-y-0.5 transition-all duration-300 group">
+              <div className="w-[34vw] aspect-21/9 flex rounded-[2rem] border border-black/10 bg-white shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] group">
+                {/* Left Content Area */}
                 <div className="flex-1 h-full flex flex-col justify-between p-6">
                   <div className="flex flex-col gap-y-1.5">
                     <h2 className="text-base font-semibold text-text-primary tracking-tight leading-snug">
-                      Help me build my <br /> resume.
+                      Create an AI-Tailored <br /> Resume.
                     </h2>
                     <h3 className="text-xxs font-medium text-text-muted leading-relaxed">
-                      Create from scratch or use AI <br /> to design a
-                      professional Job Tailored resume
+                      Build from scratch or optimize your profile to perfectly
+                      match a target job description.
                     </h3>
                   </div>
 
-                  <Icon
-                    icon="si:arrow-right-duotone"
-                    className="text-text-secondary text-lg mt-2 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-brand"
-                  />
+                  {/* Elegant subtle CTA button replacing the arrow icon */}
+                  <button
+                    type="button"
+                    className="hover:border-brand/30 self-start mt-2 px-3.5 py-1.5 text-tiny font-medium text-white bg-brand rounded-xl shadow-xs transition-all duration-300 group-hover:bg-brand/90 group-hover:scale-[1.02] cursor-pointer"
+                  >
+                    Get Started
+                  </button>
                 </div>
 
+                {/* Right Graphic Area */}
                 <div className="h-full aspect-square flex items-center justify-center overflow-visible">
                   <div className="w-full h-full flex justify-center items-center overflow-clip">
                     <ResumeStackMock />
@@ -129,14 +145,14 @@ function RouteComponent() {
           </section>
           <section className="w-full flex flex-col p-4">
             <SectionHeading label="RECENTS" />
-            <div className="w-full flex-1 grid grid-cols-5 gap-4">
+            <div className="w-full flex-1 grid grid-cols-5 gap-2">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="relative flex-1 border border-black/15 flex flex-col items-center bg-[#FAFAFA] rounded-2xl overflow-clip cursor-pointer hover:border-brand transition-all duration-300"
+                  className="relative flex-1 border-black/15 flex flex-col items-center bg-[#FAFAFA]/0 rounded-0 overflow-clip cursor-pointer hover:border-brand transition-all duration-300 group"
                 >
                   <div
-                    className="h-40 aspect-12/15 border bg-[#E7E8F1] rounded border-black/10 translate-y-4 transition-all duration-300"
+                    className="h-40 aspect-12/15 border bg-[#E7E8F1] rounded border-black/10 translate-y-3 group-hover:translate-y-0 transition-all duration-300"
                     style={{
                       boxShadow:
                         "0 15px 30px -5px rgba(14, 165, 233, 0.5), 0 10px 15px -6px rgba(14, 165, 233, 0.4)",
@@ -150,7 +166,7 @@ function RouteComponent() {
                     </div>
                   </div>
                   <div
-                    className="absolute bottom-0 w-full flex flex-col bg-white/70 backdrop-blur-md px-3 py-2 pt-6 rounded-b-[inherit]"
+                    className="absolute bottom-0 w-full flex flex-col bg-[#F9FBFC]/70 backdrop-blur-md px-3 py-2 pt-6 rounded-b-[inherit]"
                     style={{
                       maskImage:
                         "linear-gradient(to top, black 60%, transparent 100%)",
@@ -170,7 +186,7 @@ function RouteComponent() {
             </div>
           </section>
         </main>
-        <aside className="w-[23vw] p-4 flex flex-col">
+        <aside className="w-[23vw] p-4 flex flex-col border-l">
           <SectionHeading label="BASE RESUME" />
           <div className="w-full flex flex-col">
             {/* Dynamic Index Label tracking the current top card */}
@@ -183,29 +199,57 @@ function RouteComponent() {
               {/* Trackpad Wheel Interactive Stack Wrapper */}
               <div
                 ref={stackRef}
-                className="relative h-40 aspect-12/15 select-none"
+                className="relative h-40 aspect-12/15 select-none cursor-pointer"
                 style={{ perspective: "1000px" }}
+                onClick={() => {
+                  setActiveIndex((prev) => (prev + 1) % dummyResumes.length);
+                }}
               >
                 {dummyResumes.map((resume, idx) => {
                   const offset =
                     (idx - activeIndex + dummyResumes.length) %
                     dummyResumes.length;
 
-                  const translateY = offset * 10;
-                  const scale = 1 - offset * 0.04;
-                  const zIndex = dummyResumes.length - offset;
-                  const opacity = offset === 0 ? 1 : 0.65;
+                  // ── VIRTUAL STACK CAP ──────────────────────────────────────────────────
+                  // Limit visual stacking effects to 3 cards max (offset 0, 1, and 2).
+                  // Cards beyond this clamp to the same position as the 3rd card and fade out.
+                  const isVisibleStackCard = offset < 3;
+                  const visualOffset = isVisibleStackCard ? offset : 2;
+
+                  const translateY = visualOffset * 10;
+                  const scale = 1 - visualOffset * 0.04;
+                  const zIndex = dummyResumes.length - offset; // Maintains natural stacking order
+                  const opacity =
+                    offset === 0 ? 1 : isVisibleStackCard ? 0.65 : 0;
 
                   return (
                     <div
                       key={resume.id}
-                      className="absolute top-0 left-0 w-full h-full border bg-[#E7E8F1] rounded-xl border-black/10 p-0.5 shadow-lg transition-all duration-300 ease-out origin-bottom"
+                      className="absolute top-0 left-0 w-full h-full border bg-[#E7E8F1] rounded-xl border-black/10 p-px shadow-lg transition-all duration-300 ease-out origin-bottom"
                       style={{
                         transform: `translateY(${translateY}px) scale(${scale})`,
                         zIndex: zIndex,
                         opacity: opacity,
+                        // Disable mouse clicks entirely when a card is cycled to the back/hidden layer
+                        pointerEvents: offset === 0 ? "auto" : "none",
                       }}
                     >
+                      {/* Trash button remains strictly bound to the active top card */}
+                      {offset === 0 && (
+                        <button
+                          className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white z-20 p-1 rounded-full border cursor-pointer group"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Handle your delete logic here
+                          }}
+                        >
+                          <Icon
+                            icon="carbon:trash-can"
+                            className="text-xs text-text-muted transition-colors duration-200 group-hover:text-red-600"
+                          />
+                        </button>
+                      )}
+
                       <div className="bg-white h-full flex-1 rounded-[inherit] border border-black/20 overflow-clip">
                         <img
                           src={resume.image}
@@ -220,14 +264,21 @@ function RouteComponent() {
               {/* Locked Right Paginator Dots Indicator — Completely separated from the cards so it stays dead-still */}
               <div className="absolute left-full pl-1.5 flex flex-col items-center justify-center gap-y-1 h-40 w-5">
                 {dummyResumes.map((_, dotIdx) => (
-                  <div
-                    key={dotIdx}
-                    className={`rounded-full w-1.5 aspect-square transition-all duration-200 ${
-                      dotIdx === activeIndex
-                        ? "bg-brand scale-110"
-                        : "bg-gray-300"
-                    }`}
-                  />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div
+                        key={dotIdx}
+                        className={`rounded-full w-1.5 aspect-square transition-all duration-200 ${
+                          dotIdx === activeIndex
+                            ? "bg-brand scale-110"
+                            : "bg-gray-300"
+                        }`}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="text-xxs!">
+                      Swipe cards to shuffle
+                    </TooltipContent>
+                  </Tooltip>
                 ))}
               </div>
             </div>
