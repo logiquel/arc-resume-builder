@@ -4,10 +4,10 @@ import resumeMock2 from "../../../../public/sample_resume_image_2.jpg";
 import resumeMock3 from "../../../../public/sample_resume_image_3.jpg";
 import resumeMock4 from "../../../../public/sample_resume_image_4.jpg";
 import { sampleResume } from "../../../../sample_resume_data";
-import FileFolderIcon from "#/components/common/Icons/FileFolderIcon";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
 import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";
+import FileFolderIcon from "#/components/common/Icons/FileFolderIcon";
 
 const mockImages = [resumeMock1, resumeMock2, resumeMock3, resumeMock4];
 export const Route = createFileRoute("/_app/dashboard/")({
@@ -16,8 +16,12 @@ export const Route = createFileRoute("/_app/dashboard/")({
 
 interface SectionHeadingProps {
   label: string;
+  secondaryLabel?: string;
 }
-const SectionHeading: React.FC<SectionHeadingProps> = ({ label }) => {
+const SectionHeading: React.FC<SectionHeadingProps> = ({
+  label,
+  secondaryLabel,
+}) => {
   return (
     <div className="w-full flex items-center gap-x-2 bg-[#F9FBFC] mb-4 px-1">
       <h1 className="text-xs uppercase text-brand font-medium">{label}</h1>
@@ -29,49 +33,65 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({ label }) => {
 // ── Route ────────────────────────────────────────────────────────────────────
 
 function RouteComponent() {
-  const [expanded, setExpanded] = useState(false);
-
   return (
-    <div className="w-full h-full overflow-y-scroll space-y-10 custom-scrollbar p-4">
-      <section className="w-full flex gap-x-10 border-red-500">
+    <div className="w-full h-full overflow-y-scroll custom-scrollbar pb-10">
+      <div className="w-full flex flex-col px-5 py-3 sticky top-0 z-10 bg-[#F9FBFC]">
+        <h1 className="text-base font-medium text-text-primary">
+          Good Morning, Steve
+        </h1>
+        <h2 className="text-xs text-text-muted">
+          A new day, a new opportunity! Let's create something amazing together.
+        </h2>
+      </div>
+      <section className="w-full flex gap-x-2 p-5">
         <aside className="flex flex-col">
           <SectionHeading label="BASE RESUME" />
           <div className="flex flex-col">
             <div className="self-start h-40 aspect-12/15 border bg-[#E7E8F1] rounded-xl border-black/10 p-0.5 shadow-lg">
-              <div className="bg-white h-full flex-1 rounded-[inherit] border border-black/20 overflow-clip cursor-pointer hover:border-brand transition-all duration-300">
+              <div className="bg-white h-full flex-1 rounded-[inherit] border border-black/20 overflow-clip transition-all duration-300">
                 <img src={resumeMock1} className="h-full" />
               </div>
             </div>
-            <span className="text-xxs font-medium mt-2 mb-4 pb-2 px-1 text-text-secondary border-b">
-              Resume file-EN.pdf
+            <span className="text-xxs font-medium mt-2 mb-4 px-1 text-text-secondary">
+              Resume file-EN.pdf <span className="mx-1">∙</span>{" "}
+              <span className="font-normal text-brand text-tiny">
+                126.17 KB
+              </span>
             </span>
           </div>
           <button
             type="button"
-            className="relative h-20 aspect-21/8 p-2 flex items-center rounded-2xl border bg-white border-black/12 backdrop-blur-md cursor-pointer hover:border-brand"
+            className="self-start group relative p-2 flex items-center rounded-2xl border bg-white border-black/12 backdrop-blur-md cursor-pointer hover:border-brand"
             style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
           >
             <Icon
               icon="ic:twotone-plus"
-              className="absolute top-3 right-3 text-text-muted"
+              className="absolute top-2 right-2 text-text-muted"
             />
-            <div className="h-[90%] aspect-square flex items-center justify-center bg-white/40 rounded-lg p-1">
+            <div className="h-16 aspect-square flex items-center justify-center bg-white/40 rounded-lg p-1">
               <FileFolderIcon />
             </div>
             <div className="relative flex-1 h-full flex flex-col items-start justify-center pr-1">
               <span className="text-tiny text-text-primary flex justify-between items-center font-medium">
-                UPLOAD NEW BASE
+                CLICK TO UPLOAD NEW BASE
               </span>
               <span className="text-tiny text-brand mt-0.5 font-mono font-medium">
                 PDF<span className="text-text-muted">, </span>DOCX
               </span>
             </div>
           </button>
+          <span className="w-80 text-tiny flex text-text-muted mt-1 px-2">
+            <Icon icon="akar-icons:info" className="text-lg text-brand" />
+            <span className="mt-1 ml-1 font-mono font-medium">
+              Your base resume is the master data. This information is used
+              during AI tailoring.
+            </span>
+          </span>
         </aside>
 
         {/* Base Parse result */}
         <div className="flex-1 p-4">
-          <div className="w-[30vw] aspect-21/10 flex border border-black/10 rounded-[2rem] bg-linear-to-br from-white to-[#F5F7F9] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] cursor-pointer hover:border-brand hover:-translate-y-0.5 transition-all duration-300 group">
+          <div className="w-[34vw] aspect-21/9 flex border border-black/10 rounded-[2rem] bg-linear-to-br from-white to-[#F5F7F9] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] cursor-pointer hover:border-brand hover:-translate-y-0.5 transition-all duration-300 group">
             {/* Left Content Area */}
             <div className="flex-1 h-full flex flex-col justify-between p-6">
               <div className="flex flex-col gap-y-1.5">
@@ -79,7 +99,8 @@ function RouteComponent() {
                   Help me build my <br /> resume.
                 </h2>
                 <h3 className="text-xxs font-medium text-text-muted leading-relaxed">
-                  Start fresh or let AI guide <br /> your layout
+                  Create from scratch or use AI <br /> to design a professional
+                  Job Tailored resume
                 </h3>
               </div>
 
@@ -100,7 +121,7 @@ function RouteComponent() {
         </div>
       </section>
 
-      <section className="w-full flex flex-col">
+      <section className="w-full flex flex-col p-5">
         <SectionHeading label="RECENTS" />
         <div className="w-full flex-1 grid grid-cols-6 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
