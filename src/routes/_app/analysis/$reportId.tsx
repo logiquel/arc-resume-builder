@@ -39,7 +39,139 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({ sectionLabel }) => {
       <h1 className="text-xxs font-medium text-text-primary uppercase">
         {sectionLabel}
       </h1>
-      <Icon icon="ic:twotone-plus" className="text-text-muted" />
+      {/* <Icon icon="ic:twotone-plus" className="text-text-muted" /> */}
+    </div>
+  );
+};
+
+interface ScoreArcProps {
+  score: number; // Value from 0 to 100
+}
+const ScoreArc: React.FC<ScoreArcProps> = ({ score }) => {
+  const clampedScore = Math.max(0, Math.min(100, score));
+
+  let statusText = "Needs Improvement";
+  let statusColor = "text-red-500";
+  let statusPillClass = "bg-red-50 text-red-600 border-red-200";
+
+  if (clampedScore > 25) {
+    statusText = "Fair";
+    statusColor = "text-amber-500";
+    statusPillClass = "bg-amber-50 text-amber-600 border-amber-200";
+  }
+  if (clampedScore > 50) {
+    statusText = "Average";
+    statusColor = "text-orange-400";
+    statusPillClass = "bg-orange-50 text-orange-600 border-orange-200";
+  }
+  if (clampedScore > 75) {
+    statusText = "Good";
+    statusColor = "text-emerald-500";
+    statusPillClass = "bg-emerald-50 text-emerald-600 border-emerald-200";
+  }
+
+  const cx = 50,
+    cy = 50,
+    r = 38;
+
+  const arcPath = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
+
+  // Arc math: 3 gaps BETWEEN segments only (flush at both ends)
+  const arcLen = Math.PI * r;
+  const gap = 3;
+  const vis = (arcLen - 3 * gap) / 4;
+  const unit = vis + gap;
+
+  const segments = [
+    { color: "#E55353", offset: 0 },
+    { color: "#F2C16D", offset: -unit },
+    { color: "#E28739", offset: -(unit * 2) },
+    { color: "#63C27C", offset: -(unit * 3) },
+  ];
+
+  // Inner dotted arc
+  const innerR = 28;
+  const innerArcPath = `M ${cx - innerR} ${cy} A ${innerR} ${innerR} 0 0 1 ${cx + innerR} ${cy}`;
+
+  // Needle angle: 0 score = left end, 100 = right end
+  const angle = Math.PI - (clampedScore / 100) * Math.PI;
+  const needleX = cx + innerR * Math.cos(angle);
+  const needleY = cy - innerR * Math.sin(angle);
+
+  return (
+    <div className="relative z-10 w-full flex flex-col items-center justify-center">
+      <h2 className="text-tiny font-medium text-brand">RESUME SCORE</h2>
+      <svg viewBox="0 0 100 54" className="w-[80%] overflow-visible">
+        {segments.map((seg, i) => (
+          <path
+            key={i}
+            d={arcPath}
+            fill="none"
+            stroke={seg.color}
+            strokeWidth={3}
+            strokeLinecap="butt"
+            strokeDasharray={`${vis} ${arcLen}`}
+            strokeDashoffset={seg.offset}
+          />
+        ))}
+
+        <path
+          d={innerArcPath}
+          fill="none"
+          stroke="#9CA3AF"
+          strokeWidth={0.9}
+          strokeLinecap="round"
+          strokeDasharray="0.01 4"
+          opacity={0.75}
+        />
+
+        <line
+          x1={cx}
+          y1={cy}
+          x2={needleX}
+          y2={needleY}
+          stroke="#0a8cff"
+          strokeWidth={1}
+          strokeLinecap="round"
+        />
+
+        <circle cx={cx} cy={cy} r={1.8} fill="#0a8cff" />
+        <rect
+          x={needleX - 4}
+          y={needleY - 2}
+          width={8}
+          height={4}
+          rx={2}
+          ry={2}
+          fill="#ffffff"
+          stroke="#0a8cff"
+          strokeWidth={1}
+          transform={`rotate(${(-angle * 180) / Math.PI} ${needleX} ${needleY})`}
+        />
+      </svg>
+      <div className="w-full mt-3 flex flex-col items-center justify-center text-center">
+        <div className="text-xl font-mono tracking-tight text-slate-900 leading-none">
+          {clampedScore}
+          <span className="ml-0.5 text-base font-sans font-medium text-slate-400">
+            %
+          </span>
+        </div>
+        <p className="text-xxs">
+          Your resume score is{" "}
+          <span className={`ml-0.5 font-medium ${statusColor}`}>
+            {statusText}
+          </span>
+        </p>
+        {/* <div className="w-full flex items-center gap-x-1 mt-1">
+          <span className="flex-1 h-px bg-slate-200" />
+          <span
+            className={`inline-flex items-center justify-center rounded-full border px-3 py-1 text-tiny font-medium ${statusPillClass}`}
+          >
+            {statusText}
+          </span>
+          <span className="flex-1 h-px bg-slate-200" />
+        </div> */}
+      </div>
     </div>
   );
 };
@@ -1649,7 +1781,15 @@ function RouteComponent() {
       </main>
 
       {/* ── RIGHT ASIDE ── */}
-      <aside className="w-[20vw] h-full"></aside>
+      <aside className="w-[20vw] h-full p-2">
+        <div className="w-full flex flex-col space-y-4 rounded-3xl p-4 border border-black/5 bg-white shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
+          {/* Content Container */}
+          <div className="relative z-10 w-full flex items-center justify-center">
+            <ScoreArc score={75} />
+          </div>
+          <div className="w-full h-50"></div>
+        </div>
+      </aside>
     </div>
   );
 }
