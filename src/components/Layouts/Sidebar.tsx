@@ -9,7 +9,7 @@ const Sidebar = () => {
   const routes = routesConfig;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const [isSidebarCollapse, setIsSidebarCollapse] = useState(false);
+  const [isSidebarCollapse, setIsSidebarCollapse] = useState(true);
   const [openRoutes, setOpenRoutes] = useState<Record<string, boolean>>({});
   const toggleRoute = (key: string) => {
     setOpenRoutes((prev) => ({ ...prev, [key]: !prev[key] }));
