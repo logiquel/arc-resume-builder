@@ -1,0 +1,481 @@
+{
+  "resume_review": {
+    "sections": [
+      {
+        "section": "profile",
+        "label": "Profile",
+        "entries": [
+          {
+            "entry_id": "profile_1",
+            "fields": {
+              "profile_picture": "https://example.com/avatar.jpg",
+              "first_name": "Aarav",
+              "last_name": "Sharma",
+              "professional_title": {
+                "changed": true,
+                "old_value": "Frontend Engineer",
+                "new_value": "Frontend Developer"
+              },
+              "email": "aarav.sharma@example.com",
+              "phone": "+91 9876543210",
+              "location": "Jaipur, Rajasthan, India",
+              "links": [
+                {
+                  "id": "link_1",
+                  "name": "LinkedIn",
+                  "value": "linkedin.com/in/aaravsharma",
+                  "icon": "linkedin"
+                },
+                {
+                  "id": "link_2",
+                  "name": "Portfolio",
+                  "value": "https://aarav.dev",
+                  "icon": "globe"
+                }
+              ],
+              "summary": {
+                "changed": true,
+                "old_value": "Frontend engineer with experience building internal tools and dashboards.",
+                "new_value": "Frontend Developer with experience building scalable internal tools, performance-focused dashboards, and user-friendly web applications for cross-functional teams."
+              }
+            }
+          }
+        ]
+      },
+      {
+        "section": "education",
+        "label": "Education",
+        "entries": [
+          {
+            "entry_id": "edu_1",
+            "fields": {
+              "degree": {
+                "changed": true,
+                "old_value": "BTech",
+                "new_value": "Bachelor of Technology"
+              },
+              "institution": "Jaipur Engineering College",
+              "score": "8.4 CGPA",
+              "location": "Jaipur, Rajasthan",
+              "start_date": "2018-08",
+              "end_date": "2022-05",
+              "link": "https://jec.example.edu",
+              "description": {
+                "changed": true,
+                "old_value": [
+                  {
+                    "id": "edu1_old_1",
+                    "text": "Studied computer science fundamentals and worked on final year project."
+                  }
+                ],
+                "new_value": [
+                  {
+                    "id": "edu1_new_1",
+                    "text": "Studied core computer science subjects including data structures, DBMS, and operating systems."
+                  },
+                  {
+                    "id": "edu1_new_2",
+                    "text": "Completed a final-year engineering project focused on scalable web application development."
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "entry_id": "edu_2",
+            "fields": {
+              "degree": {
+                "changed": true,
+                "old_value": "MCA",
+                "new_value": "Master of Computer Applications"
+              },
+              "institution": "Rajasthan University",
+              "score": "8.9 CGPA",
+              "location": "Jaipur, Rajasthan",
+              "start_date": "2022-07",
+              "end_date": "2024-06",
+              "link": "https://uniraj.ac.in",
+              "description": {
+                "changed": true,
+                "old_value": [
+                  {
+                    "id": "edu2_b1",
+                    "text": "Focused on software development and database systems."
+                  },
+                  {
+                    "id": "edu2_b2",
+                    "text": "Built academic projects in web technologies."
+                  }
+                ],
+                "new_value": [
+                  {
+                    "id": "edu2_b1",
+                    "text": "Focused on advanced software development, database systems, and application architecture."
+                  },
+                  {
+                    "id": "edu2_b2",
+                    "text": "Built academic projects using modern web technologies and backend frameworks."
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "section": "experience",
+        "label": "Experience",
+        "entries": [
+          {
+            "entry_id": "exp_1",
+            "fields": {
+              "position": {
+                "changed": true,
+                "old_value": "Frontend Engineer",
+                "new_value": "Frontend Developer"
+              },
+              "company": "ABC Tech",
+              "location": "Jaipur, Rajasthan",
+              "start_date": "2022-06",
+              "end_date": "2024-01",
+              "description": {
+                "changed": true,
+                "old_value": [
+                  {
+                    "id": "exp1_old_1",
+                    "text": "Worked on internal dashboard and improved performance for staff users."
+                  }
+                ],
+                "new_value": [
+                  {
+                    "id": "exp1_new_1",
+                    "text": "Built an internal dashboard used by 120+ staff members across 3 departments."
+                  },
+                  {
+                    "id": "exp1_new_2",
+                    "text": "Improved page load performance by 38% by optimizing queries and bundle size."
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "entry_id": "exp_2",
+            "fields": {
+              "position": "Full Stack Developer",
+              "company": "XYZ Labs",
+              "location": "Remote",
+              "start_date": "2024-02",
+              "end_date": null,
+              "description": {
+                "changed": true,
+                "old_value": [
+                  {
+                    "id": "exp2_b1",
+                    "text": "Developed REST APIs for school ERP platform."
+                  },
+                  {
+                    "id": "exp2_b2",
+                    "text": "Worked with frontend team to improve features."
+                  }
+                ],
+                "new_value": [
+                  {
+                    "id": "exp2_b1",
+                    "text": "Developed REST APIs for a multi-tenant school ERP platform serving 15,000+ students."
+                  },
+                  {
+                    "id": "exp2_b2",
+                    "text": "Collaborated with frontend team to ship fee management and attendance features, reducing manual admin work by 25%."
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "section": "projects",
+        "label": "Projects",
+        "entries": [
+          {
+            "entry_id": "proj_1",
+            "fields": {
+              "title": "AI Resume Builder",
+              "subtitle": {
+                "changed": true,
+                "old_value": "Resume Builder App",
+                "new_value": "AI Resume Builder | React, TypeScript, Node.js, Supabase"
+              },
+              "link": "https://resume-builder.example.com",
+              "start_date": "2025-01",
+              "end_date": null,
+              "description": {
+                "changed": true,
+                "old_value": [
+                  {
+                    "id": "proj1_b1",
+                    "text": "Built a resume builder application."
+                  }
+                ],
+                "new_value": [
+                  {
+                    "id": "proj1_b1",
+                    "text": "Built an AI-powered resume builder using React, TypeScript, Node.js, and Supabase."
+                  },
+                  {
+                    "id": "proj1_b2",
+                    "text": "Implemented ATS keyword matching and resume scoring workflows to improve job-description alignment."
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "entry_id": "proj_2",
+            "fields": {
+              "title": "Inventory Management System",
+              "subtitle": {
+                "changed": true,
+                "old_value": "Inventory App",
+                "new_value": "Inventory Management System | Next.js, PostgreSQL, Prisma"
+              },
+              "link": "https://inventory.example.com",
+              "start_date": "2024-07",
+              "end_date": "2024-11",
+              "description": {
+                "changed": true,
+                "old_value": [
+                  {
+                    "id": "proj2_b1",
+                    "text": "Created an app for inventory tracking."
+                  }
+                ],
+                "new_value": [
+                  {
+                    "id": "proj2_b1",
+                    "text": "Developed an inventory management system using Next.js, PostgreSQL, and Prisma."
+                  },
+                  {
+                    "id": "proj2_b2",
+                    "text": "Automated stock tracking and reporting workflows, reducing manual errors for warehouse operations."
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "section": "certificates",
+        "label": "Certificates",
+        "entries": [
+          {
+            "entry_id": "cert_1",
+            "fields": {
+              "name": {
+                "changed": true,
+                "old_value": "AWS Cloud Practitioner",
+                "new_value": "AWS Certified Cloud Practitioner"
+              },
+              "issuer": "Amazon Web Services",
+              "issue_date": "2024-03",
+              "expiry_date": "2027-03",
+              "link": "https://aws.amazon.com/certification",
+              "description": {
+                "changed": true,
+                "old_value": "Learned cloud fundamentals.",
+                "new_value": "Built foundational knowledge in cloud infrastructure, AWS core services, pricing models, and security best practices."
+              }
+            }
+          },
+          {
+            "entry_id": "cert_2",
+            "fields": {
+              "name": {
+                "changed": true,
+                "old_value": "Google Data Analytics",
+                "new_value": "Google Data Analytics Professional Certificate"
+              },
+              "issuer": "Google",
+              "issue_date": "2023-09",
+              "expiry_date": null,
+              "link": "https://coursera.org/professional-certificates/google-data-analytics",
+              "description": {
+                "changed": true,
+                "old_value": "Covered data analysis concepts.",
+                "new_value": "Developed practical skills in data cleaning, analysis, visualization, and reporting using spreadsheets, SQL, and dashboards."
+              }
+            }
+          }
+        ]
+      },
+      {
+        "section": "skills",
+        "label": "Skills",
+        "entries": [
+          {
+            "entry_id": "skill_1",
+            "fields": {
+              "name": {
+                "changed": true,
+                "old_value": "reactjs",
+                "new_value": "React"
+              },
+              "level": "proficient"
+            }
+          },
+          {
+            "entry_id": "skill_2",
+            "fields": {
+              "name": {
+                "changed": true,
+                "old_value": "nodejs",
+                "new_value": "Node.js"
+              },
+              "level": "competent"
+            }
+          }
+        ]
+      },
+      {
+        "section": "languages",
+        "label": "Languages",
+        "entries": [
+          {
+            "entry_id": "lang_1",
+            "fields": {
+              "name": "English",
+              "level": "fluent"
+            }
+          },
+          {
+            "entry_id": "lang_2",
+            "fields": {
+              "name": "Hindi",
+              "level": "native"
+            }
+          }
+        ]
+      },
+      {
+        "section": "interests",
+        "label": "Interests",
+        "entries": [
+          {
+            "entry_id": "interest_1",
+            "fields": {
+              "name": "Open Source"
+            }
+          },
+          {
+            "entry_id": "interest_2",
+            "fields": {
+              "name": "System Design"
+            }
+          }
+        ]
+      },
+      {
+        "section": "awards",
+        "label": "Awards",
+        "entries": [
+          {
+            "entry_id": "award_1",
+            "fields": {
+              "title": {
+                "changed": true,
+                "old_value": "Best Employee",
+                "new_value": "Employee of the Quarter"
+              },
+              "awarder": "ABC Tech",
+              "date": "2023-12",
+              "description": {
+                "changed": true,
+                "old_value": "Received for good work performance.",
+                "new_value": "Recognized among the top performers in the engineering team for consistently delivering high-impact features and improving release quality."
+              }
+            }
+          },
+          {
+            "entry_id": "award_2",
+            "fields": {
+              "title": {
+                "changed": true,
+                "old_value": "Hackathon Prize",
+                "new_value": "Hackathon Winner"
+              },
+              "awarder": "Rajasthan University",
+              "date": "2021-09",
+              "description": {
+                "changed": true,
+                "old_value": "Won a college hackathon.",
+                "new_value": "Won first place in a university hackathon by building a real-time problem-solving platform evaluated on innovation, usability, and technical execution."
+              }
+            }
+          }
+        ]
+      },
+      {
+        "section": "publications",
+        "label": "Publications",
+        "entries": [
+          {
+            "entry_id": "pub_1",
+            "fields": {
+              "title": "Optimizing Web App Performance",
+              "publisher": "Dev Journal",
+              "date": "2024-05",
+              "link": "https://devjournal.example.com/web-performance",
+              "description": {
+                "changed": true,
+                "old_value": "Article about improving web application speed.",
+                "new_value": "Published an article discussing frontend performance optimization techniques, bundle reduction strategies, and practical methods for improving user experience."
+              }
+            }
+          },
+          {
+            "entry_id": "pub_2",
+            "fields": {
+              "title": "Scalable API Design Patterns",
+              "publisher": "Tech Monthly",
+              "date": "2025-02",
+              "link": "https://techmonthly.example.com/scalable-api-design",
+              "description": {
+                "changed": true,
+                "old_value": "Paper on API design practices.",
+                "new_value": "Wrote a technical publication covering scalable API design approaches, error handling strategies, versioning methods, and backend maintainability principles."
+              }
+            }
+          }
+        ]
+      },
+      {
+        "section": "references",
+        "label": "References",
+        "entries": [
+          {
+            "entry_id": "ref_1",
+            "fields": {
+              "name": "Rahul Sharma",
+              "position": "Engineering Manager",
+              "organization": "ABC Tech",
+              "email": "rahul.sharma@abctech.com",
+              "phone": "+91 9988776655"
+            }
+          },
+          {
+            "entry_id": "ref_2",
+            "fields": {
+              "name": "Priya Mehta",
+              "position": "Senior Product Manager",
+              "organization": "XYZ Labs",
+              "email": "priya.mehta@xyzlabs.com",
+              "phone": "+91 9876501234"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
