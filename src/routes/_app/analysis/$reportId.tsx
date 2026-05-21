@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { diffWords } from "diff";
 import {
   aiProcessedSampleData,
@@ -35,7 +35,7 @@ interface SectionHeadingProps {
 }
 const SectionHeading: React.FC<SectionHeadingProps> = ({ sectionLabel }) => {
   return (
-    <div className="w-full flex justify-between px-3 py-3 cursor-pointer sticky -top-2 bg-white z-10">
+    <div className="w-full flex justify-between px-3 py-3 border-b border-black/5 cursor-pointer sticky -top-2 bg-white z-10">
       <h1 className="text-xxs font-medium text-text-primary uppercase">
         {sectionLabel}
       </h1>
@@ -1052,16 +1052,13 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/5">
           <SectionHeading sectionLabel="Work Experience" />
           {workExperiences.map((exp, expIdx) => (
-            <>
-              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+            <React.Fragment key={exp.id || expIdx}>
+              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-muted font-semibold font-mono">
                   #{expIdx + 1}
                 </span>
               </div>
-              <div
-                key={exp.id || expIdx}
-                className="w-full grid grid-cols-3 p-3 gap-2  border-black/5 last:border-b-0 bg-white"
-              >
+              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0 bg-white">
                 <fieldset className="flex flex-col">
                   <label className="text-tiny text-text-muted font-medium">
                     COMPANY
@@ -1161,7 +1158,7 @@ function RouteComponent() {
                   </div>
                 </fieldset>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </section>
 
@@ -1169,16 +1166,13 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Projects" />
           {projects.map((proj, projIdx) => (
-            <>
-              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+            <React.Fragment key={proj.id || projIdx}>
+              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-muted font-semibold font-mono">
                   #{projIdx + 1}
                 </span>
               </div>
-              <div
-                key={proj.id || projIdx}
-                className="w-full grid grid-cols-3 p-3 gap-2  border-black/5 last:border-b-0 bg-white"
-              >
+              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0 bg-white">
                 <fieldset className="flex flex-col col-span-3">
                   <label className="text-tiny text-text-muted font-medium">
                     PROJECT TITLE
@@ -1281,7 +1275,7 @@ function RouteComponent() {
                   </div>
                 </fieldset>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </section>
 
@@ -1289,16 +1283,13 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Education" />
           {education.map((edu, eduIdx) => (
-            <>
-              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+            <React.Fragment key={edu.id || eduIdx}>
+              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-muted font-semibold font-mono">
                   #{eduIdx + 1}
                 </span>
               </div>
-              <div
-                key={edu.id || eduIdx}
-                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
-              >
+              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0">
                 <fieldset className="flex flex-col">
                   <label className="text-tiny text-text-muted font-medium">
                     INSTITUTION
@@ -1434,7 +1425,7 @@ function RouteComponent() {
                   </div>
                 </fieldset>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </section>
 
@@ -1442,16 +1433,13 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Certificates" />
           {certificates.map((cert, certIdx) => (
-            <>
-              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+            <React.Fragment key={cert.id || certIdx}>
+              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-muted font-semibold font-mono">
                   #{certIdx + 1}
                 </span>
               </div>
-              <div
-                key={cert.id || certIdx}
-                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
-              >
+              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0">
                 <fieldset className="flex flex-col">
                   <label className="text-tiny text-text-muted font-medium">
                     ISSUER
@@ -1548,7 +1536,7 @@ function RouteComponent() {
                   </div>
                 </fieldset>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </section>
 
@@ -1607,16 +1595,13 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Honors & Awards" />
           {awards.map((aw, awIdx) => (
-            <>
-              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+            <React.Fragment key={aw.id || awIdx}>
+              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-muted font-semibold font-mono">
                   #{awIdx + 1}
                 </span>
               </div>
-              <div
-                key={aw.id}
-                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
-              >
+              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0">
                 <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     AWARD NAME
@@ -1674,7 +1659,7 @@ function RouteComponent() {
                   </div>
                 </fieldset>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </section>
 
@@ -1682,16 +1667,13 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Publications" />
           {publications.map((pub, pubIdx) => (
-            <>
-              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+            <React.Fragment key={pub.id || pubIdx}>
+              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-muted font-semibold font-mono">
                   #{pubIdx + 1}
                 </span>
               </div>
-              <div
-                key={pub.id}
-                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
-              >
+              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0">
                 <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     PUBLICATION NAME
@@ -1761,7 +1743,7 @@ function RouteComponent() {
                   </div>
                 </fieldset>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </section>
 
@@ -1769,16 +1751,13 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="References" />
           {references.map((ref, refIdx) => (
-            <>
-              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+            <React.Fragment key={ref.id || refIdx}>
+              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-muted font-semibold font-mono">
                   #{refIdx + 1}
                 </span>
               </div>
-              <div
-                key={ref.id || refIdx}
-                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
-              >
+              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0">
                 <fieldset className="flex flex-col">
                   <label className="text-tiny text-text-muted font-medium">
                     NAME
@@ -1862,7 +1841,7 @@ function RouteComponent() {
                   />
                 </fieldset>
               </div>
-            </>
+            </React.Fragment>
           ))}
         </section>
       </main>
