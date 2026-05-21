@@ -17,6 +17,28 @@ import {
 } from "../../../../ai_process_sample_data";
 import { Icon } from "@iconify/react";
 
+const matchedKeywords = [
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Node.js",
+  "REST APIs",
+  "SQL",
+  "Git",
+  "Responsive Design",
+];
+
+const missingKeywords = [
+  "Next.js",
+  "Redux",
+  "GraphQL",
+  "Unit Testing",
+  "CI/CD",
+  "AWS",
+  "Docker",
+  "Agile",
+];
+
 export const Route = createFileRoute("/_app/analysis/$reportId")({
   loader: async ({ params }) => {
     return {
@@ -32,22 +54,31 @@ export const Route = createFileRoute("/_app/analysis/$reportId")({
 
 interface SectionHeadingProps {
   sectionLabel: string;
+  entriesCount?: number;
 }
-const SectionHeading: React.FC<SectionHeadingProps> = ({ sectionLabel }) => {
+const SectionHeading: React.FC<SectionHeadingProps> = ({
+  sectionLabel,
+  entriesCount,
+}) => {
   return (
-    <div className="w-full flex justify-between px-3 py-3 border-b border-black/5 cursor-pointer sticky -top-2 bg-white z-10">
-      <h1 className="text-xxs font-medium text-text-primary uppercase">
+    <div className="w-full flex items-center px-3 py-3 border-b border-black/5 cursor-pointer sticky -top-2 bg-white z-10">
+      <h1 className="text-xxs font-medium text-brand uppercase">
         {sectionLabel}
       </h1>
+      {entriesCount !== undefined && (
+        <span className="w-5 h-5 flex items-center justify-center text-tiny font-medium text-muted-foreground ml-1 rounded-full bg-gray-100 border">
+          {entriesCount}
+        </span>
+      )}
       {/* <Icon icon="ic:twotone-plus" className="text-text-muted" /> */}
     </div>
   );
 };
 
-interface ScoreArcProps {
-  score: number; // Value from 0 to 100
+interface ScoreCardProps {
+  score: number;
 }
-const ScoreArc: React.FC<ScoreArcProps> = ({ score }) => {
+const ScoreCard: React.FC<ScoreCardProps> = ({ score }) => {
   const clampedScore = Math.max(0, Math.min(100, score));
 
   let statusText = "Needs Improvement";
@@ -76,7 +107,6 @@ const ScoreArc: React.FC<ScoreArcProps> = ({ score }) => {
 
   const arcPath = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
 
-  // Arc math: 3 gaps BETWEEN segments only (flush at both ends)
   const arcLen = Math.PI * r;
   const gap = 3;
   const vis = (arcLen - 3 * gap) / 4;
@@ -89,11 +119,9 @@ const ScoreArc: React.FC<ScoreArcProps> = ({ score }) => {
     { color: "#63C27C", offset: -(unit * 3) },
   ];
 
-  // Inner dotted arc
   const innerR = 28;
   const innerArcPath = `M ${cx - innerR} ${cy} A ${innerR} ${innerR} 0 0 1 ${cx + innerR} ${cy}`;
 
-  // Needle angle: 0 score = left end, 100 = right end
   const angle = Math.PI - (clampedScore / 100) * Math.PI;
   const needleX = cx + innerR * Math.cos(angle);
   const needleY = cy - innerR * Math.sin(angle);
@@ -162,15 +190,6 @@ const ScoreArc: React.FC<ScoreArcProps> = ({ score }) => {
             {statusText}
           </span>
         </p>
-        {/* <div className="w-full flex items-center gap-x-1 mt-1">
-          <span className="flex-1 h-px bg-slate-200" />
-          <span
-            className={`inline-flex items-center justify-center rounded-full border px-3 py-1 text-tiny font-medium ${statusPillClass}`}
-          >
-            {statusText}
-          </span>
-          <span className="flex-1 h-px bg-slate-200" />
-        </div> */}
       </div>
     </div>
   );
@@ -179,7 +198,6 @@ const ScoreArc: React.FC<ScoreArcProps> = ({ score }) => {
 function RouteComponent() {
   const typedPayload = aiProcessedSampleData as EnhancedResumePayload;
 
-  // ── STATE PRIMITIVES MAPPED DIRECTLY FROM LOGICAL DATA SCHEMA ──
   const [firstName, setFirstName] = useState(
     typedPayload.profile?.first_name || "",
   );
@@ -200,7 +218,6 @@ function RouteComponent() {
     currentText: typedPayload.profile?.summary?.currentText || "",
   });
 
-  // Array Lists Structures
   const [workExperiences, setWorkExperiences] = useState<
     PostAIWorkExperience[]
   >(typedPayload.workExperience || []);
@@ -226,10 +243,8 @@ function RouteComponent() {
     typedPayload.references || [],
   );
 
-  // Focused state tracker identifier coordinate
   const [activeEditingKey, setActiveEditingKey] = useState<string | null>(null);
 
-  // ── ACCEPT / REJECT EVENT HANDLERS ──
   const handleAcceptText = (uniqueKey: string) => {
     if (uniqueKey === "profile-title") {
       setProfTitle((prev) => ({ ...prev, originalText: prev.currentText }));
@@ -252,7 +267,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("proj-sub-")) {
-      const [, , projIdx] = uniqueKey.split("-sub-");
+      const [, projIdx] = uniqueKey.split("-sub-");
       setProjects((prev) =>
         prev.map((item, i) =>
           i === parseInt(projIdx)
@@ -283,7 +298,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("edu-deg-")) {
-      const [, , eduIdx] = uniqueKey.split("-deg-");
+      const [, eduIdx] = uniqueKey.split("-deg-");
       setEducation((prev) =>
         prev.map((item, i) =>
           i === parseInt(eduIdx)
@@ -314,7 +329,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("cert-name-")) {
-      const [, , certIdx] = uniqueKey.split("-name-");
+      const [, certIdx] = uniqueKey.split("-name-");
       setCertificates((prev) =>
         prev.map((item, i) =>
           i === parseInt(certIdx)
@@ -342,7 +357,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("award-block-")) {
-      const [, , id] = uniqueKey.split("-block-");
+      const [, id] = uniqueKey.split("-block-");
       setAwards((prev) =>
         prev.map((item) =>
           item.id === id
@@ -357,7 +372,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("pub-block-")) {
-      const [, , id] = uniqueKey.split("-block-");
+      const [, id] = uniqueKey.split("-block-");
       setPublications((prev) =>
         prev.map((item) =>
           item.id === id
@@ -396,7 +411,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("proj-sub-")) {
-      const [, , projIdx] = uniqueKey.split("-sub-");
+      const [, projIdx] = uniqueKey.split("-sub-");
       setProjects((prev) =>
         prev.map((item, i) =>
           i === parseInt(projIdx)
@@ -427,7 +442,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("edu-deg-")) {
-      const [, , eduIdx] = uniqueKey.split("-deg-");
+      const [, eduIdx] = uniqueKey.split("-deg-");
       setEducation((prev) =>
         prev.map((item, i) =>
           i === parseInt(eduIdx)
@@ -458,7 +473,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("cert-name-")) {
-      const [, , certIdx] = uniqueKey.split("-name-");
+      const [, certIdx] = uniqueKey.split("-name-");
       setCertificates((prev) =>
         prev.map((item, i) =>
           i === parseInt(certIdx)
@@ -486,7 +501,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("award-block-")) {
-      const [, , id] = uniqueKey.split("-block-");
+      const [, id] = uniqueKey.split("-block-");
       setAwards((prev) =>
         prev.map((item) =>
           item.id === id
@@ -501,7 +516,7 @@ function RouteComponent() {
         ),
       );
     } else if (uniqueKey.startsWith("pub-block-")) {
-      const [, , id] = uniqueKey.split("-block-");
+      const [, id] = uniqueKey.split("-block-");
       setPublications((prev) =>
         prev.map((item) =>
           item.id === id
@@ -517,8 +532,6 @@ function RouteComponent() {
       );
     }
   };
-
-  // ── UNIFIED SECTION PRIMITIVE FIELD CHANGE HANDLER ──
   const handleFieldChange = (
     section: "work" | "project" | "education" | "cert" | "award" | "pub",
     index: number,
@@ -552,7 +565,6 @@ function RouteComponent() {
     }
   };
 
-  // ── UNIFIED NESTED BULLET HIGHLIGHT CHANGE HANDLER ──
   const handleBulletChange = (
     section: "work" | "project" | "education" | "cert",
     itemIdx: number,
@@ -614,7 +626,6 @@ function RouteComponent() {
     }
   };
 
-  // ── UNIFIED NESTED INLINE TEXT HANDLER (SUBTITLES, DEGREES, NAMES) ──
   const handleInlineFieldChange = (
     section:
       | "profile-title"
@@ -656,7 +667,6 @@ function RouteComponent() {
     }
   };
 
-  // ── UNIFIED HONORS & AWARDS COMPONENT TEXT BLOCKS HANDLER ──
   const handleBlockFieldChange = (
     section: "award" | "pub",
     id: string,
@@ -724,29 +734,21 @@ function RouteComponent() {
 
     const autoResize = () => {
       const textarea = textareaRef.current;
-
       if (!textarea) return;
-
       textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
     };
 
-    // Focus only once when mounted
     useEffect(() => {
       const textarea = textareaRef.current;
-
       if (textarea) {
         textarea.focus();
-
-        // place cursor at end
         const length = textarea.value.length;
         textarea.setSelectionRange(length, length);
       }
-
       autoResize();
     }, []);
 
-    // Resize whenever content changes
     useEffect(() => {
       autoResize();
     }, [currentText]);
@@ -762,55 +764,46 @@ function RouteComponent() {
 
       if (uniqueKey.startsWith("exp-")) {
         const [, expIdx, , bIdx] = uniqueKey.split("-");
-
         handleBulletChange("work", parseInt(expIdx), parseInt(bIdx), val);
       }
 
       if (uniqueKey.startsWith("proj-sub-")) {
         const [, , projIdx] = uniqueKey.split("-sub-");
-
         handleInlineFieldChange("project-subtitle", parseInt(projIdx), val);
       }
 
       if (uniqueKey.startsWith("proj-") && !uniqueKey.includes("-sub-")) {
         const [, projIdx, , bIdx] = uniqueKey.split("-");
-
         handleBulletChange("project", parseInt(projIdx), parseInt(bIdx), val);
       }
 
       if (uniqueKey.startsWith("edu-deg-")) {
         const [, , eduIdx] = uniqueKey.split("-deg-");
-
         handleInlineFieldChange("education-degree", parseInt(eduIdx), val);
       }
 
       if (uniqueKey.startsWith("edu-") && !uniqueKey.includes("-deg-")) {
         const [, eduIdx, , bIdx] = uniqueKey.split("-");
-
         handleBulletChange("education", parseInt(eduIdx), parseInt(bIdx), val);
       }
 
       if (uniqueKey.startsWith("cert-name-")) {
         const [, , certIdx] = uniqueKey.split("-name-");
-
         handleInlineFieldChange("cert-name", parseInt(certIdx), val);
       }
 
       if (uniqueKey.startsWith("cert-") && !uniqueKey.includes("-name-")) {
         const [, certIdx, , bIdx] = uniqueKey.split("-");
-
         handleBulletChange("cert", parseInt(certIdx), parseInt(bIdx), val);
       }
 
       if (uniqueKey.startsWith("award-block-")) {
         const [, , id] = uniqueKey.split("-block-");
-
         handleBlockFieldChange("award", id, val);
       }
 
       if (uniqueKey.startsWith("pub-block-")) {
         const [, , id] = uniqueKey.split("-block-");
-
         handleBlockFieldChange("pub", id, val);
       }
     };
@@ -827,7 +820,7 @@ function RouteComponent() {
       />
     );
   }
-  // ── INTERACTIVE DIFF GENERATOR SYSTEM ──
+
   const renderDiffText = (
     uniqueKey: string,
     originalText: string,
@@ -844,6 +837,25 @@ function RouteComponent() {
           handleBulletChange={handleBulletChange}
           handleBlockFieldChange={handleBlockFieldChange}
         />
+      );
+    }
+
+    const normalizedOriginal = (originalText || "").trim();
+    const normalizedCurrent = (currentText || "").trim();
+    const isResolved = normalizedOriginal === normalizedCurrent;
+
+    if (isResolved) {
+      return (
+        <p
+          onClick={() => setActiveEditingKey(uniqueKey)}
+          className={`relative text-xs cursor-text py-2 flex ${
+            isBullet
+              ? "before:content-['●'] before:text-tiny before:mx-1 before:text-text-muted"
+              : "px-0"
+          }`}
+        >
+          {normalizedCurrent}
+        </p>
       );
     }
 
@@ -909,7 +921,6 @@ function RouteComponent() {
     );
   };
 
-  // ── REUSABLE RENDERING WRAPPER FOR ACCEPT/REJECT TOOLBARS ──
   const renderControlBlock = (
     uniqueKey: string,
     index: number,
@@ -918,50 +929,46 @@ function RouteComponent() {
     isBullet = false,
     totalCount = 1,
   ) => {
+    const isResolved = (originalText || "") === (currentText || "");
+
     return (
       <div className="w-full border-black/5" key={uniqueKey}>
         <div className="px-0 border-blue-600">
           {renderDiffText(uniqueKey, originalText, currentText, isBullet)}
         </div>
-        <div className="w-full flex items-center justify-between gap-x-2 px-1 py-1">
-          {/* <span className="text-xxs text-text-secondary font-medium font-mono">
-            #{index + 1}
-          </span> */}
-          <button
-            onClick={() => handleAcceptText(uniqueKey)}
-            className="ml-auto px-2 py-1 flex gap-x-0.5 items-center justify-center bg-[#027A48] text-white cursor-pointer rounded-sm"
-          >
-            <Icon icon="ic:outline-check" className="text-tiny" />
-            <span className="text-tiny">Accept</span>
-          </button>
-          <button
-            onClick={() => handleRejectText(uniqueKey)}
-            className="px-2 py-1 flex gap-x-0.5 items-center justify-center border border-red-300 bg-[#FEF3F2] text-[#B42318] cursor-pointer rounded-sm"
-          >
-            <Icon icon="material-symbols:close-rounded" className="text-tiny" />
-            <span className="text-tiny">Reject</span>
-          </button>
-          <button
-            onClick={() => handleRejectText(uniqueKey)}
-            className="px-2 py-1 flex gap-x-0.5 items-center justify-center border border-black/10 bg-[#FAFAFA] text-text-primary cursor-pointer rounded-sm"
-          >
-            <Icon icon="line-md:edit" className="text-tiny" />
-            <span className="text-tiny">Edit</span>
-          </button>
-        </div>
+
+        {!isResolved && (
+          <div className="w-full flex items-center justify-between gap-x-2 px-1 py-1">
+            <button
+              onClick={() => handleAcceptText(uniqueKey)}
+              className="ml-auto px-2 py-1 flex gap-x-0.5 items-center justify-center bg-[#039855] text-white cursor-pointer rounded-sm"
+            >
+              <Icon icon="ic:outline-check" className="text-tiny" />
+              <span className="text-tiny">Accept</span>
+            </button>
+            <button
+              onClick={() => handleRejectText(uniqueKey)}
+              className="px-2 py-1 flex gap-x-0.5 items-center justify-center border border-red-300 bg-[#FEF3F2] text-[#B42318] cursor-pointer rounded-sm"
+            >
+              <Icon
+                icon="material-symbols:close-rounded"
+                className="text-tiny"
+              />
+              <span className="text-tiny">Reject</span>
+            </button>
+          </div>
+        )}
       </div>
     );
   };
 
   return (
     <div className="w-full h-full flex overflow-hidden">
-      {/* ── LEFT ASIDE ── */}
       <aside className="w-[20vw] h-full"></aside>
 
-      {/* ── CENTER MAIN Workspace Panel ── */}
       <main className="h-full flex-1 overflow-y-auto hide-scrollbar space-y-3 py-2 px-0.5">
         {/* 1. PROFILE SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading sectionLabel="Profile" />
           <div className="w-full grid grid-cols-3 p-3 gap-1">
             <fieldset className="flex flex-col">
@@ -1049,12 +1056,15 @@ function RouteComponent() {
         </section>
 
         {/* 2. WORK EXPERIENCE SECTION */}
-        <section className="w-full flex-col border border-black/5">
-          <SectionHeading sectionLabel="Work Experience" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="Work Experience"
+            entriesCount={workExperiences.length}
+          />
           {workExperiences.map((exp, expIdx) => (
             <React.Fragment key={exp.id || expIdx}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-muted font-semibold font-mono">
+                <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{expIdx + 1}
                 </span>
               </div>
@@ -1163,12 +1173,15 @@ function RouteComponent() {
         </section>
 
         {/* 3. PROJECTS SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="Projects" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="Projects"
+            entriesCount={projects.length}
+          />
           {projects.map((proj, projIdx) => (
             <React.Fragment key={proj.id || projIdx}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-muted font-semibold font-mono">
+                <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{projIdx + 1}
                 </span>
               </div>
@@ -1280,12 +1293,15 @@ function RouteComponent() {
         </section>
 
         {/* 4. EDUCATION SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="Education" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="Education"
+            entriesCount={education.length}
+          />
           {education.map((edu, eduIdx) => (
             <React.Fragment key={edu.id || eduIdx}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-muted font-semibold font-mono">
+                <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{eduIdx + 1}
                 </span>
               </div>
@@ -1430,12 +1446,15 @@ function RouteComponent() {
         </section>
 
         {/* 5. CERTIFICATES SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="Certificates" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="Certificates"
+            entriesCount={certificates.length}
+          />
           {certificates.map((cert, certIdx) => (
             <React.Fragment key={cert.id || certIdx}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-muted font-semibold font-mono">
+                <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{certIdx + 1}
                 </span>
               </div>
@@ -1541,8 +1560,8 @@ function RouteComponent() {
         </section>
 
         {/* 6. SKILLS SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="Skills" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading sectionLabel="Skills" entriesCount={skills.length} />
           <div className="w-full p-3">
             <div className="flex flex-wrap gap-1 py-1">
               {skills.map((s) => (
@@ -1558,8 +1577,11 @@ function RouteComponent() {
         </section>
 
         {/* 7. LANGUAGES SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="Languages" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="Languages"
+            entriesCount={languages.length}
+          />
           <div className="w-full p-3">
             <div className="flex flex-wrap gap-1 py-1">
               {languages.map((l) => (
@@ -1575,8 +1597,11 @@ function RouteComponent() {
         </section>
 
         {/* 8. INTERESTS SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="Interests" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="Interests"
+            entriesCount={interests.length}
+          />
           <div className="w-full p-3">
             <div className="flex flex-wrap gap-1 py-1">
               {interests.map((i) => (
@@ -1592,12 +1617,15 @@ function RouteComponent() {
         </section>
 
         {/* 9. AWARDS SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="Honors & Awards" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="Honors & Awards"
+            entriesCount={awards.length}
+          />
           {awards.map((aw, awIdx) => (
             <React.Fragment key={aw.id || awIdx}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-muted font-semibold font-mono">
+                <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{awIdx + 1}
                 </span>
               </div>
@@ -1664,12 +1692,15 @@ function RouteComponent() {
         </section>
 
         {/* 10. PUBLICATIONS SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="Publications" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="Publications"
+            entriesCount={publications.length}
+          />
           {publications.map((pub, pubIdx) => (
             <React.Fragment key={pub.id || pubIdx}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-muted font-semibold font-mono">
+                <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{pubIdx + 1}
                 </span>
               </div>
@@ -1748,12 +1779,15 @@ function RouteComponent() {
         </section>
 
         {/* 11. REFERENCES SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
-          <SectionHeading sectionLabel="References" />
+        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
+          <SectionHeading
+            sectionLabel="References"
+            entriesCount={references.length}
+          />
           {references.map((ref, refIdx) => (
             <React.Fragment key={ref.id || refIdx}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-muted font-semibold font-mono">
+                <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{refIdx + 1}
                 </span>
               </div>
@@ -1846,14 +1880,48 @@ function RouteComponent() {
         </section>
       </main>
 
-      {/* ── RIGHT ASIDE ── */}
       <aside className="w-[20vw] h-full p-2">
-        <div className="w-full flex flex-col space-y-4 rounded-3xl p-4 border border-black/5 bg-white shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
-          {/* Content Container */}
+        <div className="w-full flex flex-col space-y-4 rounded-3xl p-4 border border-black/10 bg-white shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
           <div className="relative z-10 w-full flex items-center justify-center">
-            <ScoreArc score={75} />
+            <ScoreCard score={75} />
           </div>
-          <div className="w-full h-50"></div>
+          <div className="w-full flex flex-col space-y-4 mt-4">
+            <div className="w-full flex flex-col space-y-4">
+              {/* MATCHED KEYWORDS */}
+              <div className="w-full flex flex-col space-y-3">
+                <h2 className="text-tiny font-medium text-brand">
+                  MATCHED KEYWORDS
+                </h2>
+                <div className="w-full flex-1 flex flex-wrap gap-2">
+                  {matchedKeywords.map((keyword) => (
+                    <span
+                      key={keyword}
+                      className="w-fit h-fit text-tiny text-[#05603A] flex items-center justify-center rounded-md px-3 py-1 bg-[#ECFDF3] border border-[#A6F4C5]"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* MISSING KEYWORDS */}
+              <div className="w-full flex flex-col space-y-3">
+                <h2 className="text-tiny font-medium text-brand">
+                  MISSING KEYWORDS
+                </h2>
+                <div className="w-full flex-1 flex flex-wrap gap-2">
+                  {missingKeywords.map((keyword) => (
+                    <span
+                      key={keyword}
+                      className="w-fit h-fit text-tiny text-[#B54708] flex items-center justify-center rounded-md px-3 py-1 bg-[#FEF0C7] border border-[#FECDCA]"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </aside>
     </div>
