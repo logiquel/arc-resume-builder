@@ -35,7 +35,7 @@ interface SectionHeadingProps {
 }
 const SectionHeading: React.FC<SectionHeadingProps> = ({ sectionLabel }) => {
   return (
-    <div className="w-full flex justify-between px-3 py-3 border-b cursor-pointer sticky -top-2 bg-white z-10">
+    <div className="w-full flex justify-between px-3 py-3 cursor-pointer sticky -top-2 bg-white z-10">
       <h1 className="text-xxs font-medium text-text-primary uppercase">
         {sectionLabel}
       </h1>
@@ -150,13 +150,13 @@ const ScoreArc: React.FC<ScoreArcProps> = ({ score }) => {
         />
       </svg>
       <div className="w-full mt-3 flex flex-col items-center justify-center text-center">
-        <div className="text-xl font-mono tracking-tight text-slate-900 leading-none">
+        <div className="text-xl font-mono tracking-tight text-text-primary leading-none">
           {clampedScore}
           <span className="ml-0.5 text-base font-sans font-medium text-slate-400">
             %
           </span>
         </div>
-        <p className="text-xxs">
+        <p className="text-xxs text-text-secondary">
           Your resume score is{" "}
           <span className={`ml-0.5 font-medium ${statusColor}`}>
             {statusText}
@@ -916,28 +916,38 @@ function RouteComponent() {
     originalText: string,
     currentText: string,
     isBullet = false,
+    totalCount = 1,
   ) => {
     return (
-      <div className="w-full border border-black/5" key={uniqueKey}>
-        <div className="w-full flex items-center justify-between gap-x-2 border-b px-1 py-1 bg-gray-50/50">
-          <span className="text-tiny">#{index + 1}</span>
+      <div className="w-full border-black/5" key={uniqueKey}>
+        <div className="px-0 border-blue-600">
+          {renderDiffText(uniqueKey, originalText, currentText, isBullet)}
+        </div>
+        <div className="w-full flex items-center justify-between gap-x-2 px-1 py-1">
+          {/* <span className="text-xxs text-text-secondary font-medium font-mono">
+            #{index + 1}
+          </span> */}
           <button
             onClick={() => handleAcceptText(uniqueKey)}
-            className="ml-auto px-1 py-0.5 flex gap-x-0.5 items-center justify-center border border-green-300 bg-[#D1FADF] text-[#027A48] cursor-pointer rounded-none"
+            className="ml-auto px-2 py-1 flex gap-x-0.5 items-center justify-center bg-[#027A48] text-white cursor-pointer rounded-sm"
           >
             <Icon icon="ic:outline-check" className="text-tiny" />
             <span className="text-tiny">Accept</span>
           </button>
           <button
             onClick={() => handleRejectText(uniqueKey)}
-            className="px-1 py-0.5 flex gap-x-0.5 items-center justify-center border border-red-300 bg-[#FECDCA] text-[#B42318] cursor-pointer rounded-none"
+            className="px-2 py-1 flex gap-x-0.5 items-center justify-center border border-red-300 bg-[#FEF3F2] text-[#B42318] cursor-pointer rounded-sm"
           >
-            <Icon icon="ic:baseline-close" className="text-tiny" />
+            <Icon icon="material-symbols:close-rounded" className="text-tiny" />
             <span className="text-tiny">Reject</span>
           </button>
-        </div>
-        <div className="px-2 border-blue-600">
-          {renderDiffText(uniqueKey, originalText, currentText, isBullet)}
+          <button
+            onClick={() => handleRejectText(uniqueKey)}
+            className="px-2 py-1 flex gap-x-0.5 items-center justify-center border border-black/10 bg-[#FAFAFA] text-text-primary cursor-pointer rounded-sm"
+          >
+            <Icon icon="line-md:edit" className="text-tiny" />
+            <span className="text-tiny">Edit</span>
+          </button>
         </div>
       </div>
     );
@@ -953,9 +963,9 @@ function RouteComponent() {
         {/* 1. PROFILE SECTION */}
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Profile" />
-          <div className="w-full grid grid-cols-2 p-3 gap-1">
+          <div className="w-full grid grid-cols-3 p-3 gap-1">
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-brand font-medium">
+              <label className="text-tiny text-text-muted font-medium">
                 FIRST NAME
               </label>
               <input
@@ -965,7 +975,7 @@ function RouteComponent() {
               />
             </fieldset>
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-brand font-medium">
+              <label className="text-tiny text-text-muted font-medium">
                 LAST NAME
               </label>
               <input
@@ -976,7 +986,9 @@ function RouteComponent() {
             </fieldset>
 
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-brand font-medium">EMAIL</label>
+              <label className="text-tiny text-text-muted font-medium">
+                EMAIL
+              </label>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -984,15 +996,17 @@ function RouteComponent() {
               />
             </fieldset>
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-brand font-medium">PHONE</label>
+              <label className="text-tiny text-text-muted font-medium">
+                PHONE
+              </label>
               <input
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
               />
             </fieldset>
-            <fieldset className="flex flex-col col-span-2">
-              <label className="text-tiny text-brand font-medium">
+            <fieldset className="flex flex-col">
+              <label className="text-tiny text-text-muted font-medium">
                 LOCATION
               </label>
               <input
@@ -1001,31 +1015,33 @@ function RouteComponent() {
                 className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
               />
             </fieldset>
-            <fieldset className="flex flex-col col-span-2">
-              <label className="text-tiny text-brand font-medium">
+            <fieldset className="flex flex-col col-span-3">
+              <label className="text-tiny text-text-muted font-medium">
                 PROFESSIONAL TITLE
               </label>
-              <div className="w-full space-y-3 mt-1">
+              <div className="w-full space-y-3">
                 {renderControlBlock(
                   "profile-title",
                   0,
                   profTitle.originalText,
                   profTitle.currentText,
                   false,
+                  1,
                 )}
               </div>
             </fieldset>
-            <fieldset className="flex flex-col col-span-2">
-              <label className="text-tiny text-brand font-medium">
+            <fieldset className="flex flex-col col-span-3">
+              <label className="text-tiny text-text-muted font-medium">
                 SUMMARY
               </label>
-              <div className="w-full space-y-3 mt-1">
+              <div className="w-full space-y-3">
                 {renderControlBlock(
                   "profile-summary",
                   0,
                   summary.originalText,
                   summary.currentText,
                   false,
+                  1,
                 )}
               </div>
             </fieldset>
@@ -1033,104 +1049,119 @@ function RouteComponent() {
         </section>
 
         {/* 2. WORK EXPERIENCE SECTION */}
-        <section className="w-full flex-col bg-white border border-black/5">
+        <section className="w-full flex-col border border-black/5">
           <SectionHeading sectionLabel="Work Experience" />
           {workExperiences.map((exp, expIdx) => (
-            <div
-              key={exp.id || expIdx}
-              className="w-full grid grid-cols-2 p-3 gap-2 border-b border-black/5 last:border-b-0"
-            >
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  COMPANY
-                </label>
-                <input
-                  value={exp.company}
-                  onChange={(e) =>
-                    handleFieldChange("work", expIdx, "company", e.target.value)
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">ROLE</label>
-                <input
-                  value={exp.role}
-                  onChange={(e) =>
-                    handleFieldChange("work", expIdx, "role", e.target.value)
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  LOCATION
-                </label>
-                <input
-                  value={exp.location}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "work",
-                      expIdx,
-                      "location",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  START DATE
-                </label>
-                <input
-                  value={exp.start_date || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "work",
-                      expIdx,
-                      "start_date",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  END DATE
-                </label>
-                <input
-                  value={exp.end_date || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "work",
-                      expIdx,
-                      "end_date",
-                      e.target.value,
-                    )
-                  }
-                  placeholder="Present"
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  DESCRIPTION
-                </label>
-                <div className="w-full space-y-3 mt-1">
-                  {exp.highlights?.map((bullet, bIdx) =>
-                    renderControlBlock(
-                      `exp-${expIdx}-bullet-${bIdx}`,
-                      bIdx,
-                      bullet.originalText,
-                      bullet.currentText,
-                      true,
-                    ),
-                  )}
-                </div>
-              </fieldset>
-            </div>
+            <>
+              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+                <span className="text-xxs text-text-muted font-semibold font-mono">
+                  #{expIdx + 1}
+                </span>
+              </div>
+              <div
+                key={exp.id || expIdx}
+                className="w-full grid grid-cols-3 p-3 gap-2  border-black/5 last:border-b-0 bg-white"
+              >
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    COMPANY
+                  </label>
+                  <input
+                    value={exp.company}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "work",
+                        expIdx,
+                        "company",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    ROLE
+                  </label>
+                  <input
+                    value={exp.role}
+                    onChange={(e) =>
+                      handleFieldChange("work", expIdx, "role", e.target.value)
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    LOCATION
+                  </label>
+                  <input
+                    value={exp.location}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "work",
+                        expIdx,
+                        "location",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    START DATE
+                  </label>
+                  <input
+                    value={exp.start_date || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "work",
+                        expIdx,
+                        "start_date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    END DATE
+                  </label>
+                  <input
+                    value={exp.end_date || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "work",
+                        expIdx,
+                        "end_date",
+                        e.target.value,
+                      )
+                    }
+                    placeholder="Present"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DESCRIPTION
+                  </label>
+                  <div className="w-full space-y-3">
+                    {exp.highlights?.map((bullet, bIdx) =>
+                      renderControlBlock(
+                        `exp-${expIdx}-bullet-${bIdx}`,
+                        bIdx,
+                        bullet.originalText,
+                        bullet.currentText,
+                        true,
+                        exp.highlights?.length || 1,
+                      ),
+                    )}
+                  </div>
+                </fieldset>
+              </div>
+            </>
           ))}
         </section>
 
@@ -1138,108 +1169,119 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Projects" />
           {projects.map((proj, projIdx) => (
-            <div
-              key={proj.id || projIdx}
-              className="w-full grid grid-cols-2 p-3 gap-2 border-b border-black/5 last:border-b-0"
-            >
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  PROJECT TITLE
-                </label>
-                <input
-                  value={proj.title}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "project",
+            <>
+              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+                <span className="text-xxs text-text-muted font-semibold font-mono">
+                  #{projIdx + 1}
+                </span>
+              </div>
+              <div
+                key={proj.id || projIdx}
+                className="w-full grid grid-cols-3 p-3 gap-2  border-black/5 last:border-b-0 bg-white"
+              >
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    PROJECT TITLE
+                  </label>
+                  <input
+                    value={proj.title}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "project",
+                        projIdx,
+                        "title",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    LINK
+                  </label>
+                  <input
+                    value={proj.link || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "project",
+                        projIdx,
+                        "link",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    START DATE
+                  </label>
+                  <input
+                    value={proj.start_date || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "project",
+                        projIdx,
+                        "start_date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    END DATE
+                  </label>
+                  <input
+                    value={proj.end_date || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "project",
+                        projIdx,
+                        "end_date",
+                        e.target.value,
+                      )
+                    }
+                    placeholder="Present"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    PROJECT SUBTITLE / TECH STACK
+                  </label>
+                  <div className="w-full space-y-3">
+                    {renderControlBlock(
+                      `proj-sub-${projIdx}`,
                       projIdx,
-                      "title",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">LINK</label>
-                <input
-                  value={proj.link || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "project",
-                      projIdx,
-                      "link",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  START DATE
-                </label>
-                <input
-                  value={proj.start_date || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "project",
-                      projIdx,
-                      "start_date",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  END DATE
-                </label>
-                <input
-                  value={proj.end_date || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "project",
-                      projIdx,
-                      "end_date",
-                      e.target.value,
-                    )
-                  }
-                  placeholder="Present"
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  PROJECT SUBTITLE / TECH STACK
-                </label>
-                <div className="w-full space-y-3 mt-1">
-                  {renderControlBlock(
-                    `proj-sub-${projIdx}`,
-                    projIdx,
-                    proj.subtitle?.originalText || "",
-                    proj.subtitle?.currentText || "",
-                    false,
-                  )}
-                </div>
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  PROJECT HIGHLIGHTS
-                </label>
-                <div className="w-full space-y-3 mt-1">
-                  {proj.highlights?.map((bullet, bIdx) =>
-                    renderControlBlock(
-                      `proj-${projIdx}-bullet-${bIdx}`,
-                      bIdx,
-                      bullet.originalText,
-                      bullet.currentText,
-                      true,
-                    ),
-                  )}
-                </div>
-              </fieldset>
-            </div>
+                      proj.subtitle?.originalText || "",
+                      proj.subtitle?.currentText || "",
+                      false,
+                      1,
+                    )}
+                  </div>
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DESCRIPTION
+                  </label>
+                  <div className="w-full space-y-3">
+                    {proj.highlights?.map((bullet, bIdx) =>
+                      renderControlBlock(
+                        `proj-${projIdx}-bullet-${bIdx}`,
+                        bIdx,
+                        bullet.originalText,
+                        bullet.currentText,
+                        true,
+                        proj.highlights?.length || 0,
+                      ),
+                    )}
+                  </div>
+                </fieldset>
+              </div>
+            </>
           ))}
         </section>
 
@@ -1247,141 +1289,152 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Education" />
           {education.map((edu, eduIdx) => (
-            <div
-              key={edu.id || eduIdx}
-              className="w-full grid grid-cols-2 p-3 gap-2 border-b border-black/5 last:border-b-0"
-            >
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  INSTITUTION
-                </label>
-                <input
-                  value={edu.institution}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "education",
+            <>
+              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+                <span className="text-xxs text-text-muted font-semibold font-mono">
+                  #{eduIdx + 1}
+                </span>
+              </div>
+              <div
+                key={edu.id || eduIdx}
+                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
+              >
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    INSTITUTION
+                  </label>
+                  <input
+                    value={edu.institution}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "education",
+                        eduIdx,
+                        "institution",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    SCORE
+                  </label>
+                  <input
+                    value={edu.score || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "education",
+                        eduIdx,
+                        "score",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    LOCATION
+                  </label>
+                  <input
+                    value={edu.location || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "education",
+                        eduIdx,
+                        "location",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    START DATE
+                  </label>
+                  <input
+                    value={edu.start_date || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "education",
+                        eduIdx,
+                        "start_date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    END DATE
+                  </label>
+                  <input
+                    value={edu.end_date || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "education",
+                        eduIdx,
+                        "end_date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    LINK
+                  </label>
+                  <input
+                    value={edu.link || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "education",
+                        eduIdx,
+                        "link",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DEGREE / COURSE
+                  </label>
+                  <div className="w-full space-y-3">
+                    {renderControlBlock(
+                      `edu-deg-${eduIdx}`,
                       eduIdx,
-                      "institution",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  SCORE
-                </label>
-                <input
-                  value={edu.score || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "education",
-                      eduIdx,
-                      "score",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  LOCATION
-                </label>
-                <input
-                  value={edu.location || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "education",
-                      eduIdx,
-                      "location",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  START DATE
-                </label>
-                <input
-                  value={edu.start_date || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "education",
-                      eduIdx,
-                      "start_date",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  END DATE
-                </label>
-                <input
-                  value={edu.end_date || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "education",
-                      eduIdx,
-                      "end_date",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">LINK</label>
-                <input
-                  value={edu.link || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "education",
-                      eduIdx,
-                      "link",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  DEGREE NOMENCLATURE
-                </label>
-                <div className="w-full space-y-3 mt-1">
-                  {renderControlBlock(
-                    `edu-deg-${eduIdx}`,
-                    eduIdx,
-                    edu.degree?.originalText || "",
-                    edu.degree?.currentText || "",
-                    false,
-                  )}
-                </div>
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  EDUCATION HIGHLIGHTS
-                </label>
-                <div className="w-full space-y-3 mt-1">
-                  {edu.highlights?.map((bullet, bIdx) =>
-                    renderControlBlock(
-                      `edu-${eduIdx}-bullet-${bIdx}`,
-                      bIdx,
-                      bullet.originalText,
-                      bullet.currentText,
-                      true,
-                    ),
-                  )}
-                </div>
-              </fieldset>
-            </div>
+                      edu.degree?.originalText || "",
+                      edu.degree?.currentText || "",
+                      false,
+                      1,
+                    )}
+                  </div>
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DESCRIPTION
+                  </label>
+                  <div className="w-full space-y-3">
+                    {edu.highlights?.map((bullet, bIdx) =>
+                      renderControlBlock(
+                        `edu-${eduIdx}-bullet-${bIdx}`,
+                        bIdx,
+                        bullet.originalText,
+                        bullet.currentText,
+                        true,
+                        edu.highlights?.length || 0,
+                      ),
+                    )}
+                  </div>
+                </fieldset>
+              </div>
+            </>
           ))}
         </section>
 
@@ -1389,97 +1442,113 @@ function RouteComponent() {
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Certificates" />
           {certificates.map((cert, certIdx) => (
-            <div
-              key={cert.id || certIdx}
-              className="w-full grid grid-cols-2 p-3 gap-2 border-b border-black/5 last:border-b-0"
-            >
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  ISSUER
-                </label>
-                <input
-                  value={cert.issuer}
-                  onChange={(e) =>
-                    handleFieldChange("cert", certIdx, "issuer", e.target.value)
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  ISSUE DATE
-                </label>
-                <input
-                  value={cert.issue_date || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "cert",
+            <>
+              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+                <span className="text-xxs text-text-muted font-semibold font-mono">
+                  #{certIdx + 1}
+                </span>
+              </div>
+              <div
+                key={cert.id || certIdx}
+                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
+              >
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    ISSUER
+                  </label>
+                  <input
+                    value={cert.issuer}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "cert",
+                        certIdx,
+                        "issuer",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    ISSUE DATE
+                  </label>
+                  <input
+                    value={cert.issue_date || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "cert",
+                        certIdx,
+                        "issue_date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    EXPIRY DATE
+                  </label>
+                  <input
+                    value={cert.expiry_date || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "cert",
+                        certIdx,
+                        "expiry_date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    LINK
+                  </label>
+                  <input
+                    value={cert.link || ""}
+                    onChange={(e) =>
+                      handleFieldChange("cert", certIdx, "link", e.target.value)
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    CERTIFICATE NAME
+                  </label>
+                  <div className="w-full space-y-3">
+                    {renderControlBlock(
+                      `cert-name-${certIdx}`,
                       certIdx,
-                      "issue_date",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  EXPIRY DATE
-                </label>
-                <input
-                  value={cert.expiry_date || ""}
-                  onChange={(e) =>
-                    handleFieldChange(
-                      "cert",
-                      certIdx,
-                      "expiry_date",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">LINK</label>
-                <input
-                  value={cert.link || ""}
-                  onChange={(e) =>
-                    handleFieldChange("cert", certIdx, "link", e.target.value)
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  CERTIFICATE NAME
-                </label>
-                <div className="w-full space-y-3 mt-1">
-                  {renderControlBlock(
-                    `cert-name-${certIdx}`,
-                    certIdx,
-                    cert.name?.originalText || "",
-                    cert.name?.currentText || "",
-                    false,
-                  )}
-                </div>
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  CERTIFICATE HIGHLIGHTS
-                </label>
-                <div className="w-full space-y-3 mt-1">
-                  {cert.highlights?.map((bullet, bIdx) =>
-                    renderControlBlock(
-                      `cert-${certIdx}-bullet-${bIdx}`,
-                      bIdx,
-                      bullet.originalText,
-                      bullet.currentText,
-                      true,
-                    ),
-                  )}
-                </div>
-              </fieldset>
-            </div>
+                      cert.name?.originalText || "",
+                      cert.name?.currentText || "",
+                      false,
+                      1,
+                    )}
+                  </div>
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DESCRIPTION
+                  </label>
+                  <div className="w-full space-y-3">
+                    {cert.highlights?.map((bullet, bIdx) =>
+                      renderControlBlock(
+                        `cert-${certIdx}-bullet-${bIdx}`,
+                        bIdx,
+                        bullet.originalText,
+                        bullet.currentText,
+                        true,
+                        cert.highlights?.length || 0,
+                      ),
+                    )}
+                  </div>
+                </fieldset>
+              </div>
+            </>
           ))}
         </section>
 
@@ -1537,11 +1606,19 @@ function RouteComponent() {
         {/* 9. AWARDS SECTION */}
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Honors & Awards" />
-          <div className="p-3 space-y-4">
-            {awards.map((aw, awIdx) => (
-              <div key={aw.id} className="text-xs space-y-2">
+          {awards.map((aw, awIdx) => (
+            <>
+              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+                <span className="text-xxs text-text-muted font-semibold font-mono">
+                  #{awIdx + 1}
+                </span>
+              </div>
+              <div
+                key={aw.id}
+                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
+              >
                 <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-brand font-medium">
+                  <label className="text-tiny text-text-muted font-medium">
                     AWARD NAME
                   </label>
                   <input
@@ -1549,72 +1626,74 @@ function RouteComponent() {
                     onChange={(e) =>
                       handleFieldChange("award", awIdx, "title", e.target.value)
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 font-semibold text-brand text-tiny uppercase"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 font-semibold text-tiny uppercase"
                   />
                 </fieldset>
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  <fieldset className="flex flex-col">
-                    <label className="text-tiny text-brand font-medium">
-                      AWARDER
-                    </label>
-                    <input
-                      value={aw.awarder || ""}
-                      onChange={(e) =>
-                        handleFieldChange(
-                          "award",
-                          awIdx,
-                          "awarder",
-                          e.target.value,
-                        )
-                      }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                    />
-                  </fieldset>
-                  <fieldset className="flex flex-col">
-                    <label className="text-tiny text-brand font-medium">
-                      DATE
-                    </label>
-                    <input
-                      value={aw.date || ""}
-                      onChange={(e) =>
-                        handleFieldChange(
-                          "award",
-                          awIdx,
-                          "date",
-                          e.target.value,
-                        )
-                      }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                    />
-                  </fieldset>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-tiny text-brand font-medium mb-1">
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DATE
+                  </label>
+                  <input
+                    value={aw.date || ""}
+                    onChange={(e) =>
+                      handleFieldChange("award", awIdx, "date", e.target.value)
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
+                    AWARDER
+                  </label>
+                  <input
+                    value={aw.awarder || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "award",
+                        awIdx,
+                        "awarder",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
-                  <div className="w-full space-y-3 mt-1">
+                  <div className="w-full space-y-3">
                     {renderControlBlock(
                       `award-block-${aw.id}`,
                       awIdx,
                       aw.description?.originalText || "",
                       aw.description?.currentText || "",
                       false,
+                      awards.length,
                     )}
                   </div>
-                </div>
+                </fieldset>
               </div>
-            ))}
-          </div>
+            </>
+          ))}
         </section>
 
         {/* 10. PUBLICATIONS SECTION */}
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="Publications" />
-          <div className="p-3 space-y-4">
-            {publications.map((pub, pubIdx) => (
-              <div key={pub.id} className="text-xs space-y-2">
+          {publications.map((pub, pubIdx) => (
+            <>
+              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+                <span className="text-xxs text-text-muted font-semibold font-mono">
+                  #{pubIdx + 1}
+                </span>
+              </div>
+              <div
+                key={pub.id}
+                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
+              >
                 <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-brand font-medium">
+                  <label className="text-tiny text-text-muted font-medium">
                     PUBLICATION NAME
                   </label>
                   <input
@@ -1625,157 +1704,165 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 font-semibold text-tiny uppercase"
                   />
                 </fieldset>
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  <fieldset className="flex flex-col">
-                    <label className="text-tiny text-brand font-medium">
-                      PUBLISHER
-                    </label>
-                    <input
-                      value={pub.publisher || ""}
-                      onChange={(e) =>
-                        handleFieldChange(
-                          "pub",
-                          pubIdx,
-                          "publisher",
-                          e.target.value,
-                        )
-                      }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                    />
-                  </fieldset>
-                  <fieldset className="flex flex-col">
-                    <label className="text-tiny text-brand font-medium">
-                      DATE
-                    </label>
-                    <input
-                      value={pub.date || ""}
-                      onChange={(e) =>
-                        handleFieldChange("pub", pubIdx, "date", e.target.value)
-                      }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                    />
-                  </fieldset>
-                  <fieldset className="flex flex-col col-span-2">
-                    <label className="text-tiny text-brand font-medium">
-                      LINK
-                    </label>
-                    <input
-                      value={pub.link || ""}
-                      onChange={(e) =>
-                        handleFieldChange("pub", pubIdx, "link", e.target.value)
-                      }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                    />
-                  </fieldset>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-tiny text-brand font-medium mb-1">
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DATE
+                  </label>
+                  <input
+                    value={pub.date || ""}
+                    onChange={(e) =>
+                      handleFieldChange("pub", pubIdx, "date", e.target.value)
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-2">
+                  <label className="text-tiny text-text-muted font-medium">
+                    PUBLISHER
+                  </label>
+                  <input
+                    value={pub.publisher || ""}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        "pub",
+                        pubIdx,
+                        "publisher",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    LINK
+                  </label>
+                  <input
+                    value={pub.link || ""}
+                    onChange={(e) =>
+                      handleFieldChange("pub", pubIdx, "link", e.target.value)
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-3">
+                  <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
-                  <div className="w-full space-y-3 mt-1">
+                  <div className="w-full space-y-3">
                     {renderControlBlock(
                       `pub-block-${pub.id}`,
                       pubIdx,
                       pub.description?.originalText || "",
                       pub.description?.currentText || "",
                       false,
+                      publications.length,
                     )}
                   </div>
-                </div>
+                </fieldset>
               </div>
-            ))}
-          </div>
+            </>
+          ))}
         </section>
 
         {/* 11. REFERENCES SECTION */}
         <section className="w-full flex-col bg-white border border-black/5">
           <SectionHeading sectionLabel="References" />
           {references.map((ref, refIdx) => (
-            <div
-              key={ref.id || refIdx}
-              className="w-full grid grid-cols-2 p-4 gap-2 border-b border-black/5 last:border-b-0"
-            >
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">NAME</label>
-                <input
-                  value={ref.name}
-                  onChange={(e) =>
-                    setReferences((prev) =>
-                      prev.map((r, i) =>
-                        i === refIdx ? { ...r, name: e.target.value } : r,
-                      ),
-                    )
-                  }
-                  className="rounded-none py-1  text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny  text-brand font-medium">
-                  POSITION
-                </label>
-                <input
-                  value={ref.position}
-                  onChange={(e) =>
-                    setReferences((prev) =>
-                      prev.map((r, i) =>
-                        i === refIdx ? { ...r, position: e.target.value } : r,
-                      ),
-                    )
-                  }
-                  className="rounded-none py-1  text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  ORGANIZATION
-                </label>
-                <input
-                  value={ref.organization}
-                  onChange={(e) =>
-                    setReferences((prev) =>
-                      prev.map((r, i) =>
-                        i === refIdx
-                          ? { ...r, organization: e.target.value }
-                          : r,
-                      ),
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-brand font-medium">
-                  EMAIL
-                </label>
-                <input
-                  value={ref.email}
-                  onChange={(e) =>
-                    setReferences((prev) =>
-                      prev.map((r, i) =>
-                        i === refIdx ? { ...r, email: e.target.value } : r,
-                      ),
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-brand font-medium">
-                  PHONE
-                </label>
-                <input
-                  value={ref.phone}
-                  onChange={(e) =>
-                    setReferences((prev) =>
-                      prev.map((r, i) =>
-                        i === refIdx ? { ...r, phone: e.target.value } : r,
-                      ),
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                />
-              </fieldset>
-            </div>
+            <>
+              <div className="w-full col-span-3 px-3 py-1 border-y border-black/5 bg-gray-50 flex items-center">
+                <span className="text-xxs text-text-muted font-semibold font-mono">
+                  #{refIdx + 1}
+                </span>
+              </div>
+              <div
+                key={ref.id || refIdx}
+                className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0"
+              >
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    NAME
+                  </label>
+                  <input
+                    value={ref.name}
+                    onChange={(e) =>
+                      setReferences((prev) =>
+                        prev.map((r, i) =>
+                          i === refIdx ? { ...r, name: e.target.value } : r,
+                        ),
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    EMAIL
+                  </label>
+                  <input
+                    value={ref.email}
+                    onChange={(e) =>
+                      setReferences((prev) =>
+                        prev.map((r, i) =>
+                          i === refIdx ? { ...r, email: e.target.value } : r,
+                        ),
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    ORGANIZATION
+                  </label>
+                  <input
+                    value={ref.organization}
+                    onChange={(e) =>
+                      setReferences((prev) =>
+                        prev.map((r, i) =>
+                          i === refIdx
+                            ? { ...r, organization: e.target.value }
+                            : r,
+                        ),
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    PHONE
+                  </label>
+                  <input
+                    value={ref.phone}
+                    onChange={(e) =>
+                      setReferences((prev) =>
+                        prev.map((r, i) =>
+                          i === refIdx ? { ...r, phone: e.target.value } : r,
+                        ),
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    POSITION
+                  </label>
+                  <input
+                    value={ref.position}
+                    onChange={(e) =>
+                      setReferences((prev) =>
+                        prev.map((r, i) =>
+                          i === refIdx ? { ...r, position: e.target.value } : r,
+                        ),
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  />
+                </fieldset>
+              </div>
+            </>
           ))}
         </section>
       </main>
@@ -1793,3 +1880,5 @@ function RouteComponent() {
     </div>
   );
 }
+
+//OG
