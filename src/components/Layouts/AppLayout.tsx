@@ -20,10 +20,10 @@ const AppLayout = () => {
 
         {/* --- Main Content --- */}
         <main className="flex-1 min-w-0 h-full flex flex-col">
-          <header className="h-14 w-full flex items-center gap-2.5 px-2 pt-2 pb-1.5 bg-white border-b">
+          <header className="h-16 w-full flex items-center gap-2.5 px-2 pt-2 pb-1.5 bg-white border-b">
             <button
               onClick={() => router.history.back()}
-              className="h-[70%] aspect-square shrink-0 flex items-center justify-center border rounded-md bg-gray-50 hover:bg-gray-100 cursor-pointer"
+              className="h-[60%] aspect-square shrink-0 flex items-center justify-center border rounded-md bg-gray-50 hover:bg-gray-100 cursor-pointer"
             >
               <Icon
                 icon="lets-icons:back"

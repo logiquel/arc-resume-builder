@@ -10,6 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../addons/breadcrumb";
+import { Icon } from "@iconify/react";
 
 export interface BreadcrumbItemType {
   label: string;
@@ -63,7 +64,7 @@ function useRouterBreadcrumbItems(): BreadcrumbItemType[] {
 
 export default function AppBreadcrumb({
   items,
-  separator = "",
+  separator = ">",
 }: AppBreadcrumbProps) {
   const routerItems = useRouterBreadcrumbItems();
   const finalItems = items?.length ? items : routerItems;
@@ -73,7 +74,7 @@ export default function AppBreadcrumb({
   }
 
   return (
-    <div className="relative w-full flex items-center flex-1  ml-1 pl-3 before:content-[''] before:absolute before:left-0 before:w-2 before:h-[0.01rem] before:bg-gray-400 after:content-[''] after:absolute after:left-0 after:top-0 after:w-[0.01rem] after:h-2 after:bg-gray-400">
+    <div className="relative w-full flex items-center flex-1  ml-1 pl-3 before:content-[''] before:absolute before:left-0 before:w-2.5 before:h-[0.02rem] before:bg-gray-400 after:content-[''] after:absolute after:left-0 after:top-0 after:w-[0.02rem] after:h-2.5 after:bg-gray-400">
       <Breadcrumb>
         <BreadcrumbList>
           {finalItems.map((item, index) => {
@@ -81,7 +82,7 @@ export default function AppBreadcrumb({
 
             return (
               <Fragment key={`${item.href ?? item.label}-${index}`}>
-                <BreadcrumbItem className="text-tiny">
+                <BreadcrumbItem className="text-xxs">
                   {isLast || !item.href ? (
                     <BreadcrumbPage className="font-medium border-b border-transparent text-text-primary">
                       {item.label}
@@ -101,6 +102,7 @@ export default function AppBreadcrumb({
                 {!isLast && (
                   <BreadcrumbSeparator className="text-tiny">
                     {/* {separator} */}
+                    <Icon icon="ei:chevron-right" className="scale-[1.5]" />
                   </BreadcrumbSeparator>
                 )}
               </Fragment>
