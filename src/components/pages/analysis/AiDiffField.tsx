@@ -48,7 +48,7 @@ const AutoTextarea: React.FC<{
         adjustHeight();
       }}
       rows={1}
-      className={`text-xs py-1 resize-none overflow-hidden border border-transparent focus:border-gray-300 rounded-none outline-0 transition-colors ${className}`}
+      className={`text-xs py-1 resize-none overflow-hidden border border-transparent focus:border-gray-300 rounded-none outline-0 transition-colors focus:bg-[#F5FBFF] ${className}`}
     />
   );
 };

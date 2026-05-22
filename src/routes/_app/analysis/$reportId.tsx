@@ -226,7 +226,7 @@ function RouteComponent() {
                     e.target.value,
                   )
                 }
-                className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
+                className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
               />
             </fieldset>
 
@@ -244,7 +244,7 @@ function RouteComponent() {
                     e.target.value,
                   )
                 }
-                className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
+                className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
               />
             </fieldset>
 
@@ -280,7 +280,7 @@ function RouteComponent() {
                     e.target.value,
                   )
                 }
-                className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
+                className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
               />
             </fieldset>
 
@@ -298,7 +298,7 @@ function RouteComponent() {
                     e.target.value,
                   )
                 }
-                className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
+                className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
               />
             </fieldset>
 
@@ -361,7 +361,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-2">
@@ -378,7 +378,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col">
@@ -395,7 +395,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col">
@@ -412,7 +412,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
@@ -470,7 +470,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-2">
@@ -487,7 +487,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col">
@@ -504,7 +504,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col">
@@ -522,7 +522,7 @@ function RouteComponent() {
                       )
                     }
                     placeholder="Present"
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
@@ -580,7 +580,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
@@ -608,7 +608,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-2">
@@ -625,7 +625,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
@@ -679,7 +679,7 @@ function RouteComponent() {
                             e.target.value,
                           )
                         }
-                        className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                        className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                       />
                     )}
                   </fieldset>
@@ -697,7 +697,7 @@ function RouteComponent() {
                           e.target.value,
                         )
                       }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                     />
                   </fieldset>
                 </div>
@@ -742,7 +742,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col">
@@ -759,7 +759,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col">
@@ -776,7 +776,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-4">
@@ -821,7 +821,7 @@ function RouteComponent() {
                           e.target.value,
                         )
                       }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                     />
                   </fieldset>
                   <fieldset className="flex-1 flex flex-col">
@@ -838,7 +838,7 @@ function RouteComponent() {
                           e.target.value,
                         )
                       }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                     />
                   </fieldset>
                 </div>
@@ -867,7 +867,7 @@ function RouteComponent() {
                         e.target.value,
                       )
                     }
-                    className="rounded-full py-1.5 px-3 text-text-primary text-xs border border-gray-200 focus:border-gray-300 outline-0 bg-gray-50"
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF] px-2"
                   />
                 </fieldset>
               ))}
@@ -911,7 +911,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-2">
@@ -923,7 +923,7 @@ function RouteComponent() {
                   onChange={(e) =>
                     handlePrimitiveChange("awards", idx, "date", e.target.value)
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-4">
@@ -977,7 +977,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col">
@@ -994,7 +994,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col">
@@ -1011,7 +1011,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-4">
@@ -1054,7 +1054,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-2">
@@ -1071,7 +1071,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col">
@@ -1088,7 +1088,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col">
@@ -1105,7 +1105,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
               <fieldset className="flex flex-col">
@@ -1122,7 +1122,7 @@ function RouteComponent() {
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
             </div>
