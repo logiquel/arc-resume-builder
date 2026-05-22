@@ -19,14 +19,12 @@ interface AiDiffFieldProps {
 
 type ResolutionState = "unresolved" | "resolved";
 
-// Auto-resizing textarea component
+// Auto-resizing textarea component - used only for resolved state
 const AutoTextarea: React.FC<{
   value: string;
   onChange: (value: string) => void;
-  onSave: () => void;
-  onCancel: () => void;
   className?: string;
-}> = ({ value, onChange, onSave, onCancel, className = "" }) => {
+}> = ({ value, onChange, className = "" }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const adjustHeight = () => {
@@ -44,25 +42,110 @@ const AutoTextarea: React.FC<{
   return (
     <textarea
       ref={textareaRef}
-      autoFocus
       value={value}
       onChange={(e) => {
         onChange(e.target.value);
         adjustHeight();
       }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          onSave();
-        }
-        if (e.key === "Escape") {
-          onCancel();
-        }
-      }}
-      onBlur={onSave}
       rows={1}
-      className={`resize-none overflow-hidden ${className}`}
+      className={`text-xs py-1 resize-none overflow-hidden border border-transparent focus:border-gray-300 rounded-none outline-0 transition-colors ${className}`}
     />
+  );
+};
+
+// Common Action Buttons Component
+const ActionButtons: React.FC<{
+  onAccept: () => void;
+  onReject: () => void;
+  acceptText?: string;
+  rejectText?: string;
+  acceptIcon?: string;
+  rejectIcon?: string;
+}> = ({
+  onAccept,
+  onReject,
+  acceptText = "Accept",
+  rejectText = "Reject",
+  acceptIcon = "tabler:check-filled",
+  rejectIcon = "iconamoon:close-duotone",
+}) => (
+  <div className="flex items-center gap-2">
+    <button
+      onClick={onAccept}
+      className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[#027A48] hover:bg-green-700 border border-[#027A48] text-white text-tiny rounded-sm transition-colors cursor-pointer"
+    >
+      <Icon icon={acceptIcon} className="text-xs" /> {acceptText}
+    </button>
+    <button
+      onClick={onReject}
+      className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[#FEF3F2] hover:bg-red-50 text-red-600 border border-[#FDA29B] text-tiny rounded-sm transition-colors cursor-pointer"
+    >
+      <Icon icon={rejectIcon} className="text-xs" /> {rejectText}
+    </button>
+  </div>
+);
+
+// Shared inline diff renderer - used only for unresolved state
+const renderInlineDiff = (oldStr: string, newStr: string) => {
+  const diffs = diffWords(oldStr || "", newStr || "");
+  return (
+    <div className="leading-snug py-1 whitespace-pre-wrap text-xs text-text-primary">
+      {diffs.map((part, i) => {
+        if (part.added)
+          return (
+            <span key={i} className="bg-green-100 text-green-800 px-1">
+              {part.value}
+            </span>
+          );
+        if (part.removed)
+          return (
+            <span key={i} className="bg-red-100 text-red-800 line-through px-1">
+              {part.value}
+            </span>
+          );
+        return <span key={i}>{part.value}</span>;
+      })}
+    </div>
+  );
+};
+
+// Resolved Bullet component - shows bullet with input
+const ResolvedBullet: React.FC<{
+  value: string;
+  index: number;
+  onChange: (index: number, value: string) => void;
+}> = ({ value, index, onChange }) => {
+  return (
+    <div className="relative">
+      <div className="text-xs text-text-primary flex items-start before:content-['●'] before:text-text-muted before:text-tiny before:inline-block before:mr-1 before:mt-1.5">
+        <AutoTextarea
+          value={value}
+          onChange={(val) => onChange(index, val)}
+          className="flex-1"
+        />
+      </div>
+    </div>
+  );
+};
+
+// Unresolved Bullet component - shows bullet with inline diff (no input)
+const UnresolvedBullet: React.FC<{
+  oldValue: string;
+  newValue: string;
+  onResolve: (value: string) => void;
+}> = ({ oldValue, newValue, onResolve }) => {
+  return (
+    <div className="relative w-full flex flex-col">
+      <div className="flex items-start before:content-['●'] before:text-text-muted before:text-tiny before:inline-block before:mr-1 before:mt-1">
+        <div className="flex-1">{renderInlineDiff(oldValue, newValue)}</div>
+      </div>
+      <div className="flex items-center gap-2 mt-2 ml-2.5">
+        <ActionButtons
+          onAccept={() => onResolve(newValue)}
+          onReject={() => onResolve(oldValue)}
+        />
+      </div>
+    </div>
   );
 };
 
@@ -82,16 +165,8 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
   });
 
   const [resolvedBullets, setResolvedBullets] = useState<
-    Record<number, { resolved: boolean; value: string }>
+    Record<number, boolean>
   >({});
-
-  // Editing state
-  const [editingBulletIndex, setEditingBulletIndex] = useState<number | null>(
-    null,
-  );
-  const [editingBulletValue, setEditingBulletValue] = useState<string>("");
-  const [editingText, setEditingText] = useState<boolean>(false);
-  const [editingTextValue, setEditingTextValue] = useState<string>("");
 
   useEffect(() => {
     if (resolution === "resolved") {
@@ -110,47 +185,18 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
     setResolution("resolved");
   };
 
-  // Handle editing a resolved bullet point
-  const startEditingBullet = (index: number, value: string) => {
-    setEditingBulletIndex(index);
-    setEditingBulletValue(value);
-  };
-
-  const saveBulletEdit = (index: number) => {
+  // Handle bullet value change (for resolved bullets)
+  const handleBulletChange = (index: number, value: string) => {
     if (Array.isArray(currentValue)) {
       const updated = [...currentValue];
-      updated[index] = editingBulletValue;
+      updated[index] = value;
       setCurrentValue(updated);
-
-      setResolvedBullets((prev) => ({
-        ...prev,
-        [index]: { ...prev[index], value: editingBulletValue },
-      }));
     }
-    setEditingBulletIndex(null);
-    setEditingBulletValue("");
   };
 
-  const cancelBulletEdit = () => {
-    setEditingBulletIndex(null);
-    setEditingBulletValue("");
-  };
-
-  // Handle editing resolved paragraph/text
-  const startEditingText = () => {
-    setEditingText(true);
-    setEditingTextValue(typeof currentValue === "string" ? currentValue : "");
-  };
-
-  const saveTextEdit = () => {
-    setCurrentValue(editingTextValue);
-    setEditingText(false);
-    setEditingTextValue("");
-  };
-
-  const cancelTextEdit = () => {
-    setEditingText(false);
-    setEditingTextValue("");
+  // Handle text value change (for resolved text)
+  const handleTextChange = (value: string) => {
+    setCurrentValue(value);
   };
 
   // Handle resolving individual bullet
@@ -163,15 +209,15 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
 
     setResolvedBullets((prev) => ({
       ...prev,
-      [index]: { resolved: true, value },
+      [index]: true,
     }));
 
     const totalBullets = Array.isArray(fieldData.new_value)
       ? fieldData.new_value.length
       : 0;
     const allResolved =
-      Object.keys({ ...resolvedBullets, [index]: { resolved: true, value } })
-        .length === totalBullets;
+      Object.keys({ ...resolvedBullets, [index]: true }).length ===
+      totalBullets;
 
     if (allResolved) {
       setResolution("resolved");
@@ -179,44 +225,29 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
   };
 
   // --- DIFF RENDERING ENGINE ---
-
-  const renderInlineDiff = (oldStr: string, newStr: string) => {
-    const diffs = diffWords(oldStr || "", newStr || "");
-    return (
-      <p className="leading-snug whitespace-pre-wrap text-xs text-text-primary border border-blue-600">
-        {diffs.map((part, i) => {
-          if (part.added)
-            return (
-              <span key={i} className="bg-green-100 text-green-800 px-1">
-                {part.value}
-              </span>
-            );
-          if (part.removed)
-            return (
-              <span
-                key={i}
-                className="bg-red-100 text-red-800 line-through px-1"
-              >
-                {part.value}
-              </span>
-            );
-          return <span key={i}>{part.value}</span>;
-        })}
-      </p>
-    );
-  };
-
   const renderStructuralDiff = (oldStr: string, newBullets: string[]) => {
     return (
       <div className="flex flex-col gap-2 w-full">
-        <div className="p-2 bg-red-50 text-red-800 line-through text-xs rounded border border-red-100">
-          {oldStr}
+        {/* Old value with - prefix using before: */}
+        <div className="leading-snug py-1 whitespace-pre-wrap flex items-start before:content-['-'] before:text-red-600 before:text-xs before:inline-block before:mr-1">
+          <span className="flex-1 px-1 bg-red-100 text-xs text-red-800 line-through">
+            {oldStr}
+          </span>
         </div>
-        <ul className="p-2 bg-green-50 text-green-800 text-xs rounded border border-green-100 list-disc pl-6 space-y-1">
+
+        {/* New bullets with + prefix using before: */}
+        <div className="flex flex-col gap-y-1">
           {newBullets.map((bullet, i) => (
-            <li key={i}>{bullet}</li>
+            <div
+              key={i}
+              className="leading-snug py-1 whitespace-pre-wrap flex items-center before:content-['+'] before:text-green-600 before:text-xs before:inline-block before:mr-1"
+            >
+              <span className="flex-1 px-1 bg-green-100 text-xs text-green-800">
+                {bullet}
+              </span>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     );
   };
@@ -231,63 +262,31 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
     return (
       <div className="w-full flex flex-col gap-y-3">
         {bullets.map((_, i) => {
-          const isResolved = resolvedBullets[i]?.resolved;
-          const resolvedValue = resolvedBullets[i]?.value;
+          const isResolved = resolvedBullets[i];
+          const currentBulletValue = Array.isArray(currentValue)
+            ? currentValue[i]
+            : "";
 
           if (isResolved) {
-            const displayValue =
-              resolvedValue ||
-              (Array.isArray(currentValue) ? currentValue[i] : "");
-
-            // Show as normal bullet point (like resolved view)
+            // Resolved: Show bullet with input
             return (
-              <div key={i} className="group relative">
-                {editingBulletIndex === i ? (
-                  <AutoTextarea
-                    value={editingBulletValue}
-                    onChange={setEditingBulletValue}
-                    onSave={() => saveBulletEdit(i)}
-                    onCancel={cancelBulletEdit}
-                    className="w-full text-xs p-1 border border-brand rounded focus:outline-none focus:ring-1 focus:ring-brand"
-                  />
-                ) : (
-                  <div
-                    onClick={() => startEditingBullet(i, displayValue)}
-                    className="cursor-text hover:bg-gray-50 -ml-1 pl-1 pr-6 py-0.5 rounded relative group-hover:bg-gray-50 transition-colors"
-                  >
-                    <span className="text-xs text-text-primary">
-                      • {displayValue}
-                    </span>
-                    <Icon
-                      icon="lucide:pencil"
-                      className="absolute right-0 top-1 opacity-0 group-hover:opacity-40 text-gray-400 text-sm transition-opacity"
-                    />
-                  </div>
-                )}
-              </div>
+              <ResolvedBullet
+                key={i}
+                index={i}
+                value={currentBulletValue}
+                onChange={handleBulletChange}
+              />
             );
           }
 
-          // Show diff for unresolved bullet
+          // Unresolved: Show bullet with inline diff (rich text)
           return (
-            <div className="relative w-full flex flex-col bg-blue-100" key={i}>
-              {renderInlineDiff(oldBullets[i] || "", newBullets[i] || "")}
-              <div className="flex items-center gap-2 mt-2 border border-red-400">
-                <button
-                  onClick={() => resolveBullet(i, newBullets[i])}
-                  className="flex items-center gap-0.5 px-2 py-1 bg-[#027A48] hover:bg-green-700 border border-[#027A48] text-white text-tiny rounded-sm transition-colors cursor-pointer"
-                >
-                  <Icon icon="tabler:check-filled" className="text-xs" /> Accept
-                </button>
-                <button
-                  onClick={() => resolveBullet(i, oldBullets[i])}
-                  className="flex items-center gap-0.5 px-2 py-1 bg-[#FEF3F2] hover:bg-red-50 text-red-600 border border-[#FDA29B] text-tiny rounded-sm transition-colors cursor-pointer"
-                >
-                  <Icon icon="iconamoon:close-duotone" className="text-xs" />
-                  Reject
-                </button>
-              </div>
-            </div>
+            <UnresolvedBullet
+              key={i}
+              oldValue={oldBullets[i] || ""}
+              newValue={newBullets[i] || ""}
+              onResolve={(value) => resolveBullet(i, value)}
+            />
           );
         })}
       </div>
@@ -295,70 +294,37 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
   };
 
   // ==========================================
-  // RESOLVED VIEW - Show final value with edit capability
+  // RESOLVED VIEW - Show actual inputs
   // ==========================================
   if (resolution === "resolved") {
-    // Array case (bullet points)
+    // Array case (bullet points) - show bullets with inputs
     if (Array.isArray(currentValue)) {
       return (
-        <ul className="list-disc pl-4 w-full text-xs text-text-primary space-y-1.5 bg-orange-400">
+        <div className="w-full space-y-1.5">
           {currentValue.map((bullet, i) => (
-            <li key={i} className="group relative">
-              {editingBulletIndex === i ? (
-                <AutoTextarea
-                  value={editingBulletValue}
-                  onChange={setEditingBulletValue}
-                  onSave={() => saveBulletEdit(i)}
-                  onCancel={cancelBulletEdit}
-                  className="rounded-none py-2 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
-                />
-              ) : (
-                <div
-                  onClick={() => startEditingBullet(i, bullet)}
-                  className="cursor-text hover:bg-gray-50 -ml-1 pl-1 pr-6 py-0.5 rounded relative group-hover:bg-gray-50 transition-colors"
-                >
-                  <span>{bullet}</span>
-                  <Icon
-                    icon="lucide:pencil"
-                    className="absolute right-0 top-1 opacity-0 group-hover:opacity-40 text-gray-400 text-sm transition-opacity"
-                  />
-                </div>
-              )}
-            </li>
+            <ResolvedBullet
+              key={i}
+              index={i}
+              value={bullet}
+              onChange={handleBulletChange}
+            />
           ))}
-        </ul>
+        </div>
       );
     }
 
-    // String case (paragraph/text)
-    if (editingText) {
-      return (
-        <AutoTextarea
-          value={editingTextValue}
-          onChange={setEditingTextValue}
-          onSave={saveTextEdit}
-          onCancel={cancelTextEdit}
-          className="rounded-none py-2 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
-        />
-      );
-    }
-
+    // String case (paragraph/text) - show input (no bullet)
     return (
-      <div
-        onClick={startEditingText}
-        className="w-full text-xs text-text-primary leading-relaxed whitespace-pre-wrap cursor-text hover:bg-gray-50 p-1.5 -ml-1.5 rounded relative group transition-colors"
-      >
-        <span>{currentValue}</span>
-        <Icon
-          icon="lucide:pencil"
-          className="absolute right-1 top-2 opacity-0 group-hover:opacity-40 text-gray-400 text-sm transition-opacity"
-        />
-      </div>
+      <AutoTextarea
+        value={currentValue as string}
+        onChange={handleTextChange}
+        className="w-full"
+      />
     );
   }
 
   // ==========================================
-  // UNRESOLVED DIFF LAYOUT PIPELINE
+  // UNRESOLVED VIEW - Show diff (rich text, no inputs)
   // ==========================================
 
   // 1. Structural View Layout (para -> bullets)
@@ -369,19 +335,11 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
           fieldData.old_value as string,
           fieldData.new_value as string[],
         )}
-        <div className="flex items-center  gap-2 pt-2 border border-red-400">
-          <button
-            onClick={handleAcceptField}
-            className="flex items-center gap-0.5 px-2 py-1 bg-[#027A48] hover:bg-green-700 border border-[#027A48] text-white text-tiny rounded-sm transition-colors cursor-pointer"
-          >
-            <Icon icon="tabler:check-filled" className="text-xs" /> Accept
-          </button>
-          <button
-            onClick={handleRejectField}
-            className="flex items-center gap-0.5 px-2 py-1 bg-[#FEF3F2] hover:bg-red-50 text-red-600 border border-[#FDA29B] text-tiny rounded-sm transition-colors cursor-pointer"
-          >
-            <Icon icon="iconamoon:close-duotone" className="text-xs" /> Reject
-          </button>
+        <div className="flex items-center gap-2 pt-2">
+          <ActionButtons
+            onAccept={handleAcceptField}
+            onReject={handleRejectField}
+          />
         </div>
       </div>
     );
@@ -389,7 +347,7 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
 
   // 2. Inline View Layout Container
   if (fieldData.diff_mode === "inline") {
-    // Condition A: bullet -> bullet ----------------------------------------------------------
+    // Condition A: bullet -> bullet - show bullets with inline diff
     if (
       Array.isArray(fieldData.old_value) &&
       Array.isArray(fieldData.new_value)
@@ -404,27 +362,18 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
       );
     }
 
-    // Condition B: para -> para -------------------------------------------------------------
+    // Condition B: para -> para - show inline diff block (no bullet)
     return (
-      <div className="relative w-full flex flex-col bg-blue-100">
+      <div className="relative w-full flex flex-col">
         {renderInlineDiff(
           fieldData.old_value as string,
           fieldData.new_value as string,
         )}
-        <div className="flex items-center gap-2 mt-2 border border-red-400">
-          <button
-            onClick={handleAcceptField}
-            className="flex items-center gap-0.5 px-2 py-1 bg-[#027A48] hover:bg-green-700 border border-[#027A48] text-white text-tiny rounded-sm transition-colors cursor-pointer"
-          >
-            <Icon icon="tabler:check-filled" className="text-xs" />
-            Accept
-          </button>
-          <button
-            onClick={handleRejectField}
-            className="flex items-center gap-0.5 px-2 py-1 bg-[#FEF3F2] hover:bg-red-50 text-red-600 border border-[#FDA29B] text-tiny rounded-sm transition-colors cursor-pointer"
-          >
-            <Icon icon="iconamoon:close-duotone" className="text-xs" /> Reject
-          </button>
+        <div className="flex items-center gap-2 mt-2">
+          <ActionButtons
+            onAccept={handleAcceptField}
+            onReject={handleRejectField}
+          />
         </div>
       </div>
     );
@@ -432,5 +381,3 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
 
   return null;
 };
-
-//DEEPSEEK

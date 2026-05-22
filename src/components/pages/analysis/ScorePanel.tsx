@@ -40,7 +40,7 @@ const ScorePanel = () => {
                 {matchedKeywords.map((keyword) => (
                   <span
                     key={keyword}
-                    className="w-fit h-fit text-tiny text-[#05603A] flex items-center justify-center rounded-md px-3 py-1 bg-[#ECFDF3] border border-[#A6F4C5]"
+                    className="w-fit h-fit text-tiny font-medium text-[#05603A] flex items-center justify-center rounded-md px-3 py-1 bg-[#ECFDF3] border border-[#A6F4C5]"
                   >
                     {keyword}
                   </span>
@@ -57,7 +57,7 @@ const ScorePanel = () => {
                 {missingKeywords.map((keyword) => (
                   <span
                     key={keyword}
-                    className="w-fit h-fit text-tiny text-[#B54708] flex items-center justify-center rounded-md px-3 py-1 bg-[#FEF0C7] border border-[#FECDCA]"
+                    className="w-fit h-fit text-tiny font-medium text-[#B54708] flex items-center justify-center rounded-md px-3 py-1 bg-[#FEF0C7] border border-[#FECDCA]"
                   >
                     {keyword}
                   </span>
