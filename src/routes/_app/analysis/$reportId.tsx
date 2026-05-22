@@ -25,7 +25,7 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
   sectionLabel,
   entriesCount,
 }) => (
-  <div className="w-full flex items-center px-4 py-3 border-b border-black/5 cursor-pointer sticky -top-2 bg-white z-10">
+  <div className="w-full flex items-center px-5 py-4 border-b border-black/10 cursor-pointer top-0 bg-white z-10 roundedd-[inherit]">
     <h1 className="text-xxs font-medium text-brand uppercase">
       {sectionLabel}
     </h1>
@@ -207,917 +207,86 @@ function RouteComponent() {
 
   return (
     <div className="w-full h-full flex overflow-hidden">
-      <main className="h-full flex-1 overflow-y-auto hide-scrollbar space-y-4 p-2">
+      <main className="h-full min-h-0 flex-1 flex flex-col">
+        <div className="w-full flex flex-col p-3">
+          <h1 className="text-lg text-text-primary">Enhance Resume Report</h1>
+          <h3 className="text-xxs text-text-muted">
+            Review your change. Accept or edit AI suggestions to finalize your
+            resume.
+          </h3>
+        </div>
         {/* PROFILE SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading sectionLabel="Profile" />
-          <div className="w-full grid grid-cols-3 p-4 gap-3">
-            <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium">
-                FIRST NAME
-              </label>
-              <input
-                value={profile.first_name || ""}
-                onChange={(e) =>
-                  handlePrimitiveChange(
-                    "profile",
-                    null,
-                    "first_name",
-                    e.target.value,
-                  )
-                }
-                className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-              />
-            </fieldset>
-
-            <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium">
-                LAST NAME
-              </label>
-              <input
-                value={profile.last_name || ""}
-                onChange={(e) =>
-                  handlePrimitiveChange(
-                    "profile",
-                    null,
-                    "last_name",
-                    e.target.value,
-                  )
-                }
-                className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-              />
-            </fieldset>
-
-            <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium">
-                EMAIL
-              </label>
-              <input
-                value={profile.email || ""}
-                onChange={(e) =>
-                  handlePrimitiveChange(
-                    "profile",
-                    null,
-                    "email",
-                    e.target.value,
-                  )
-                }
-                className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
-              />
-            </fieldset>
-
-            <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium">
-                PHONE
-              </label>
-              <input
-                value={profile.phone || ""}
-                onChange={(e) =>
-                  handlePrimitiveChange(
-                    "profile",
-                    null,
-                    "phone",
-                    e.target.value,
-                  )
-                }
-                className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-              />
-            </fieldset>
-
-            <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium">
-                LOCATION
-              </label>
-              <input
-                value={profile.location || ""}
-                onChange={(e) =>
-                  handlePrimitiveChange(
-                    "profile",
-                    null,
-                    "location",
-                    e.target.value,
-                  )
-                }
-                className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-              />
-            </fieldset>
-
-            <fieldset className="flex flex-col col-span-3">
-              <label className="text-tiny text-text-muted font-medium">
-                PROFESSIONAL TITLE
-              </label>
-              <AiDiffField
-                fieldData={profile.professional_title}
-                onUpdateValue={(val) =>
-                  handleAiFieldUpdate(
-                    "profile",
-                    null,
-                    "professional_title",
-                    val,
-                  )
-                }
-              />
-            </fieldset>
-
-            <fieldset className="flex flex-col col-span-3">
-              <label className="text-tiny text-text-muted font-medium">
-                SUMMARY
-              </label>
-              <AiDiffField
-                fieldData={profile.summary}
-                onUpdateValue={(val) =>
-                  handleAiFieldUpdate("profile", null, "summary", val)
-                }
-              />
-            </fieldset>
-          </div>
-        </section>
-
-        {/* EDUCATION SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Education"
-            entriesCount={education.entries?.length || 0}
-          />
-          {education.entries?.map((edu: any, idx: number) => (
-            <React.Fragment key={edu.entry_id}>
-              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-secondary font-semibold font-mono">
-                  #{idx + 1}
-                </span>
-              </div>
-              <div className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white">
-                <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium">
-                    INSTITUTION
-                  </label>
-                  <input
-                    value={edu.institution || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "education",
-                        idx,
-                        "institution",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium">
-                    LOCATION
-                  </label>
-                  <input
-                    value={edu.location || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "education",
-                        idx,
-                        "location",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium">
-                    START DATE
-                  </label>
-                  <input
-                    value={edu.start_date || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "education",
-                        idx,
-                        "start_date",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium">
-                    END DATE
-                  </label>
-                  <input
-                    value={edu.end_date || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "education",
-                        idx,
-                        "end_date",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium">
-                    DEGREE
-                  </label>
-                  <AiDiffField
-                    fieldData={edu.degree}
-                    onUpdateValue={(val) =>
-                      handleAiFieldUpdate("education", idx, "degree", val)
-                    }
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium">
-                    DESCRIPTION
-                  </label>
-                  <AiDiffField
-                    fieldData={edu.description}
-                    onUpdateValue={(val) =>
-                      handleAiFieldUpdate("education", idx, "description", val)
-                    }
-                  />
-                </fieldset>
-              </div>
-            </React.Fragment>
-          ))}
-        </section>
-
-        {/* WORK EXPERIENCE SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Work Experience"
-            entriesCount={experience.entries?.length || 0}
-          />
-          {experience.entries?.map((exp: any, idx: number) => (
-            <React.Fragment key={exp.entry_id}>
-              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-secondary font-semibold font-mono">
-                  #{idx + 1}
-                </span>
-              </div>
-              <div className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white">
-                <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium">
-                    COMPANY
-                  </label>
-                  <input
-                    value={exp.company || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "experience",
-                        idx,
-                        "company",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium">
-                    LOCATION
-                  </label>
-                  <input
-                    value={exp.location || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "experience",
-                        idx,
-                        "location",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium">
-                    START DATE
-                  </label>
-                  <input
-                    value={exp.start_date || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "experience",
-                        idx,
-                        "start_date",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium">
-                    END DATE
-                  </label>
-                  <input
-                    value={exp.end_date || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "experience",
-                        idx,
-                        "end_date",
-                        e.target.value,
-                      )
-                    }
-                    placeholder="Present"
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium">
-                    POSITION
-                  </label>
-                  <AiDiffField
-                    fieldData={exp.position}
-                    onUpdateValue={(val) =>
-                      handleAiFieldUpdate("experience", idx, "position", val)
-                    }
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium">
-                    DESCRIPTION
-                  </label>
-                  <AiDiffField
-                    fieldData={exp.description}
-                    onUpdateValue={(val) =>
-                      handleAiFieldUpdate("experience", idx, "description", val)
-                    }
-                  />
-                </fieldset>
-              </div>
-            </React.Fragment>
-          ))}
-        </section>
-
-        {/* PROJECTS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Projects"
-            entriesCount={projects.entries?.length || 0}
-          />
-          {projects.entries?.map((project: any, idx: number) => (
-            <React.Fragment key={project.entry_id}>
-              <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
-                <span className="text-xxs text-text-secondary font-semibold font-mono">
-                  #{idx + 1}
-                </span>
-              </div>
-              <div className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white">
-                <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium">
-                    TITLE
-                  </label>
-                  <input
-                    value={project.title || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "projects",
-                        idx,
-                        "title",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium">
-                    SUBTITLE
-                  </label>
-                  <AiDiffField
-                    fieldData={project.subtitle}
-                    onUpdateValue={(val) =>
-                      handleAiFieldUpdate("projects", idx, "subtitle", val)
-                    }
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium">
-                    START DATE
-                  </label>
-                  <input
-                    value={project.start_date || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "projects",
-                        idx,
-                        "start_date",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium">
-                    END DATE
-                  </label>
-                  <input
-                    value={project.end_date || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "projects",
-                        idx,
-                        "end_date",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium">
-                    DESCRIPTION
-                  </label>
-                  <AiDiffField
-                    fieldData={project.description}
-                    onUpdateValue={(val) =>
-                      handleAiFieldUpdate("projects", idx, "description", val)
-                    }
-                  />
-                </fieldset>
-              </div>
-            </React.Fragment>
-          ))}
-        </section>
-
-        {/* SKILLS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Skills"
-            entriesCount={skills.entries?.length || 0}
-          />
-          <div className="w-full p-4">
-            <div className="grid grid-cols-2 gap-4">
-              {skills.entries?.map((skill: any, idx: number) => (
-                <div
-                  key={skill.entry_id}
-                  className="flex items-center gap-2 border-b border-black/5 pb-2"
-                >
-                  <fieldset className="flex-1 flex flex-col">
-                    <label className="text-tiny text-text-muted font-medium">
-                      SKILL
-                    </label>
-                    {skill.name?.old_value ? (
-                      <AiDiffField
-                        fieldData={skill.name}
-                        onUpdateValue={(val) =>
-                          handleAiFieldUpdate("skills", idx, "name", val)
-                        }
-                      />
-                    ) : (
-                      <input
-                        value={skill.name || ""}
-                        onChange={(e) =>
-                          handlePrimitiveChange(
-                            "skills",
-                            idx,
-                            "name",
-                            e.target.value,
-                          )
-                        }
-                        className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                      />
-                    )}
-                  </fieldset>
-                  <fieldset className="flex-1 flex flex-col">
-                    <label className="text-tiny text-text-muted font-medium">
-                      LEVEL
-                    </label>
-                    <input
-                      value={skill.level || ""}
-                      onChange={(e) =>
-                        handlePrimitiveChange(
-                          "skills",
-                          idx,
-                          "level",
-                          e.target.value,
-                        )
-                      }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                    />
-                  </fieldset>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* CERTIFICATES SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Certificates"
-            entriesCount={certificates.entries?.length || 0}
-          />
-          {certificates.entries?.map((cert: any, idx: number) => (
-            <div
-              key={cert.entry_id}
-              className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white"
-            >
-              <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium">
-                  NAME
-                </label>
-                <AiDiffField
-                  fieldData={cert.name}
-                  onUpdateValue={(val) =>
-                    handleAiFieldUpdate("certificates", idx, "name", val)
-                  }
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium">
-                  ISSUER
-                </label>
-                <input
-                  value={cert.issuer || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange(
-                      "certificates",
-                      idx,
-                      "issuer",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
+        <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 p-2">
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading sectionLabel="Profile" />
+            <div className="w-full grid grid-cols-3 p-5 gap-3">
               <fieldset className="flex flex-col">
                 <label className="text-tiny text-text-muted font-medium">
-                  ISSUE DATE
+                  FIRST NAME
                 </label>
                 <input
-                  value={cert.issue_date || ""}
+                  value={profile.first_name || ""}
                   onChange={(e) =>
                     handlePrimitiveChange(
-                      "certificates",
-                      idx,
-                      "issue_date",
+                      "profile",
+                      null,
+                      "first_name",
                       e.target.value,
                     )
                   }
                   className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
+
               <fieldset className="flex flex-col">
                 <label className="text-tiny text-text-muted font-medium">
-                  EXPIRY DATE
+                  LAST NAME
                 </label>
                 <input
-                  value={cert.expiry_date || ""}
+                  value={profile.last_name || ""}
                   onChange={(e) =>
                     handlePrimitiveChange(
-                      "certificates",
-                      idx,
-                      "expiry_date",
+                      "profile",
+                      null,
+                      "last_name",
                       e.target.value,
                     )
                   }
                   className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
-              <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium">
-                  DESCRIPTION
-                </label>
-                <AiDiffField
-                  fieldData={cert.description}
-                  onUpdateValue={(val) =>
-                    handleAiFieldUpdate("certificates", idx, "description", val)
-                  }
-                />
-              </fieldset>
-            </div>
-          ))}
-        </section>
 
-        {/* LANGUAGES SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Languages"
-            entriesCount={languages.entries?.length || 0}
-          />
-          <div className="w-full p-4">
-            <div className="grid grid-cols-2 gap-4">
-              {languages.entries?.map((lang: any, idx: number) => (
-                <div
-                  key={lang.entry_id}
-                  className="flex items-center gap-4 border-b border-black/5 pb-2"
-                >
-                  <fieldset className="flex-1 flex flex-col">
-                    <label className="text-tiny text-text-muted font-medium">
-                      LANGUAGE
-                    </label>
-                    <input
-                      value={lang.name || ""}
-                      onChange={(e) =>
-                        handlePrimitiveChange(
-                          "languages",
-                          idx,
-                          "name",
-                          e.target.value,
-                        )
-                      }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                    />
-                  </fieldset>
-                  <fieldset className="flex-1 flex flex-col">
-                    <label className="text-tiny text-text-muted font-medium">
-                      LEVEL
-                    </label>
-                    <input
-                      value={lang.level || ""}
-                      onChange={(e) =>
-                        handlePrimitiveChange(
-                          "languages",
-                          idx,
-                          "level",
-                          e.target.value,
-                        )
-                      }
-                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                    />
-                  </fieldset>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* INTERESTS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Interests"
-            entriesCount={interests.entries?.length || 0}
-          />
-          <div className="w-full p-4">
-            <div className="flex flex-wrap gap-2">
-              {interests.entries?.map((interest: any, idx: number) => (
-                <fieldset key={interest.entry_id} className="flex flex-col">
-                  <input
-                    value={interest.name || ""}
-                    onChange={(e) =>
-                      handlePrimitiveChange(
-                        "interests",
-                        idx,
-                        "name",
-                        e.target.value,
-                      )
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF] px-2"
-                  />
-                </fieldset>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* AWARDS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Awards"
-            entriesCount={awards.entries?.length || 0}
-          />
-          {awards.entries?.map((award: any, idx: number) => (
-            <div
-              key={award.entry_id}
-              className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white"
-            >
-              <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium">
-                  TITLE
-                </label>
-                <AiDiffField
-                  fieldData={award.title}
-                  onUpdateValue={(val) =>
-                    handleAiFieldUpdate("awards", idx, "title", val)
-                  }
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium">
-                  AWARDER
-                </label>
-                <input
-                  value={award.awarder || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange(
-                      "awards",
-                      idx,
-                      "awarder",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium">
-                  DATE
-                </label>
-                <input
-                  value={award.date || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange("awards", idx, "date", e.target.value)
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium">
-                  DESCRIPTION
-                </label>
-                <AiDiffField
-                  fieldData={award.description}
-                  onUpdateValue={(val) =>
-                    handleAiFieldUpdate("awards", idx, "description", val)
-                  }
-                />
-              </fieldset>
-            </div>
-          ))}
-        </section>
-
-        {/* PUBLICATIONS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="Publications"
-            entriesCount={publications.entries?.length || 0}
-          />
-          {publications.entries?.map((pub: any, idx: number) => (
-            <div
-              key={pub.entry_id}
-              className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white"
-            >
-              <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium">
-                  TITLE
-                </label>
-                <AiDiffField
-                  fieldData={pub.title}
-                  onUpdateValue={(val) =>
-                    handleAiFieldUpdate("publications", idx, "title", val)
-                  }
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium">
-                  PUBLISHER
-                </label>
-                <input
-                  value={pub.publisher || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange(
-                      "publications",
-                      idx,
-                      "publisher",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium">
-                  DATE
-                </label>
-                <input
-                  value={pub.date || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange(
-                      "publications",
-                      idx,
-                      "date",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium">
-                  LINK
-                </label>
-                <input
-                  value={pub.link || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange(
-                      "publications",
-                      idx,
-                      "link",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium">
-                  DESCRIPTION
-                </label>
-                <AiDiffField
-                  fieldData={pub.description}
-                  onUpdateValue={(val) =>
-                    handleAiFieldUpdate("publications", idx, "description", val)
-                  }
-                />
-              </fieldset>
-            </div>
-          ))}
-        </section>
-
-        {/* REFERENCES SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
-          <SectionHeading
-            sectionLabel="References"
-            entriesCount={references.entries?.length || 0}
-          />
-          {references.entries?.map((ref: any, idx: number) => (
-            <div
-              key={ref.entry_id}
-              className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white"
-            >
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium">
-                  NAME
-                </label>
-                <input
-                  value={ref.name || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange(
-                      "references",
-                      idx,
-                      "name",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium">
-                  POSITION
-                </label>
-                <input
-                  value={ref.position || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange(
-                      "references",
-                      idx,
-                      "position",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
-              <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium">
-                  ORGANIZATION
-                </label>
-                <input
-                  value={ref.organization || ""}
-                  onChange={(e) =>
-                    handlePrimitiveChange(
-                      "references",
-                      idx,
-                      "organization",
-                      e.target.value,
-                    )
-                  }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
-                />
-              </fieldset>
               <fieldset className="flex flex-col">
                 <label className="text-tiny text-text-muted font-medium">
                   EMAIL
                 </label>
                 <input
-                  value={ref.email || ""}
+                  value={profile.email || ""}
                   onChange={(e) =>
                     handlePrimitiveChange(
-                      "references",
-                      idx,
+                      "profile",
+                      null,
                       "email",
                       e.target.value,
                     )
                   }
-                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
                 />
               </fieldset>
+
               <fieldset className="flex flex-col">
                 <label className="text-tiny text-text-muted font-medium">
                   PHONE
                 </label>
                 <input
-                  value={ref.phone || ""}
+                  value={profile.phone || ""}
                   onChange={(e) =>
                     handlePrimitiveChange(
-                      "references",
-                      idx,
+                      "profile",
+                      null,
                       "phone",
                       e.target.value,
                     )
@@ -1125,9 +294,907 @@ function RouteComponent() {
                   className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
                 />
               </fieldset>
+
+              <fieldset className="flex flex-col">
+                <label className="text-tiny text-text-muted font-medium">
+                  LOCATION
+                </label>
+                <input
+                  value={profile.location || ""}
+                  onChange={(e) =>
+                    handlePrimitiveChange(
+                      "profile",
+                      null,
+                      "location",
+                      e.target.value,
+                    )
+                  }
+                  className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                />
+              </fieldset>
+
+              <fieldset className="flex flex-col col-span-3">
+                <label className="text-tiny text-text-muted font-medium">
+                  PROFESSIONAL TITLE
+                </label>
+                <AiDiffField
+                  fieldData={profile.professional_title}
+                  onUpdateValue={(val) =>
+                    handleAiFieldUpdate(
+                      "profile",
+                      null,
+                      "professional_title",
+                      val,
+                    )
+                  }
+                />
+              </fieldset>
+
+              <fieldset className="flex flex-col col-span-3">
+                <label className="text-tiny text-text-muted font-medium">
+                  SUMMARY
+                </label>
+                <AiDiffField
+                  fieldData={profile.summary}
+                  onUpdateValue={(val) =>
+                    handleAiFieldUpdate("profile", null, "summary", val)
+                  }
+                />
+              </fieldset>
             </div>
-          ))}
-        </section>
+          </section>
+
+          {/* EDUCATION SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Education"
+              entriesCount={education.entries?.length || 0}
+            />
+            {education.entries?.map((edu: any, idx: number) => (
+              <React.Fragment key={edu.entry_id}>
+                <div className="w-full col-span-3 px-4 py-1 border-b border-black/5 bg-gray-50 flex items-center">
+                  <span className="text-xxs text-text-secondary font-semibold font-mono">
+                    #{idx + 1}
+                  </span>
+                </div>
+                <div className="w-full grid grid-cols-4 p-5 gap-3 border-b border-black/5 last:border-0 bg-white">
+                  <fieldset className="flex flex-col col-span-2">
+                    <label className="text-tiny text-text-muted font-medium">
+                      INSTITUTION
+                    </label>
+                    <input
+                      value={edu.institution || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "education",
+                          idx,
+                          "institution",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-2">
+                    <label className="text-tiny text-text-muted font-medium">
+                      LOCATION
+                    </label>
+                    <input
+                      value={edu.location || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "education",
+                          idx,
+                          "location",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col">
+                    <label className="text-tiny text-text-muted font-medium">
+                      START DATE
+                    </label>
+                    <input
+                      value={edu.start_date || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "education",
+                          idx,
+                          "start_date",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col">
+                    <label className="text-tiny text-text-muted font-medium">
+                      END DATE
+                    </label>
+                    <input
+                      value={edu.end_date || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "education",
+                          idx,
+                          "end_date",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-4">
+                    <label className="text-tiny text-text-muted font-medium">
+                      DEGREE
+                    </label>
+                    <AiDiffField
+                      fieldData={edu.degree}
+                      onUpdateValue={(val) =>
+                        handleAiFieldUpdate("education", idx, "degree", val)
+                      }
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-4">
+                    <label className="text-tiny text-text-muted font-medium">
+                      DESCRIPTION
+                    </label>
+                    <AiDiffField
+                      fieldData={edu.description}
+                      onUpdateValue={(val) =>
+                        handleAiFieldUpdate(
+                          "education",
+                          idx,
+                          "description",
+                          val,
+                        )
+                      }
+                    />
+                  </fieldset>
+                </div>
+              </React.Fragment>
+            ))}
+          </section>
+
+          {/* WORK EXPERIENCE SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Work Experience"
+              entriesCount={experience.entries?.length || 0}
+            />
+            {experience.entries?.map((exp: any, idx: number) => (
+              <React.Fragment key={exp.entry_id}>
+                <div className="w-full col-span-3 px-4 py-1 border-b border-black/5 bg-gray-50 flex items-center">
+                  <span className="text-xxs text-text-secondary font-semibold font-mono">
+                    #{idx + 1}
+                  </span>
+                </div>
+                <div className="w-full grid grid-cols-4 p-5 gap-3 border-b border-black/5 last:border-0 bg-white">
+                  <fieldset className="flex flex-col col-span-2">
+                    <label className="text-tiny text-text-muted font-medium">
+                      COMPANY
+                    </label>
+                    <input
+                      value={exp.company || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "experience",
+                          idx,
+                          "company",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-2">
+                    <label className="text-tiny text-text-muted font-medium">
+                      LOCATION
+                    </label>
+                    <input
+                      value={exp.location || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "experience",
+                          idx,
+                          "location",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col">
+                    <label className="text-tiny text-text-muted font-medium">
+                      START DATE
+                    </label>
+                    <input
+                      value={exp.start_date || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "experience",
+                          idx,
+                          "start_date",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col">
+                    <label className="text-tiny text-text-muted font-medium">
+                      END DATE
+                    </label>
+                    <input
+                      value={exp.end_date || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "experience",
+                          idx,
+                          "end_date",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="Present"
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-4">
+                    <label className="text-tiny text-text-muted font-medium">
+                      POSITION
+                    </label>
+                    <AiDiffField
+                      fieldData={exp.position}
+                      onUpdateValue={(val) =>
+                        handleAiFieldUpdate("experience", idx, "position", val)
+                      }
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-4">
+                    <label className="text-tiny text-text-muted font-medium">
+                      DESCRIPTION
+                    </label>
+                    <AiDiffField
+                      fieldData={exp.description}
+                      onUpdateValue={(val) =>
+                        handleAiFieldUpdate(
+                          "experience",
+                          idx,
+                          "description",
+                          val,
+                        )
+                      }
+                    />
+                  </fieldset>
+                </div>
+              </React.Fragment>
+            ))}
+          </section>
+
+          {/* PROJECTS SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Projects"
+              entriesCount={projects.entries?.length || 0}
+            />
+            {projects.entries?.map((project: any, idx: number) => (
+              <React.Fragment key={project.entry_id}>
+                <div className="w-full col-span-3 px-4 py-1 border-b border-black/5 bg-gray-50 flex items-center">
+                  <span className="text-xxs text-text-secondary font-semibold font-mono">
+                    #{idx + 1}
+                  </span>
+                </div>
+                <div className="w-full grid grid-cols-4 p-5 gap-3 border-b border-black/5 last:border-0 bg-white">
+                  <fieldset className="flex flex-col col-span-4">
+                    <label className="text-tiny text-text-muted font-medium">
+                      TITLE
+                    </label>
+                    <input
+                      value={project.title || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "projects",
+                          idx,
+                          "title",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-4">
+                    <label className="text-tiny text-text-muted font-medium">
+                      SUBTITLE
+                    </label>
+                    <AiDiffField
+                      fieldData={project.subtitle}
+                      onUpdateValue={(val) =>
+                        handleAiFieldUpdate("projects", idx, "subtitle", val)
+                      }
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-2">
+                    <label className="text-tiny text-text-muted font-medium">
+                      START DATE
+                    </label>
+                    <input
+                      value={project.start_date || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "projects",
+                          idx,
+                          "start_date",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-2">
+                    <label className="text-tiny text-text-muted font-medium">
+                      END DATE
+                    </label>
+                    <input
+                      value={project.end_date || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "projects",
+                          idx,
+                          "end_date",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                    />
+                  </fieldset>
+                  <fieldset className="flex flex-col col-span-4">
+                    <label className="text-tiny text-text-muted font-medium">
+                      DESCRIPTION
+                    </label>
+                    <AiDiffField
+                      fieldData={project.description}
+                      onUpdateValue={(val) =>
+                        handleAiFieldUpdate("projects", idx, "description", val)
+                      }
+                    />
+                  </fieldset>
+                </div>
+              </React.Fragment>
+            ))}
+          </section>
+
+          {/* SKILLS SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Skills"
+              entriesCount={skills.entries?.length || 0}
+            />
+            <div className="w-full p-5">
+              <div className="grid grid-cols-2 gap-4">
+                {skills.entries?.map((skill: any, idx: number) => (
+                  <div
+                    key={skill.entry_id}
+                    className="flex items-center gap-2 border-b border-black/5 pb-2"
+                  >
+                    <fieldset className="flex-1 flex flex-col">
+                      <label className="text-tiny text-text-muted font-medium">
+                        SKILL
+                      </label>
+                      {skill.name?.old_value ? (
+                        <AiDiffField
+                          fieldData={skill.name}
+                          onUpdateValue={(val) =>
+                            handleAiFieldUpdate("skills", idx, "name", val)
+                          }
+                        />
+                      ) : (
+                        <input
+                          value={skill.name || ""}
+                          onChange={(e) =>
+                            handlePrimitiveChange(
+                              "skills",
+                              idx,
+                              "name",
+                              e.target.value,
+                            )
+                          }
+                          className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                        />
+                      )}
+                    </fieldset>
+                    <fieldset className="flex-1 flex flex-col">
+                      <label className="text-tiny text-text-muted font-medium">
+                        LEVEL
+                      </label>
+                      <input
+                        value={skill.level || ""}
+                        onChange={(e) =>
+                          handlePrimitiveChange(
+                            "skills",
+                            idx,
+                            "level",
+                            e.target.value,
+                          )
+                        }
+                        className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                      />
+                    </fieldset>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* CERTIFICATES SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Certificates"
+              entriesCount={certificates.entries?.length || 0}
+            />
+            {certificates.entries?.map((cert: any, idx: number) => (
+              <div
+                key={cert.entry_id}
+                className="w-full grid grid-cols-4 p-5 gap-3 border-b border-black/5 last:border-0 bg-white"
+              >
+                <fieldset className="flex flex-col col-span-4">
+                  <label className="text-tiny text-text-muted font-medium">
+                    NAME
+                  </label>
+                  <AiDiffField
+                    fieldData={cert.name}
+                    onUpdateValue={(val) =>
+                      handleAiFieldUpdate("certificates", idx, "name", val)
+                    }
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-2">
+                  <label className="text-tiny text-text-muted font-medium">
+                    ISSUER
+                  </label>
+                  <input
+                    value={cert.issuer || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "certificates",
+                        idx,
+                        "issuer",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    ISSUE DATE
+                  </label>
+                  <input
+                    value={cert.issue_date || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "certificates",
+                        idx,
+                        "issue_date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    EXPIRY DATE
+                  </label>
+                  <input
+                    value={cert.expiry_date || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "certificates",
+                        idx,
+                        "expiry_date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-4">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DESCRIPTION
+                  </label>
+                  <AiDiffField
+                    fieldData={cert.description}
+                    onUpdateValue={(val) =>
+                      handleAiFieldUpdate(
+                        "certificates",
+                        idx,
+                        "description",
+                        val,
+                      )
+                    }
+                  />
+                </fieldset>
+              </div>
+            ))}
+          </section>
+
+          {/* LANGUAGES SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Languages"
+              entriesCount={languages.entries?.length || 0}
+            />
+            <div className="w-full p-5">
+              <div className="grid grid-cols-2 gap-4">
+                {languages.entries?.map((lang: any, idx: number) => (
+                  <div
+                    key={lang.entry_id}
+                    className="flex items-center gap-4 border-b border-black/5 pb-2"
+                  >
+                    <fieldset className="flex-1 flex flex-col">
+                      <label className="text-tiny text-text-muted font-medium">
+                        LANGUAGE
+                      </label>
+                      <input
+                        value={lang.name || ""}
+                        onChange={(e) =>
+                          handlePrimitiveChange(
+                            "languages",
+                            idx,
+                            "name",
+                            e.target.value,
+                          )
+                        }
+                        className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                      />
+                    </fieldset>
+                    <fieldset className="flex-1 flex flex-col">
+                      <label className="text-tiny text-text-muted font-medium">
+                        LEVEL
+                      </label>
+                      <input
+                        value={lang.level || ""}
+                        onChange={(e) =>
+                          handlePrimitiveChange(
+                            "languages",
+                            idx,
+                            "level",
+                            e.target.value,
+                          )
+                        }
+                        className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                      />
+                    </fieldset>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* INTERESTS SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Interests"
+              entriesCount={interests.entries?.length || 0}
+            />
+            <div className="w-full p-5">
+              <div className="flex flex-wrap gap-2">
+                {interests.entries?.map((interest: any, idx: number) => (
+                  <fieldset key={interest.entry_id} className="flex flex-col">
+                    <input
+                      value={interest.name || ""}
+                      onChange={(e) =>
+                        handlePrimitiveChange(
+                          "interests",
+                          idx,
+                          "name",
+                          e.target.value,
+                        )
+                      }
+                      className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF] px-2"
+                    />
+                  </fieldset>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* AWARDS SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Awards"
+              entriesCount={awards.entries?.length || 0}
+            />
+            {awards.entries?.map((award: any, idx: number) => (
+              <div
+                key={award.entry_id}
+                className="w-full grid grid-cols-4 p-5 gap-3 border-b border-black/5 last:border-0 bg-white"
+              >
+                <fieldset className="flex flex-col col-span-4">
+                  <label className="text-tiny text-text-muted font-medium">
+                    TITLE
+                  </label>
+                  <AiDiffField
+                    fieldData={award.title}
+                    onUpdateValue={(val) =>
+                      handleAiFieldUpdate("awards", idx, "title", val)
+                    }
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-2">
+                  <label className="text-tiny text-text-muted font-medium">
+                    AWARDER
+                  </label>
+                  <input
+                    value={award.awarder || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "awards",
+                        idx,
+                        "awarder",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-2">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DATE
+                  </label>
+                  <input
+                    value={award.date || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "awards",
+                        idx,
+                        "date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-4">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DESCRIPTION
+                  </label>
+                  <AiDiffField
+                    fieldData={award.description}
+                    onUpdateValue={(val) =>
+                      handleAiFieldUpdate("awards", idx, "description", val)
+                    }
+                  />
+                </fieldset>
+              </div>
+            ))}
+          </section>
+
+          {/* PUBLICATIONS SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="Publications"
+              entriesCount={publications.entries?.length || 0}
+            />
+            {publications.entries?.map((pub: any, idx: number) => (
+              <div
+                key={pub.entry_id}
+                className="w-full grid grid-cols-4 p-5 gap-3 border-b border-black/5 last:border-0 bg-white"
+              >
+                <fieldset className="flex flex-col col-span-4">
+                  <label className="text-tiny text-text-muted font-medium">
+                    TITLE
+                  </label>
+                  <AiDiffField
+                    fieldData={pub.title}
+                    onUpdateValue={(val) =>
+                      handleAiFieldUpdate("publications", idx, "title", val)
+                    }
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-2">
+                  <label className="text-tiny text-text-muted font-medium">
+                    PUBLISHER
+                  </label>
+                  <input
+                    value={pub.publisher || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "publications",
+                        idx,
+                        "publisher",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DATE
+                  </label>
+                  <input
+                    value={pub.date || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "publications",
+                        idx,
+                        "date",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    LINK
+                  </label>
+                  <input
+                    value={pub.link || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "publications",
+                        idx,
+                        "link",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-4">
+                  <label className="text-tiny text-text-muted font-medium">
+                    DESCRIPTION
+                  </label>
+                  <AiDiffField
+                    fieldData={pub.description}
+                    onUpdateValue={(val) =>
+                      handleAiFieldUpdate(
+                        "publications",
+                        idx,
+                        "description",
+                        val,
+                      )
+                    }
+                  />
+                </fieldset>
+              </div>
+            ))}
+          </section>
+
+          {/* REFERENCES SECTION */}
+          <section
+            className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+            style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+          >
+            <SectionHeading
+              sectionLabel="References"
+              entriesCount={references.entries?.length || 0}
+            />
+            {references.entries?.map((ref: any, idx: number) => (
+              <div
+                key={ref.entry_id}
+                className="w-full grid grid-cols-4 p-5 gap-3 border-b border-black/5 last:border-0 bg-white"
+              >
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    NAME
+                  </label>
+                  <input
+                    value={ref.name || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "references",
+                        idx,
+                        "name",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col col-span-2">
+                  <label className="text-tiny text-text-muted font-medium">
+                    POSITION
+                  </label>
+                  <input
+                    value={ref.position || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "references",
+                        idx,
+                        "position",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    ORGANIZATION
+                  </label>
+                  <input
+                    value={ref.organization || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "references",
+                        idx,
+                        "organization",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    EMAIL
+                  </label>
+                  <input
+                    value={ref.email || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "references",
+                        idx,
+                        "email",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+                <fieldset className="flex flex-col">
+                  <label className="text-tiny text-text-muted font-medium">
+                    PHONE
+                  </label>
+                  <input
+                    value={ref.phone || ""}
+                    onChange={(e) =>
+                      handlePrimitiveChange(
+                        "references",
+                        idx,
+                        "phone",
+                        e.target.value,
+                      )
+                    }
+                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 focus:bg-[#F5FBFF]"
+                  />
+                </fieldset>
+              </div>
+            ))}
+          </section>
+        </div>
       </main>
 
       <ScorePanel />

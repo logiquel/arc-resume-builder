@@ -72,15 +72,20 @@ const ActionButtons: React.FC<{
   <div className="flex items-center gap-2">
     <button
       onClick={onAccept}
-      className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[#027A48] hover:bg-green-700 border border-[#027A48] text-white text-tiny rounded-sm transition-colors cursor-pointer"
+      className="flex items-center gap-0.5 px-1.5 py-0.5 text-tiny text-emerald-800 bg-emerald-100 hover:bg-emerald-100 hover:text-emerald-900 active:bg-emerald-200 border border-emerald-200/60 rounded-sm transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-slate-500/20 cursor-pointer"
     >
-      <Icon icon={acceptIcon} className="text-xs" /> {acceptText}
+      <Icon
+        icon={acceptIcon}
+        className="text-xxs text-emerald-800 opacity-90"
+      />
+      {acceptText}
     </button>
     <button
       onClick={onReject}
-      className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[#FEF3F2] hover:bg-red-50 text-red-600 border border-[#FDA29B] text-tiny rounded-sm transition-colors cursor-pointer"
+      className="flex items-center gap-0.5 px-1.5 py-0.5 text-tiny text-rose-800 bg-rose-100 hover:bg-rose-100 hover:text-rose-900 active:bg-rose-200 border border-rose-200/60 rounded-sm transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-slate-500/20 cursor-pointer"
     >
-      <Icon icon={rejectIcon} className="text-xs" /> {rejectText}
+      <Icon icon={rejectIcon} className="text-xxs text-rose-800 opacity-90" />
+      {rejectText}
     </button>
   </div>
 );
@@ -168,9 +173,19 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
     Record<number, boolean>
   >({});
 
+  // Keeps track of values already sent to parent to prevent loop updates
+  const lastNotifiedValueRef = useRef<string | string[] | null>(null);
+
   useEffect(() => {
     if (resolution === "resolved") {
-      onUpdateValue(currentValue);
+      // Direct deep reference equality check to prevent recursive infinite loop updates
+      const stringifiedCurrent = JSON.stringify(currentValue);
+      const stringifiedLast = JSON.stringify(lastNotifiedValueRef.current);
+      
+      if (stringifiedCurrent !== stringifiedLast) {
+        lastNotifiedValueRef.current = currentValue;
+        onUpdateValue(currentValue);
+      }
     }
   }, [currentValue, resolution, onUpdateValue]);
 
@@ -201,27 +216,28 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
 
   // Handle resolving individual bullet
   const resolveBullet = (index: number, value: string) => {
+    let updated: string[] = [];
     if (Array.isArray(currentValue)) {
-      const updated = [...currentValue];
+      updated = [...currentValue];
       updated[index] = value;
       setCurrentValue(updated);
     }
 
-    setResolvedBullets((prev) => ({
-      ...prev,
-      [index]: true,
-    }));
+    setResolvedBullets((prev) => {
+      const nextResolved = { ...prev, [index]: true };
+      
+      const totalBullets = Array.isArray(fieldData.new_value)
+        ? fieldData.new_value.length
+        : 0;
+        
+      const allResolved = Object.keys(nextResolved).length === totalBullets;
 
-    const totalBullets = Array.isArray(fieldData.new_value)
-      ? fieldData.new_value.length
-      : 0;
-    const allResolved =
-      Object.keys({ ...resolvedBullets, [index]: true }).length ===
-      totalBullets;
-
-    if (allResolved) {
-      setResolution("resolved");
-    }
+      if (allResolved) {
+        // Safe state update inside callback execution block
+        setResolution("resolved");
+      }
+      return nextResolved;
+    });
   };
 
   // --- DIFF RENDERING ENGINE ---
@@ -381,3 +397,4 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
 
   return null;
 };
+// GEMINI FIXED
