@@ -1,43 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useRef, useState } from "react";
 import { diffWords } from "diff";
-import {
-  aiProcessedSampleData,
-  type EnhancedResumePayload,
-  type PostAIWorkExperience,
-  type PostAIProject,
-  type PostAIEducation,
-  type PostAICertificate,
-  type PostAISkill,
-  type PostAILanguage,
-  type PostAIInterest,
-  type PostAIAward,
-  type PostAIPublication,
-  type PostAIReference,
-} from "../../../../ai_process_sample_data";
+import { aiProcessedSampleData } from "../../../../ai_process_sample_dataV2";
 import { Icon } from "@iconify/react";
-
-const matchedKeywords = [
-  "JavaScript",
-  "TypeScript",
-  "React",
-  "Node.js",
-  "REST APIs",
-  "SQL",
-  "Git",
-  "Responsive Design",
-];
-
-const missingKeywords = [
-  "Next.js",
-  "Redux",
-  "GraphQL",
-  "Unit Testing",
-  "CI/CD",
-  "AWS",
-  "Docker",
-  "Agile",
-];
+import ScorePanel from "#/components/pages/analysis/ScorePanel";
 
 export const Route = createFileRoute("/_app/analysis/$reportId")({
   loader: async ({ params }) => {
@@ -70,665 +36,162 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
           {entriesCount}
         </span>
       )}
-      {/* <Icon icon="ic:twotone-plus" className="text-text-muted" /> */}
-    </div>
-  );
-};
-
-interface ScoreCardProps {
-  score: number;
-}
-const ScoreCard: React.FC<ScoreCardProps> = ({ score }) => {
-  const clampedScore = Math.max(0, Math.min(100, score));
-
-  let statusText = "Needs Improvement";
-  let statusColor = "text-red-500";
-  let statusPillClass = "bg-red-50 text-red-600 border-red-200";
-
-  if (clampedScore > 25) {
-    statusText = "Fair";
-    statusColor = "text-amber-500";
-    statusPillClass = "bg-amber-50 text-amber-600 border-amber-200";
-  }
-  if (clampedScore > 50) {
-    statusText = "Average";
-    statusColor = "text-orange-400";
-    statusPillClass = "bg-orange-50 text-orange-600 border-orange-200";
-  }
-  if (clampedScore > 75) {
-    statusText = "Good";
-    statusColor = "text-emerald-500";
-    statusPillClass = "bg-emerald-50 text-emerald-600 border-emerald-200";
-  }
-
-  const cx = 50,
-    cy = 50,
-    r = 38;
-
-  const arcPath = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
-
-  const arcLen = Math.PI * r;
-  const gap = 3;
-  const vis = (arcLen - 3 * gap) / 4;
-  const unit = vis + gap;
-
-  const segments = [
-    { color: "#E55353", offset: 0 },
-    { color: "#F2C16D", offset: -unit },
-    { color: "#E28739", offset: -(unit * 2) },
-    { color: "#63C27C", offset: -(unit * 3) },
-  ];
-
-  const innerR = 28;
-  const innerArcPath = `M ${cx - innerR} ${cy} A ${innerR} ${innerR} 0 0 1 ${cx + innerR} ${cy}`;
-
-  const angle = Math.PI - (clampedScore / 100) * Math.PI;
-  const needleX = cx + innerR * Math.cos(angle);
-  const needleY = cy - innerR * Math.sin(angle);
-
-  return (
-    <div className="relative z-10 w-full flex flex-col items-center justify-center">
-      <h2 className="text-tiny font-medium text-brand">RESUME SCORE</h2>
-      <svg viewBox="0 0 100 54" className="w-[80%] overflow-visible">
-        {segments.map((seg, i) => (
-          <path
-            key={i}
-            d={arcPath}
-            fill="none"
-            stroke={seg.color}
-            strokeWidth={3}
-            strokeLinecap="butt"
-            strokeDasharray={`${vis} ${arcLen}`}
-            strokeDashoffset={seg.offset}
-          />
-        ))}
-
-        <path
-          d={innerArcPath}
-          fill="none"
-          stroke="#9CA3AF"
-          strokeWidth={0.9}
-          strokeLinecap="round"
-          strokeDasharray="0.01 4"
-          opacity={0.75}
-        />
-
-        <line
-          x1={cx}
-          y1={cy}
-          x2={needleX}
-          y2={needleY}
-          stroke="#0a8cff"
-          strokeWidth={1}
-          strokeLinecap="round"
-        />
-
-        <circle cx={cx} cy={cy} r={1.8} fill="#0a8cff" />
-        <rect
-          x={needleX - 4}
-          y={needleY - 2}
-          width={8}
-          height={4}
-          rx={2}
-          ry={2}
-          fill="#ffffff"
-          stroke="#0a8cff"
-          strokeWidth={1}
-          transform={`rotate(${(-angle * 180) / Math.PI} ${needleX} ${needleY})`}
-        />
-      </svg>
-      <div className="w-full mt-3 flex flex-col items-center justify-center text-center">
-        <div className="text-xl font-mono tracking-tight text-text-primary leading-none">
-          {clampedScore}
-          <span className="ml-0.5 text-base font-sans font-medium text-slate-400">
-            %
-          </span>
-        </div>
-        <p className="text-xxs text-text-secondary">
-          Your resume score is{" "}
-          <span className={`ml-0.5 font-medium ${statusColor}`}>
-            {statusText}
-          </span>
-        </p>
-      </div>
     </div>
   );
 };
 
 function RouteComponent() {
-  const typedPayload = aiProcessedSampleData as EnhancedResumePayload;
-
-  const [firstName, setFirstName] = useState(
-    typedPayload.profile?.first_name || "",
+  // Initialize state with the new data format (sections object)
+  const [resumeData, setResumeData] = useState<any>(
+    aiProcessedSampleData[0].resume_review.sections,
   );
-  const [lastName, setLastName] = useState(
-    typedPayload.profile?.last_name || "",
-  );
-  const [profTitle, setProfTitle] = useState({
-    originalText: typedPayload.profile?.professional_title?.originalText || "",
-    currentText: typedPayload.profile?.professional_title?.currentText || "",
-  });
-  const [email, setEmail] = useState(typedPayload.profile?.email || "");
-  const [phone, setPhone] = useState(typedPayload.profile?.phone || "");
-  const [location, setLocation] = useState(
-    typedPayload.profile?.location || "",
-  );
-  const [summary, setSummary] = useState({
-    originalText: typedPayload.profile?.summary?.originalText || "",
-    currentText: typedPayload.profile?.summary?.currentText || "",
-  });
-
-  const [workExperiences, setWorkExperiences] = useState<
-    PostAIWorkExperience[]
-  >(typedPayload.workExperience || []);
-  const [projects, setProjects] = useState<PostAIProject[]>(
-    typedPayload.projects || [],
-  );
-  const [education, setEducation] = useState<PostAIEducation[]>(
-    typedPayload.education || [],
-  );
-  const [certificates, setCertificates] = useState<PostAICertificate[]>(
-    typedPayload.certificates || [],
-  );
-  const [skills] = useState<PostAISkill[]>(typedPayload.skills || []);
-  const [languages] = useState<PostAILanguage[]>(typedPayload.languages || []);
-  const [interests] = useState<PostAIInterest[]>(typedPayload.interests || []);
-  const [awards, setAwards] = useState<PostAIAward[]>(
-    typedPayload.awards || [],
-  );
-  const [publications, setPublications] = useState<PostAIPublication[]>(
-    typedPayload.publications || [],
-  );
-  const [references, setReferences] = useState<PostAIReference[]>(
-    typedPayload.references || [],
-  );
-
   const [activeEditingKey, setActiveEditingKey] = useState<string | null>(null);
 
+  // --- KEY PARSER ---
+  // Coordinates format: sectionId:entryId:field[:bulletIndex]
+  const parseKey = (key: string) => {
+    const parts = key.split(":");
+    return {
+      sectionId: parts[0],
+      entryId: parts[1] === "none" ? null : parts[1],
+      field: parts[2],
+      bIdx: parts.length > 3 ? parseInt(parts[3]) : undefined,
+    };
+  };
+
+  // --- HANDLERS ---
+  const handlePrimitiveChange = (
+    sectionId: string,
+    entryId: string | null,
+    field: string,
+    val: string,
+  ) => {
+    setResumeData((prev: any) => {
+      const newSec = { ...prev[sectionId] };
+      if (!entryId) {
+        newSec[field] = val;
+      } else {
+        newSec.entries = newSec.entries.map((e: any) =>
+          e.entry_id === entryId ? { ...e, [field]: val } : e,
+        );
+      }
+      return { ...prev, [sectionId]: newSec };
+    });
+  };
+
+  const handleTextChange = (uniqueKey: string, val: string) => {
+    const { sectionId, entryId, field, bIdx } = parseKey(uniqueKey);
+    setResumeData((prev: any) => {
+      const newSec = { ...prev[sectionId] };
+      const updateField = (targetObj: any) => {
+        const fieldData = { ...targetObj[field] };
+        if (bIdx !== undefined) {
+          const newArr = [...(fieldData.new_value || [])];
+          newArr[bIdx] = val;
+          fieldData.new_value = newArr;
+        } else {
+          fieldData.new_value = val;
+        }
+        targetObj[field] = fieldData;
+      };
+
+      if (!entryId) {
+        updateField(newSec);
+      } else {
+        newSec.entries = newSec.entries.map((e: any) => {
+          if (e.entry_id === entryId) {
+            const newE = { ...e };
+            updateField(newE);
+            return newE;
+          }
+          return e;
+        });
+      }
+      return { ...prev, [sectionId]: newSec };
+    });
+  };
+
   const handleAcceptText = (uniqueKey: string) => {
-    if (uniqueKey === "profile-title") {
-      setProfTitle((prev) => ({ ...prev, originalText: prev.currentText }));
-    } else if (uniqueKey === "profile-summary") {
-      setSummary((prev) => ({ ...prev, originalText: prev.currentText }));
-    } else if (uniqueKey.startsWith("exp-")) {
-      const [, expIdx, , bIdx] = uniqueKey.split("-");
-      setWorkExperiences((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(expIdx)
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === parseInt(bIdx)
-                    ? { ...b, originalText: b.currentText }
-                    : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("proj-sub-")) {
-      const [, projIdx] = uniqueKey.split("-sub-");
-      setProjects((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(projIdx)
-            ? {
-                ...item,
-                subtitle: {
-                  ...item.subtitle,
-                  originalText: item.subtitle.currentText,
-                },
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("proj-")) {
-      const [, projIdx, , bIdx] = uniqueKey.split("-");
-      setProjects((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(projIdx)
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === parseInt(bIdx)
-                    ? { ...b, originalText: b.currentText }
-                    : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("edu-deg-")) {
-      const [, eduIdx] = uniqueKey.split("-deg-");
-      setEducation((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(eduIdx)
-            ? {
-                ...item,
-                degree: {
-                  ...item.degree,
-                  originalText: item.degree.currentText,
-                },
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("edu-")) {
-      const [, eduIdx, , bIdx] = uniqueKey.split("-");
-      setEducation((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(eduIdx)
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === parseInt(bIdx)
-                    ? { ...b, originalText: b.currentText }
-                    : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("cert-name-")) {
-      const [, certIdx] = uniqueKey.split("-name-");
-      setCertificates((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(certIdx)
-            ? {
-                ...item,
-                name: { ...item.name, originalText: item.name.currentText },
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("cert-")) {
-      const [, certIdx, , bIdx] = uniqueKey.split("-");
-      setCertificates((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(certIdx)
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === parseInt(bIdx)
-                    ? { ...b, originalText: b.currentText }
-                    : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("award-block-")) {
-      const [, id] = uniqueKey.split("-block-");
-      setAwards((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                description: {
-                  ...item.description,
-                  originalText: item.description.currentText,
-                },
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("pub-block-")) {
-      const [, id] = uniqueKey.split("-block-");
-      setPublications((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                description: {
-                  ...item.description,
-                  originalText: item.description.currentText,
-                },
-              }
-            : item,
-        ),
-      );
-    }
+    const { sectionId, entryId, field, bIdx } = parseKey(uniqueKey);
+    setResumeData((prev: any) => {
+      const newSec = { ...prev[sectionId] };
+      const updateField = (targetObj: any) => {
+        const fieldData = { ...targetObj[field] };
+        if (bIdx !== undefined) {
+          const oldArr = Array.isArray(fieldData.old_value)
+            ? [...fieldData.old_value]
+            : [];
+          oldArr[bIdx] = fieldData.new_value[bIdx];
+          fieldData.old_value = oldArr;
+        } else {
+          fieldData.old_value = fieldData.new_value;
+          fieldData.old_format = fieldData.new_format;
+        }
+        targetObj[field] = fieldData;
+      };
+
+      if (!entryId) {
+        updateField(newSec);
+      } else {
+        newSec.entries = newSec.entries.map((e: any) => {
+          if (e.entry_id === entryId) {
+            const newE = { ...e };
+            updateField(newE);
+            return newE;
+          }
+          return e;
+        });
+      }
+      return { ...prev, [sectionId]: newSec };
+    });
   };
 
   const handleRejectText = (uniqueKey: string) => {
-    if (uniqueKey === "profile-title") {
-      setProfTitle((prev) => ({ ...prev, currentText: prev.originalText }));
-    } else if (uniqueKey === "profile-summary") {
-      setSummary((prev) => ({ ...prev, currentText: prev.originalText }));
-    } else if (uniqueKey.startsWith("exp-")) {
-      const [, expIdx, , bIdx] = uniqueKey.split("-");
-      setWorkExperiences((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(expIdx)
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === parseInt(bIdx)
-                    ? { ...b, currentText: b.originalText }
-                    : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("proj-sub-")) {
-      const [, projIdx] = uniqueKey.split("-sub-");
-      setProjects((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(projIdx)
-            ? {
-                ...item,
-                subtitle: {
-                  ...item.subtitle,
-                  currentText: item.subtitle.originalText,
-                },
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("proj-")) {
-      const [, projIdx, , bIdx] = uniqueKey.split("-");
-      setProjects((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(projIdx)
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === parseInt(bIdx)
-                    ? { ...b, currentText: b.originalText }
-                    : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("edu-deg-")) {
-      const [, eduIdx] = uniqueKey.split("-deg-");
-      setEducation((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(eduIdx)
-            ? {
-                ...item,
-                degree: {
-                  ...item.degree,
-                  currentText: item.degree.originalText,
-                },
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("edu-")) {
-      const [, eduIdx, , bIdx] = uniqueKey.split("-");
-      setEducation((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(eduIdx)
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === parseInt(bIdx)
-                    ? { ...b, currentText: b.originalText }
-                    : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("cert-name-")) {
-      const [, certIdx] = uniqueKey.split("-name-");
-      setCertificates((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(certIdx)
-            ? {
-                ...item,
-                name: { ...item.name, currentText: item.name.originalText },
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("cert-")) {
-      const [, certIdx, , bIdx] = uniqueKey.split("-");
-      setCertificates((prev) =>
-        prev.map((item, i) =>
-          i === parseInt(certIdx)
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === parseInt(bIdx)
-                    ? { ...b, currentText: b.originalText }
-                    : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("award-block-")) {
-      const [, id] = uniqueKey.split("-block-");
-      setAwards((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                description: {
-                  ...item.description,
-                  currentText: item.description.originalText,
-                },
-              }
-            : item,
-        ),
-      );
-    } else if (uniqueKey.startsWith("pub-block-")) {
-      const [, id] = uniqueKey.split("-block-");
-      setPublications((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                description: {
-                  ...item.description,
-                  currentText: item.description.originalText,
-                },
-              }
-            : item,
-        ),
-      );
-    }
-  };
-  const handleFieldChange = (
-    section: "work" | "project" | "education" | "cert" | "award" | "pub",
-    index: number,
-    key: string,
-    value: string,
-  ) => {
-    if (section === "work") {
-      setWorkExperiences((prev) =>
-        prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)),
-      );
-    } else if (section === "project") {
-      setProjects((prev) =>
-        prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)),
-      );
-    } else if (section === "education") {
-      setEducation((prev) =>
-        prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)),
-      );
-    } else if (section === "cert") {
-      setCertificates((prev) =>
-        prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)),
-      );
-    } else if (section === "award") {
-      setAwards((prev) =>
-        prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)),
-      );
-    } else if (section === "pub") {
-      setPublications((prev) =>
-        prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)),
-      );
-    }
+    const { sectionId, entryId, field, bIdx } = parseKey(uniqueKey);
+    setResumeData((prev: any) => {
+      const newSec = { ...prev[sectionId] };
+      const updateField = (targetObj: any) => {
+        const fieldData = { ...targetObj[field] };
+        if (bIdx !== undefined) {
+          const newArr = Array.isArray(fieldData.new_value)
+            ? [...fieldData.new_value]
+            : [];
+          newArr[bIdx] = Array.isArray(fieldData.old_value)
+            ? fieldData.old_value[bIdx] || ""
+            : "";
+          fieldData.new_value = newArr;
+        } else {
+          fieldData.new_value = fieldData.old_value;
+          fieldData.new_format = fieldData.old_format;
+        }
+        targetObj[field] = fieldData;
+      };
+
+      if (!entryId) {
+        updateField(newSec);
+      } else {
+        newSec.entries = newSec.entries.map((e: any) => {
+          if (e.entry_id === entryId) {
+            const newE = { ...e };
+            updateField(newE);
+            return newE;
+          }
+          return e;
+        });
+      }
+      return { ...prev, [sectionId]: newSec };
+    });
   };
 
-  const handleBulletChange = (
-    section: "work" | "project" | "education" | "cert",
-    itemIdx: number,
-    bulletIdx: number,
-    value: string,
-  ) => {
-    if (section === "work") {
-      setWorkExperiences((prev) =>
-        prev.map((item, i) =>
-          i === itemIdx
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === bulletIdx ? { ...b, currentText: value } : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (section === "project") {
-      setProjects((prev) =>
-        prev.map((item, i) =>
-          i === itemIdx
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === bulletIdx ? { ...b, currentText: value } : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (section === "education") {
-      setEducation((prev) =>
-        prev.map((item, i) =>
-          i === itemIdx
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === bulletIdx ? { ...b, currentText: value } : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    } else if (section === "cert") {
-      setCertificates((prev) =>
-        prev.map((item, i) =>
-          i === itemIdx
-            ? {
-                ...item,
-                highlights: item.highlights.map((b, bi) =>
-                  bi === bulletIdx ? { ...b, currentText: value } : b,
-                ),
-              }
-            : item,
-        ),
-      );
-    }
-  };
-
-  const handleInlineFieldChange = (
-    section:
-      | "profile-title"
-      | "profile-summary"
-      | "project-subtitle"
-      | "education-degree"
-      | "cert-name",
-    index: number,
-    value: string,
-  ) => {
-    if (section === "profile-title") {
-      setProfTitle((prev) => ({ ...prev, currentText: value }));
-    } else if (section === "profile-summary") {
-      setSummary((prev) => ({ ...prev, currentText: value }));
-    } else if (section === "project-subtitle") {
-      setProjects((prev) =>
-        prev.map((item, i) =>
-          i === index
-            ? { ...item, subtitle: { ...item.subtitle, currentText: value } }
-            : item,
-        ),
-      );
-    } else if (section === "education-degree") {
-      setEducation((prev) =>
-        prev.map((item, i) =>
-          i === index
-            ? { ...item, degree: { ...item.degree, currentText: value } }
-            : item,
-        ),
-      );
-    } else if (section === "cert-name") {
-      setCertificates((prev) =>
-        prev.map((item, i) =>
-          i === index
-            ? { ...item, name: { ...item.name, currentText: value } }
-            : item,
-        ),
-      );
-    }
-  };
-
-  const handleBlockFieldChange = (
-    section: "award" | "pub",
-    id: string,
-    value: string,
-  ) => {
-    if (section === "award") {
-      setAwards((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                description: { ...item.description, currentText: value },
-              }
-            : item,
-        ),
-      );
-    } else if (section === "pub") {
-      setPublications((prev) =>
-        prev.map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                description: { ...item.description, currentText: value },
-              }
-            : item,
-        ),
-      );
-    }
-  };
-
+  // --- AUTO RESIZE TEXTAREA ---
   function AutoResizeTextarea({
-    uniqueKey,
     currentText,
-    setActiveEditingKey,
-    handleInlineFieldChange,
-    handleBulletChange,
-    handleBlockFieldChange,
+    onTextChange,
+    onBlur,
   }: {
-    uniqueKey: string;
     currentText: string;
-    setActiveEditingKey: (key: string | null) => void;
-    handleInlineFieldChange: (
-      section:
-        | "profile-title"
-        | "profile-summary"
-        | "project-subtitle"
-        | "education-degree"
-        | "cert-name",
-      index: number,
-      value: string,
-    ) => void;
-    handleBulletChange: (
-      section: "work" | "project" | "education" | "cert",
-      itemIdx: number,
-      bulletIdx: number,
-      value: string,
-    ) => void;
-    handleBlockFieldChange: (
-      section: "award" | "pub",
-      id: string,
-      value: string,
-    ) => void;
+    onTextChange: (val: string) => void;
+    onBlur: () => void;
   }) {
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -753,74 +216,20 @@ function RouteComponent() {
       autoResize();
     }, [currentText]);
 
-    const handleChange = (val: string) => {
-      if (uniqueKey === "profile-title") {
-        handleInlineFieldChange("profile-title", 0, val);
-      }
-
-      if (uniqueKey === "profile-summary") {
-        handleInlineFieldChange("profile-summary", 0, val);
-      }
-
-      if (uniqueKey.startsWith("exp-")) {
-        const [, expIdx, , bIdx] = uniqueKey.split("-");
-        handleBulletChange("work", parseInt(expIdx), parseInt(bIdx), val);
-      }
-
-      if (uniqueKey.startsWith("proj-sub-")) {
-        const [, , projIdx] = uniqueKey.split("-sub-");
-        handleInlineFieldChange("project-subtitle", parseInt(projIdx), val);
-      }
-
-      if (uniqueKey.startsWith("proj-") && !uniqueKey.includes("-sub-")) {
-        const [, projIdx, , bIdx] = uniqueKey.split("-");
-        handleBulletChange("project", parseInt(projIdx), parseInt(bIdx), val);
-      }
-
-      if (uniqueKey.startsWith("edu-deg-")) {
-        const [, , eduIdx] = uniqueKey.split("-deg-");
-        handleInlineFieldChange("education-degree", parseInt(eduIdx), val);
-      }
-
-      if (uniqueKey.startsWith("edu-") && !uniqueKey.includes("-deg-")) {
-        const [, eduIdx, , bIdx] = uniqueKey.split("-");
-        handleBulletChange("education", parseInt(eduIdx), parseInt(bIdx), val);
-      }
-
-      if (uniqueKey.startsWith("cert-name-")) {
-        const [, , certIdx] = uniqueKey.split("-name-");
-        handleInlineFieldChange("cert-name", parseInt(certIdx), val);
-      }
-
-      if (uniqueKey.startsWith("cert-") && !uniqueKey.includes("-name-")) {
-        const [, certIdx, , bIdx] = uniqueKey.split("-");
-        handleBulletChange("cert", parseInt(certIdx), parseInt(bIdx), val);
-      }
-
-      if (uniqueKey.startsWith("award-block-")) {
-        const [, , id] = uniqueKey.split("-block-");
-        handleBlockFieldChange("award", id, val);
-      }
-
-      if (uniqueKey.startsWith("pub-block-")) {
-        const [, , id] = uniqueKey.split("-block-");
-        handleBlockFieldChange("pub", id, val);
-      }
-    };
-
     return (
       <textarea
         ref={textareaRef}
         rows={1}
         value={currentText}
         onInput={autoResize}
-        onChange={(e) => handleChange(e.target.value)}
-        onBlur={() => setActiveEditingKey(null)}
+        onChange={(e) => onTextChange(e.target.value)}
+        onBlur={onBlur}
         className="w-full text-xs mt-2 py-2 px-1 border border-black/10 outline-none text-text-primary font-sans resize-none overflow-hidden"
       />
     );
   }
 
+  // --- RENDER TEXT DIFFING (WORD-LEVEL) ---
   const renderDiffText = (
     uniqueKey: string,
     originalText: string,
@@ -830,12 +239,9 @@ function RouteComponent() {
     if (activeEditingKey === uniqueKey) {
       return (
         <AutoResizeTextarea
-          uniqueKey={uniqueKey}
           currentText={currentText}
-          setActiveEditingKey={setActiveEditingKey}
-          handleInlineFieldChange={handleInlineFieldChange}
-          handleBulletChange={handleBulletChange}
-          handleBlockFieldChange={handleBlockFieldChange}
+          onTextChange={(val) => handleTextChange(uniqueKey, val)}
+          onBlur={() => setActiveEditingKey(null)}
         />
       );
     }
@@ -848,7 +254,7 @@ function RouteComponent() {
       return (
         <p
           onClick={() => setActiveEditingKey(uniqueKey)}
-          className={`relative text-xs cursor-text py-2 flex ${
+          className={`relative text-xs cursor-text py-0 flex ${
             isBullet
               ? "before:content-['●'] before:text-tiny before:mx-1 before:text-text-muted"
               : "px-0"
@@ -890,7 +296,7 @@ function RouteComponent() {
         onClick={() => setActiveEditingKey(uniqueKey)}
         className={`relative text-xs cursor-text py-2 ${
           isBullet
-            ? "before:content-['●'] before:text-xxs before:mx-1 before:text-text-secondary"
+            ? "before:content-['●'] before:text-tiny before:mx-1 before:text-text-muted"
             : "px-0"
         }`}
       >
@@ -921,20 +327,21 @@ function RouteComponent() {
     );
   };
 
-  const renderControlBlock = (
+  // --- RENDER INLINE ROW ---
+  const renderInlineDiffRow = (
     uniqueKey: string,
-    index: number,
-    originalText: string,
-    currentText: string,
+    oldText: string,
+    newText: string,
     isBullet = false,
-    totalCount = 1,
   ) => {
-    const isResolved = (originalText || "") === (currentText || "");
+    const isResolved = (oldText || "").trim() === (newText || "").trim();
 
     return (
       <div className="w-full border-black/5" key={uniqueKey}>
-        <div className="px-0 border-blue-600">
-          {renderDiffText(uniqueKey, originalText, currentText, isBullet)}
+        <div
+          className={`px-0 ${!isResolved ? "border-blue-600 border py-2" : ""}`}
+        >
+          {renderDiffText(uniqueKey, oldText, newText, isBullet)}
         </div>
 
         {!isResolved && (
@@ -962,6 +369,122 @@ function RouteComponent() {
     );
   };
 
+  // --- DISPATCHER: RENDER DYNAMIC FIELD BASED ON DIFF MODE ---
+  const renderDescriptionBlock = (
+    sectionId: string,
+    entryId: string | null,
+    fieldName: string,
+    fieldData: any,
+  ) => {
+    if (
+      !fieldData ||
+      typeof fieldData !== "object" ||
+      !("old_value" in fieldData)
+    )
+      return null;
+
+    const { old_value, new_value, old_format, new_format, diff_mode } =
+      fieldData;
+    const baseKey = `${sectionId}:${entryId || "none"}:${fieldName}`;
+
+    // Verify if the change is resolved
+    const isResolved =
+      old_format === new_format &&
+      JSON.stringify(old_value) === JSON.stringify(new_value);
+
+    // CASE 1: STRUCTURAL MIGRATION (Para -> Bullets) - PENDING RESOLUTION
+    if (diff_mode === "structural" && !isResolved) {
+      return (
+        <div
+          key={baseKey}
+          className="w-full space-y-2 py-2 pl-2 border border-dashed border-slate-200 rounded-lg bg-slate-50/50"
+        >
+          {/* Full Red Strikethrough Box */}
+          <p className="relative before:content-['-'] before:absolute before:left-0 before:-translate-x-2 before:text-[#B42318]">
+            <mark className="bg-[#FECDCA] text-[#B42318] line-through px-1 text-xxs">
+              {old_value}
+            </mark>
+          </p>
+
+          <div className="space-y-1">
+            {Array.isArray(new_value) &&
+              new_value.map((bullet: string, idx: number) => (
+                <p
+                  key={idx}
+                  className="px-1 relative text-xs before:content-['+'] before:absolute before:left-0 before:-translate-x-2 before:text-[#027A48]"
+                >
+                  <mark className="bg-[#D1FADF] text-[#027A48] px-1 text-xxs">
+                    {bullet}
+                  </mark>
+                </p>
+              ))}
+          </div>
+
+          {/* Master Controls */}
+          <div className="w-full flex items-center justify-end gap-x-2 pt-1">
+            <button
+              onClick={() => handleAcceptText(baseKey)}
+              className="px-2 py-1 flex gap-x-0.5 items-center justify-center bg-[#039855] text-white cursor-pointer rounded-sm"
+            >
+              <Icon icon="ic:outline-check" className="text-tiny" />
+              <span className="text-tiny">Accept Format</span>
+            </button>
+            <button
+              onClick={() => handleRejectText(baseKey)}
+              className="px-2 py-1 flex gap-x-0.5 items-center justify-center border border-red-300 bg-[#FEF3F2] text-[#B42318] cursor-pointer rounded-sm"
+            >
+              <Icon
+                icon="material-symbols:close-rounded"
+                className="text-tiny"
+              />
+              <span className="text-tiny">Reject Format</span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // CASE 2: INLINE DIFF OR RESOLVED STRUCTURAL MIGRATION
+    if (new_format === "bullet_points") {
+      return (
+        <div className="w-full space-y-0">
+          {Array.isArray(new_value) &&
+            new_value.map((bullet: string, bIdx: number) => {
+              // Safety: Ensure oldBullet aligns properly even if the original array is shorter
+              const oldBullet = Array.isArray(old_value)
+                ? old_value[bIdx] || ""
+                : old_value === new_value
+                  ? bullet
+                  : "";
+              const itemKey = `${baseKey}:${bIdx}`;
+              return renderInlineDiffRow(itemKey, oldBullet, bullet, true);
+            })}
+        </div>
+      );
+    } else {
+      // Handles 'text' and 'para' safely
+      return renderInlineDiffRow(
+        baseKey,
+        old_value as string,
+        new_value as string,
+        false,
+      );
+    }
+  };
+
+  // --- EXTRACTORS ---
+  const profile = resumeData.profile || {};
+  const expSection = resumeData.experience || { entries: [] };
+  const projSection = resumeData.projects || { entries: [] };
+  const eduSection = resumeData.education || { entries: [] };
+  const certSection = resumeData.certificates || { entries: [] };
+  const awardsSection = resumeData.awards || { entries: [] };
+  const pubSection = resumeData.publications || { entries: [] };
+  const refSection = resumeData.references || { entries: [] };
+  const skillsSection = resumeData.skills || { entries: [] };
+  const langSection = resumeData.languages || { entries: [] };
+  const intSection = resumeData.interests || { entries: [] };
+
   return (
     <div className="w-full h-full flex overflow-hidden">
       <aside className="w-[20vw] h-full"></aside>
@@ -976,8 +499,15 @@ function RouteComponent() {
                 FIRST NAME
               </label>
               <input
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={profile.first_name || ""}
+                onChange={(e) =>
+                  handlePrimitiveChange(
+                    "profile",
+                    null,
+                    "first_name",
+                    e.target.value,
+                  )
+                }
                 className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
               />
             </fieldset>
@@ -986,8 +516,15 @@ function RouteComponent() {
                 LAST NAME
               </label>
               <input
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                value={profile.last_name || ""}
+                onChange={(e) =>
+                  handlePrimitiveChange(
+                    "profile",
+                    null,
+                    "last_name",
+                    e.target.value,
+                  )
+                }
                 className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
               />
             </fieldset>
@@ -997,8 +534,15 @@ function RouteComponent() {
                 EMAIL
               </label>
               <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={profile.email || ""}
+                onChange={(e) =>
+                  handlePrimitiveChange(
+                    "profile",
+                    null,
+                    "email",
+                    e.target.value,
+                  )
+                }
                 className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
               />
             </fieldset>
@@ -1007,8 +551,15 @@ function RouteComponent() {
                 PHONE
               </label>
               <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={profile.phone || ""}
+                onChange={(e) =>
+                  handlePrimitiveChange(
+                    "profile",
+                    null,
+                    "phone",
+                    e.target.value,
+                  )
+                }
                 className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
               />
             </fieldset>
@@ -1017,8 +568,15 @@ function RouteComponent() {
                 LOCATION
               </label>
               <input
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                value={profile.location || ""}
+                onChange={(e) =>
+                  handlePrimitiveChange(
+                    "profile",
+                    null,
+                    "location",
+                    e.target.value,
+                  )
+                }
                 className="rounded-none py-1 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
               />
             </fieldset>
@@ -1027,13 +585,11 @@ function RouteComponent() {
                 PROFESSIONAL TITLE
               </label>
               <div className="w-full space-y-3">
-                {renderControlBlock(
-                  "profile-title",
-                  0,
-                  profTitle.originalText,
-                  profTitle.currentText,
-                  false,
-                  1,
+                {renderDescriptionBlock(
+                  "profile",
+                  null,
+                  "professional_title",
+                  profile.professional_title,
                 )}
               </div>
             </fieldset>
@@ -1042,13 +598,11 @@ function RouteComponent() {
                 SUMMARY
               </label>
               <div className="w-full space-y-3">
-                {renderControlBlock(
-                  "profile-summary",
-                  0,
-                  summary.originalText,
-                  summary.currentText,
-                  false,
-                  1,
+                {renderDescriptionBlock(
+                  "profile",
+                  null,
+                  "summary",
+                  profile.summary,
                 )}
               </div>
             </fieldset>
@@ -1059,26 +613,26 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="Work Experience"
-            entriesCount={workExperiences.length}
+            entriesCount={expSection.entries.length}
           />
-          {workExperiences.map((exp, expIdx) => (
-            <React.Fragment key={exp.id || expIdx}>
+          {expSection.entries.map((exp: any, expIdx: number) => (
+            <React.Fragment key={exp.entry_id}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{expIdx + 1}
                 </span>
               </div>
-              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0 bg-white">
-                <fieldset className="flex flex-col">
+              <div className="w-full grid grid-cols-4 p-3 gap-2 border-b border-black/5 last:border-b-0 bg-white">
+                <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     COMPANY
                   </label>
                   <input
-                    value={exp.company}
+                    value={exp.company || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "work",
-                        expIdx,
+                      handlePrimitiveChange(
+                        "experience",
+                        exp.entry_id,
                         "company",
                         e.target.value,
                       )
@@ -1086,28 +640,16 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium">
-                    ROLE
-                  </label>
-                  <input
-                    value={exp.role}
-                    onChange={(e) =>
-                      handleFieldChange("work", expIdx, "role", e.target.value)
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
-                  />
-                </fieldset>
-                <fieldset className="flex flex-col">
+                <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     LOCATION
                   </label>
                   <input
-                    value={exp.location}
+                    value={exp.location || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "work",
-                        expIdx,
+                      handlePrimitiveChange(
+                        "experience",
+                        exp.entry_id,
                         "location",
                         e.target.value,
                       )
@@ -1115,16 +657,16 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col">
+                <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     START DATE
                   </label>
                   <input
                     value={exp.start_date || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "work",
-                        expIdx,
+                      handlePrimitiveChange(
+                        "experience",
+                        exp.entry_id,
                         "start_date",
                         e.target.value,
                       )
@@ -1132,16 +674,16 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col">
+                <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     END DATE
                   </label>
                   <input
                     value={exp.end_date || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "work",
-                        expIdx,
+                      handlePrimitiveChange(
+                        "experience",
+                        exp.entry_id,
                         "end_date",
                         e.target.value,
                       )
@@ -1150,20 +692,29 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col col-span-3">
+                <fieldset className="flex flex-col col-span-4">
+                  <label className="text-tiny text-text-muted font-medium">
+                    ROLE
+                  </label>
+                  <div className="w-full">
+                    {renderDescriptionBlock(
+                      "experience",
+                      exp.entry_id,
+                      "position",
+                      exp.position,
+                    )}
+                  </div>
+                </fieldset>
+                <fieldset className="flex flex-col col-span-4">
                   <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
-                  <div className="w-full space-y-3">
-                    {exp.highlights?.map((bullet, bIdx) =>
-                      renderControlBlock(
-                        `exp-${expIdx}-bullet-${bIdx}`,
-                        bIdx,
-                        bullet.originalText,
-                        bullet.currentText,
-                        true,
-                        exp.highlights?.length || 1,
-                      ),
+                  <div className="w-full space-y-0">
+                    {renderDescriptionBlock(
+                      "experience",
+                      exp.entry_id,
+                      "description",
+                      exp.description,
                     )}
                   </div>
                 </fieldset>
@@ -1176,26 +727,26 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="Projects"
-            entriesCount={projects.length}
+            entriesCount={projSection.entries.length}
           />
-          {projects.map((proj, projIdx) => (
-            <React.Fragment key={proj.id || projIdx}>
+          {projSection.entries.map((proj: any, projIdx: number) => (
+            <React.Fragment key={proj.entry_id}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{projIdx + 1}
                 </span>
               </div>
-              <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0 bg-white">
-                <fieldset className="flex flex-col col-span-3">
+              <div className="w-full grid grid-cols-4 p-3 gap-2 border-b border-black/5 last:border-b-0 bg-white">
+                <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     PROJECT TITLE
                   </label>
                   <input
-                    value={proj.title}
+                    value={proj.title || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "project",
-                        projIdx,
+                      handlePrimitiveChange(
+                        "projects",
+                        proj.entry_id,
                         "title",
                         e.target.value,
                       )
@@ -1203,16 +754,16 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col">
+                <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     LINK
                   </label>
                   <input
                     value={proj.link || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "project",
-                        projIdx,
+                      handlePrimitiveChange(
+                        "projects",
+                        proj.entry_id,
                         "link",
                         e.target.value,
                       )
@@ -1220,16 +771,16 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col">
+                <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     START DATE
                   </label>
                   <input
                     value={proj.start_date || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "project",
-                        projIdx,
+                      handlePrimitiveChange(
+                        "projects",
+                        proj.entry_id,
                         "start_date",
                         e.target.value,
                       )
@@ -1237,16 +788,16 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col">
+                <fieldset className="flex flex-col col-span-2">
                   <label className="text-tiny text-text-muted font-medium">
                     END DATE
                   </label>
                   <input
                     value={proj.end_date || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "project",
-                        projIdx,
+                      handlePrimitiveChange(
+                        "projects",
+                        proj.entry_id,
                         "end_date",
                         e.target.value,
                       )
@@ -1255,35 +806,29 @@ function RouteComponent() {
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col col-span-3">
+                <fieldset className="flex flex-col col-span-4">
                   <label className="text-tiny text-text-muted font-medium">
                     PROJECT SUBTITLE / TECH STACK
                   </label>
                   <div className="w-full space-y-3">
-                    {renderControlBlock(
-                      `proj-sub-${projIdx}`,
-                      projIdx,
-                      proj.subtitle?.originalText || "",
-                      proj.subtitle?.currentText || "",
-                      false,
-                      1,
+                    {renderDescriptionBlock(
+                      "projects",
+                      proj.entry_id,
+                      "subtitle",
+                      proj.subtitle,
                     )}
                   </div>
                 </fieldset>
-                <fieldset className="flex flex-col col-span-3">
+                <fieldset className="flex flex-col col-span-4">
                   <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
-                  <div className="w-full space-y-3">
-                    {proj.highlights?.map((bullet, bIdx) =>
-                      renderControlBlock(
-                        `proj-${projIdx}-bullet-${bIdx}`,
-                        bIdx,
-                        bullet.originalText,
-                        bullet.currentText,
-                        true,
-                        proj.highlights?.length || 0,
-                      ),
+                  <div className="w-full">
+                    {renderDescriptionBlock(
+                      "projects",
+                      proj.entry_id,
+                      "description",
+                      proj.description,
                     )}
                   </div>
                 </fieldset>
@@ -1296,10 +841,10 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="Education"
-            entriesCount={education.length}
+            entriesCount={eduSection.entries.length}
           />
-          {education.map((edu, eduIdx) => (
-            <React.Fragment key={edu.id || eduIdx}>
+          {eduSection.entries.map((edu: any, eduIdx: number) => (
+            <React.Fragment key={edu.entry_id}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{eduIdx + 1}
@@ -1311,11 +856,11 @@ function RouteComponent() {
                     INSTITUTION
                   </label>
                   <input
-                    value={edu.institution}
+                    value={edu.institution || ""}
                     onChange={(e) =>
-                      handleFieldChange(
+                      handlePrimitiveChange(
                         "education",
-                        eduIdx,
+                        edu.entry_id,
                         "institution",
                         e.target.value,
                       )
@@ -1330,9 +875,9 @@ function RouteComponent() {
                   <input
                     value={edu.score || ""}
                     onChange={(e) =>
-                      handleFieldChange(
+                      handlePrimitiveChange(
                         "education",
-                        eduIdx,
+                        edu.entry_id,
                         "score",
                         e.target.value,
                       )
@@ -1347,9 +892,9 @@ function RouteComponent() {
                   <input
                     value={edu.location || ""}
                     onChange={(e) =>
-                      handleFieldChange(
+                      handlePrimitiveChange(
                         "education",
-                        eduIdx,
+                        edu.entry_id,
                         "location",
                         e.target.value,
                       )
@@ -1364,9 +909,9 @@ function RouteComponent() {
                   <input
                     value={edu.start_date || ""}
                     onChange={(e) =>
-                      handleFieldChange(
+                      handlePrimitiveChange(
                         "education",
-                        eduIdx,
+                        edu.entry_id,
                         "start_date",
                         e.target.value,
                       )
@@ -1381,9 +926,9 @@ function RouteComponent() {
                   <input
                     value={edu.end_date || ""}
                     onChange={(e) =>
-                      handleFieldChange(
+                      handlePrimitiveChange(
                         "education",
-                        eduIdx,
+                        edu.entry_id,
                         "end_date",
                         e.target.value,
                       )
@@ -1398,9 +943,9 @@ function RouteComponent() {
                   <input
                     value={edu.link || ""}
                     onChange={(e) =>
-                      handleFieldChange(
+                      handlePrimitiveChange(
                         "education",
-                        eduIdx,
+                        edu.entry_id,
                         "link",
                         e.target.value,
                       )
@@ -1413,13 +958,11 @@ function RouteComponent() {
                     DEGREE / COURSE
                   </label>
                   <div className="w-full space-y-3">
-                    {renderControlBlock(
-                      `edu-deg-${eduIdx}`,
-                      eduIdx,
-                      edu.degree?.originalText || "",
-                      edu.degree?.currentText || "",
-                      false,
-                      1,
+                    {renderDescriptionBlock(
+                      "education",
+                      edu.entry_id,
+                      "degree",
+                      edu.degree,
                     )}
                   </div>
                 </fieldset>
@@ -1427,16 +970,12 @@ function RouteComponent() {
                   <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
-                  <div className="w-full space-y-3">
-                    {edu.highlights?.map((bullet, bIdx) =>
-                      renderControlBlock(
-                        `edu-${eduIdx}-bullet-${bIdx}`,
-                        bIdx,
-                        bullet.originalText,
-                        bullet.currentText,
-                        true,
-                        edu.highlights?.length || 0,
-                      ),
+                  <div className="w-full">
+                    {renderDescriptionBlock(
+                      "education",
+                      edu.entry_id,
+                      "description",
+                      edu.description,
                     )}
                   </div>
                 </fieldset>
@@ -1449,10 +988,10 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="Certificates"
-            entriesCount={certificates.length}
+            entriesCount={certSection.entries.length}
           />
-          {certificates.map((cert, certIdx) => (
-            <React.Fragment key={cert.id || certIdx}>
+          {certSection.entries.map((cert: any, certIdx: number) => (
+            <React.Fragment key={cert.entry_id}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{certIdx + 1}
@@ -1464,11 +1003,11 @@ function RouteComponent() {
                     ISSUER
                   </label>
                   <input
-                    value={cert.issuer}
+                    value={cert.issuer || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "cert",
-                        certIdx,
+                      handlePrimitiveChange(
+                        "certificates",
+                        cert.entry_id,
                         "issuer",
                         e.target.value,
                       )
@@ -1483,9 +1022,9 @@ function RouteComponent() {
                   <input
                     value={cert.issue_date || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "cert",
-                        certIdx,
+                      handlePrimitiveChange(
+                        "certificates",
+                        cert.entry_id,
                         "issue_date",
                         e.target.value,
                       )
@@ -1500,9 +1039,9 @@ function RouteComponent() {
                   <input
                     value={cert.expiry_date || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "cert",
-                        certIdx,
+                      handlePrimitiveChange(
+                        "certificates",
+                        cert.entry_id,
                         "expiry_date",
                         e.target.value,
                       )
@@ -1517,7 +1056,12 @@ function RouteComponent() {
                   <input
                     value={cert.link || ""}
                     onChange={(e) =>
-                      handleFieldChange("cert", certIdx, "link", e.target.value)
+                      handlePrimitiveChange(
+                        "certificates",
+                        cert.entry_id,
+                        "link",
+                        e.target.value,
+                      )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
@@ -1527,13 +1071,11 @@ function RouteComponent() {
                     CERTIFICATE NAME
                   </label>
                   <div className="w-full space-y-3">
-                    {renderControlBlock(
-                      `cert-name-${certIdx}`,
-                      certIdx,
-                      cert.name?.originalText || "",
-                      cert.name?.currentText || "",
-                      false,
-                      1,
+                    {renderDescriptionBlock(
+                      "certificates",
+                      cert.entry_id,
+                      "name",
+                      cert.name,
                     )}
                   </div>
                 </fieldset>
@@ -1541,16 +1083,12 @@ function RouteComponent() {
                   <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
-                  <div className="w-full space-y-3">
-                    {cert.highlights?.map((bullet, bIdx) =>
-                      renderControlBlock(
-                        `cert-${certIdx}-bullet-${bIdx}`,
-                        bIdx,
-                        bullet.originalText,
-                        bullet.currentText,
-                        true,
-                        cert.highlights?.length || 0,
-                      ),
+                  <div className="w-full">
+                    {renderDescriptionBlock(
+                      "certificates",
+                      cert.entry_id,
+                      "description",
+                      cert.description,
                     )}
                   </div>
                 </fieldset>
@@ -1561,15 +1099,18 @@ function RouteComponent() {
 
         {/* 6. SKILLS SECTION */}
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
-          <SectionHeading sectionLabel="Skills" entriesCount={skills.length} />
+          <SectionHeading
+            sectionLabel="Skills"
+            entriesCount={skillsSection.entries.length}
+          />
           <div className="w-full p-3">
             <div className="flex flex-wrap gap-1 py-1">
-              {skills.map((s) => (
+              {skillsSection.entries.map((s: any) => (
                 <span
-                  key={s.id}
+                  key={s.entry_id}
                   className="text-xxs bg-gray-100 text-text-primary px-1.5 py-0.5 rounded-none"
                 >
-                  {s.name}
+                  {typeof s.name === "object" ? s.name.new_value : s.name}
                 </span>
               ))}
             </div>
@@ -1580,13 +1121,13 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="Languages"
-            entriesCount={languages.length}
+            entriesCount={langSection.entries.length}
           />
           <div className="w-full p-3">
             <div className="flex flex-wrap gap-1 py-1">
-              {languages.map((l) => (
+              {langSection.entries.map((l: any) => (
                 <span
-                  key={l.id}
+                  key={l.entry_id}
                   className="text-xxs bg-gray-100 text-text-primary px-1.5 py-0.5 rounded-none"
                 >
                   {l.name}
@@ -1600,13 +1141,13 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="Interests"
-            entriesCount={interests.length}
+            entriesCount={intSection.entries.length}
           />
           <div className="w-full p-3">
             <div className="flex flex-wrap gap-1 py-1">
-              {interests.map((i) => (
+              {intSection.entries.map((i: any) => (
                 <span
-                  key={i.id}
+                  key={i.entry_id}
                   className="text-xxs bg-gray-100 text-text-primary px-1.5 py-0.5 rounded-none"
                 >
                   {i.name}
@@ -1620,27 +1161,28 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="Honors & Awards"
-            entriesCount={awards.length}
+            entriesCount={awardsSection.entries.length}
           />
-          {awards.map((aw, awIdx) => (
-            <React.Fragment key={aw.id || awIdx}>
+          {awardsSection.entries.map((aw: any, awIdx: number) => (
+            <React.Fragment key={aw.entry_id}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{awIdx + 1}
                 </span>
               </div>
               <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0">
-                <fieldset className="flex flex-col col-span-2">
+                <fieldset className="flex flex-col col-span-3">
                   <label className="text-tiny text-text-muted font-medium">
                     AWARD NAME
                   </label>
-                  <input
-                    value={aw.title}
-                    onChange={(e) =>
-                      handleFieldChange("award", awIdx, "title", e.target.value)
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 font-semibold text-tiny uppercase"
-                  />
+                  <div className="w-full">
+                    {renderDescriptionBlock(
+                      "awards",
+                      aw.entry_id,
+                      "title",
+                      aw.title,
+                    )}
+                  </div>
                 </fieldset>
                 <fieldset className="flex flex-col">
                   <label className="text-tiny text-text-muted font-medium">
@@ -1649,21 +1191,26 @@ function RouteComponent() {
                   <input
                     value={aw.date || ""}
                     onChange={(e) =>
-                      handleFieldChange("award", awIdx, "date", e.target.value)
+                      handlePrimitiveChange(
+                        "awards",
+                        aw.entry_id,
+                        "date",
+                        e.target.value,
+                      )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col col-span-3">
+                <fieldset className="flex flex-col">
                   <label className="text-tiny text-text-muted font-medium">
                     AWARDER
                   </label>
                   <input
                     value={aw.awarder || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "award",
-                        awIdx,
+                      handlePrimitiveChange(
+                        "awards",
+                        aw.entry_id,
                         "awarder",
                         e.target.value,
                       )
@@ -1675,14 +1222,12 @@ function RouteComponent() {
                   <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
-                  <div className="w-full space-y-3">
-                    {renderControlBlock(
-                      `award-block-${aw.id}`,
-                      awIdx,
-                      aw.description?.originalText || "",
-                      aw.description?.currentText || "",
-                      false,
-                      awards.length,
+                  <div className="w-full">
+                    {renderDescriptionBlock(
+                      "awards",
+                      aw.entry_id,
+                      "description",
+                      aw.description,
                     )}
                   </div>
                 </fieldset>
@@ -1695,27 +1240,28 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="Publications"
-            entriesCount={publications.length}
+            entriesCount={pubSection.entries.length}
           />
-          {publications.map((pub, pubIdx) => (
-            <React.Fragment key={pub.id || pubIdx}>
+          {pubSection.entries.map((pub: any, pubIdx: number) => (
+            <React.Fragment key={pub.entry_id}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{pubIdx + 1}
                 </span>
               </div>
               <div className="w-full grid grid-cols-3 p-3 gap-2 border-b border-black/5 last:border-b-0">
-                <fieldset className="flex flex-col col-span-2">
+                <fieldset className="flex flex-col col-span-3">
                   <label className="text-tiny text-text-muted font-medium">
                     PUBLICATION NAME
                   </label>
-                  <input
-                    value={pub.title}
-                    onChange={(e) =>
-                      handleFieldChange("pub", pubIdx, "title", e.target.value)
-                    }
-                    className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0 font-semibold text-tiny uppercase"
-                  />
+                  <div className="w-full">
+                    {renderDescriptionBlock(
+                      "publications",
+                      pub.entry_id,
+                      "title",
+                      pub.title,
+                    )}
+                  </div>
                 </fieldset>
                 <fieldset className="flex flex-col">
                   <label className="text-tiny text-text-muted font-medium">
@@ -1724,21 +1270,26 @@ function RouteComponent() {
                   <input
                     value={pub.date || ""}
                     onChange={(e) =>
-                      handleFieldChange("pub", pubIdx, "date", e.target.value)
+                      handlePrimitiveChange(
+                        "publications",
+                        pub.entry_id,
+                        "date",
+                        e.target.value,
+                      )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
                 </fieldset>
-                <fieldset className="flex flex-col col-span-2">
+                <fieldset className="flex flex-col">
                   <label className="text-tiny text-text-muted font-medium">
                     PUBLISHER
                   </label>
                   <input
                     value={pub.publisher || ""}
                     onChange={(e) =>
-                      handleFieldChange(
-                        "pub",
-                        pubIdx,
+                      handlePrimitiveChange(
+                        "publications",
+                        pub.entry_id,
                         "publisher",
                         e.target.value,
                       )
@@ -1753,7 +1304,12 @@ function RouteComponent() {
                   <input
                     value={pub.link || ""}
                     onChange={(e) =>
-                      handleFieldChange("pub", pubIdx, "link", e.target.value)
+                      handlePrimitiveChange(
+                        "publications",
+                        pub.entry_id,
+                        "link",
+                        e.target.value,
+                      )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
                   />
@@ -1762,14 +1318,12 @@ function RouteComponent() {
                   <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
-                  <div className="w-full space-y-3">
-                    {renderControlBlock(
-                      `pub-block-${pub.id}`,
-                      pubIdx,
-                      pub.description?.originalText || "",
-                      pub.description?.currentText || "",
-                      false,
-                      publications.length,
+                  <div className="w-full">
+                    {renderDescriptionBlock(
+                      "publications",
+                      pub.entry_id,
+                      "description",
+                      pub.description,
                     )}
                   </div>
                 </fieldset>
@@ -1782,10 +1336,10 @@ function RouteComponent() {
         <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip">
           <SectionHeading
             sectionLabel="References"
-            entriesCount={references.length}
+            entriesCount={refSection.entries.length}
           />
-          {references.map((ref, refIdx) => (
-            <React.Fragment key={ref.id || refIdx}>
+          {refSection.entries.map((ref: any, refIdx: number) => (
+            <React.Fragment key={ref.entry_id}>
               <div className="w-full col-span-3 px-3 py-1 border-b border-black/5 bg-gray-50 flex items-center">
                 <span className="text-xxs text-text-secondary font-semibold font-mono">
                   #{refIdx + 1}
@@ -1797,12 +1351,13 @@ function RouteComponent() {
                     NAME
                   </label>
                   <input
-                    value={ref.name}
+                    value={ref.name || ""}
                     onChange={(e) =>
-                      setReferences((prev) =>
-                        prev.map((r, i) =>
-                          i === refIdx ? { ...r, name: e.target.value } : r,
-                        ),
+                      handlePrimitiveChange(
+                        "references",
+                        ref.entry_id,
+                        "name",
+                        e.target.value,
                       )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
@@ -1813,12 +1368,13 @@ function RouteComponent() {
                     EMAIL
                   </label>
                   <input
-                    value={ref.email}
+                    value={ref.email || ""}
                     onChange={(e) =>
-                      setReferences((prev) =>
-                        prev.map((r, i) =>
-                          i === refIdx ? { ...r, email: e.target.value } : r,
-                        ),
+                      handlePrimitiveChange(
+                        "references",
+                        ref.entry_id,
+                        "email",
+                        e.target.value,
                       )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
@@ -1829,14 +1385,13 @@ function RouteComponent() {
                     ORGANIZATION
                   </label>
                   <input
-                    value={ref.organization}
+                    value={ref.organization || ""}
                     onChange={(e) =>
-                      setReferences((prev) =>
-                        prev.map((r, i) =>
-                          i === refIdx
-                            ? { ...r, organization: e.target.value }
-                            : r,
-                        ),
+                      handlePrimitiveChange(
+                        "references",
+                        ref.entry_id,
+                        "organization",
+                        e.target.value,
                       )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
@@ -1847,12 +1402,13 @@ function RouteComponent() {
                     PHONE
                   </label>
                   <input
-                    value={ref.phone}
+                    value={ref.phone || ""}
                     onChange={(e) =>
-                      setReferences((prev) =>
-                        prev.map((r, i) =>
-                          i === refIdx ? { ...r, phone: e.target.value } : r,
-                        ),
+                      handlePrimitiveChange(
+                        "references",
+                        ref.entry_id,
+                        "phone",
+                        e.target.value,
                       )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
@@ -1863,12 +1419,13 @@ function RouteComponent() {
                     POSITION
                   </label>
                   <input
-                    value={ref.position}
+                    value={ref.position || ""}
                     onChange={(e) =>
-                      setReferences((prev) =>
-                        prev.map((r, i) =>
-                          i === refIdx ? { ...r, position: e.target.value } : r,
-                        ),
+                      handlePrimitiveChange(
+                        "references",
+                        ref.entry_id,
+                        "position",
+                        e.target.value,
                       )
                     }
                     className="rounded-none py-1 text-text-primary text-xs border border-transparent focus:border-gray-300 outline-0"
@@ -1880,52 +1437,9 @@ function RouteComponent() {
         </section>
       </main>
 
-      <aside className="w-[20vw] h-full p-2">
-        <div className="w-full flex flex-col space-y-4 rounded-3xl p-4 border border-black/10 bg-white shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
-          <div className="relative z-10 w-full flex items-center justify-center">
-            <ScoreCard score={75} />
-          </div>
-          <div className="w-full flex flex-col space-y-4 mt-4">
-            <div className="w-full flex flex-col space-y-4">
-              {/* MATCHED KEYWORDS */}
-              <div className="w-full flex flex-col space-y-3">
-                <h2 className="text-tiny font-medium text-brand">
-                  MATCHED KEYWORDS
-                </h2>
-                <div className="w-full flex-1 flex flex-wrap gap-2">
-                  {matchedKeywords.map((keyword) => (
-                    <span
-                      key={keyword}
-                      className="w-fit h-fit text-tiny text-[#05603A] flex items-center justify-center rounded-md px-3 py-1 bg-[#ECFDF3] border border-[#A6F4C5]"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* MISSING KEYWORDS */}
-              <div className="w-full flex flex-col space-y-3">
-                <h2 className="text-tiny font-medium text-brand">
-                  MISSING KEYWORDS
-                </h2>
-                <div className="w-full flex-1 flex flex-wrap gap-2">
-                  {missingKeywords.map((keyword) => (
-                    <span
-                      key={keyword}
-                      className="w-fit h-fit text-tiny text-[#B54708] flex items-center justify-center rounded-md px-3 py-1 bg-[#FEF0C7] border border-[#FECDCA]"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <ScorePanel />
     </div>
   );
 }
 
-//OG
+// GEMINI PRO
