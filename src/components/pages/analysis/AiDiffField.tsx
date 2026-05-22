@@ -183,14 +183,11 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
   const renderInlineDiff = (oldStr: string, newStr: string) => {
     const diffs = diffWords(oldStr || "", newStr || "");
     return (
-      <div className="leading-relaxed whitespace-pre-wrap">
+      <p className="leading-snug whitespace-pre-wrap text-xs text-text-primary border border-blue-600">
         {diffs.map((part, i) => {
           if (part.added)
             return (
-              <span
-                key={i}
-                className="bg-green-100 text-green-800 rounded px-0.5"
-              >
+              <span key={i} className="bg-green-100 text-green-800 px-1">
                 {part.value}
               </span>
             );
@@ -198,14 +195,14 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
             return (
               <span
                 key={i}
-                className="bg-red-100 text-red-800 line-through rounded px-0.5"
+                className="bg-red-100 text-red-800 line-through px-1"
               >
                 {part.value}
               </span>
             );
           return <span key={i}>{part.value}</span>;
         })}
-      </div>
+      </p>
     );
   };
 
@@ -232,7 +229,7 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
     const bullets = Array.from({ length: maxLen });
 
     return (
-      <div className="space-y-3">
+      <div className="w-full flex flex-col gap-y-3">
         {bullets.map((_, i) => {
           const isResolved = resolvedBullets[i]?.resolved;
           const resolvedValue = resolvedBullets[i]?.value;
@@ -263,7 +260,7 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
                     </span>
                     <Icon
                       icon="lucide:pencil"
-                      className="absolute right-0 top-1 opacity-0 group-hover:opacity-40 text-gray-400 w-3 h-3 transition-opacity"
+                      className="absolute right-0 top-1 opacity-0 group-hover:opacity-40 text-gray-400 text-sm transition-opacity"
                     />
                   </div>
                 )}
@@ -273,24 +270,20 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
 
           // Show diff for unresolved bullet
           return (
-            <div
-              key={i}
-              className="p-2 bg-gray-50 rounded border border-gray-200"
-            >
-              <div className="whitespace-pre-wrap text-xs leading-relaxed mb-2">
-                {renderInlineDiff(oldBullets[i] || "", newBullets[i] || "")}
-              </div>
-              <div className="flex gap-2">
+            <div className="relative w-full flex flex-col bg-blue-100" key={i}>
+              {renderInlineDiff(oldBullets[i] || "", newBullets[i] || "")}
+              <div className="flex items-center gap-2 mt-2 border border-red-400">
                 <button
                   onClick={() => resolveBullet(i, newBullets[i])}
-                  className="px-2 py-0.5 text-xxs bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                  className="flex items-center gap-0.5 px-2 py-1 bg-[#027A48] hover:bg-green-700 border border-[#027A48] text-white text-tiny rounded-sm transition-colors cursor-pointer"
                 >
-                  Accept
+                  <Icon icon="tabler:check-filled" className="text-xs" /> Accept
                 </button>
                 <button
                   onClick={() => resolveBullet(i, oldBullets[i])}
-                  className="px-2 py-0.5 text-xxs bg-white border border-red-200 text-red-600 rounded hover:bg-red-50 transition-colors"
+                  className="flex items-center gap-0.5 px-2 py-1 bg-[#FEF3F2] hover:bg-red-50 text-red-600 border border-[#FDA29B] text-tiny rounded-sm transition-colors cursor-pointer"
                 >
+                  <Icon icon="iconamoon:close-duotone" className="text-xs" />
                   Reject
                 </button>
               </div>
@@ -308,7 +301,7 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
     // Array case (bullet points)
     if (Array.isArray(currentValue)) {
       return (
-        <ul className="list-disc pl-4 w-full text-xs text-text-primary space-y-1.5">
+        <ul className="list-disc pl-4 w-full text-xs text-text-primary space-y-1.5 bg-orange-400">
           {currentValue.map((bullet, i) => (
             <li key={i} className="group relative">
               {editingBulletIndex === i ? (
@@ -317,7 +310,7 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
                   onChange={setEditingBulletValue}
                   onSave={() => saveBulletEdit(i)}
                   onCancel={cancelBulletEdit}
-                  className="w-full text-xs p-1 border border-brand rounded focus:outline-none focus:ring-1 focus:ring-brand"
+                  className="rounded-none py-2 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
                 />
               ) : (
                 <div
@@ -327,7 +320,7 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
                   <span>{bullet}</span>
                   <Icon
                     icon="lucide:pencil"
-                    className="absolute right-0 top-1 opacity-0 group-hover:opacity-40 text-gray-400 w-3 h-3 transition-opacity"
+                    className="absolute right-0 top-1 opacity-0 group-hover:opacity-40 text-gray-400 text-sm transition-opacity"
                   />
                 </div>
               )}
@@ -340,18 +333,13 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
     // String case (paragraph/text)
     if (editingText) {
       return (
-        <div className="flex flex-col gap-1 w-full">
-          <AutoTextarea
-            value={editingTextValue}
-            onChange={setEditingTextValue}
-            onSave={saveTextEdit}
-            onCancel={cancelTextEdit}
-            className="w-full text-xs p-2 border border-brand rounded focus:outline-none focus:ring-1 focus:ring-brand"
-          />
-          <div className="flex gap-1 text-xxs text-gray-400">
-            <span>Click outside or press Escape to save</span>
-          </div>
-        </div>
+        <AutoTextarea
+          value={editingTextValue}
+          onChange={setEditingTextValue}
+          onSave={saveTextEdit}
+          onCancel={cancelTextEdit}
+          className="rounded-none py-2 border border-transparent outline-0 transition-colors focus:border-gray-300 text-text-primary text-xs"
+        />
       );
     }
 
@@ -363,7 +351,7 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
         <span>{currentValue}</span>
         <Icon
           icon="lucide:pencil"
-          className="absolute right-1 top-2 opacity-0 group-hover:opacity-40 text-gray-400 w-3 h-3 transition-opacity"
+          className="absolute right-1 top-2 opacity-0 group-hover:opacity-40 text-gray-400 text-sm transition-opacity"
         />
       </div>
     );
@@ -376,23 +364,23 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
   // 1. Structural View Layout (para -> bullets)
   if (fieldData.diff_mode === "structural") {
     return (
-      <div className="flex flex-col gap-2 w-full p-2 border border-blue-100 bg-blue-50/30 rounded-lg relative">
+      <div className="relative flex flex-col w-full">
         {renderStructuralDiff(
           fieldData.old_value as string,
           fieldData.new_value as string[],
         )}
-        <div className="flex items-center gap-2 mt-1">
+        <div className="flex items-center  gap-2 pt-2 border border-red-400">
           <button
             onClick={handleAcceptField}
-            className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xxs font-semibold rounded shadow-sm transition-colors"
+            className="flex items-center gap-0.5 px-2 py-1 bg-[#027A48] hover:bg-green-700 border border-[#027A48] text-white text-tiny rounded-sm transition-colors cursor-pointer"
           >
-            <Icon icon="lucide:check" className="w-3 h-3" /> Accept
+            <Icon icon="tabler:check-filled" className="text-xs" /> Accept
           </button>
           <button
             onClick={handleRejectField}
-            className="flex items-center gap-1 px-3 py-1 bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xxs font-semibold rounded shadow-sm transition-colors"
+            className="flex items-center gap-0.5 px-2 py-1 bg-[#FEF3F2] hover:bg-red-50 text-red-600 border border-[#FDA29B] text-tiny rounded-sm transition-colors cursor-pointer"
           >
-            <Icon icon="lucide:x" className="w-3 h-3" /> Reject
+            <Icon icon="iconamoon:close-duotone" className="text-xs" /> Reject
           </button>
         </div>
       </div>
@@ -401,42 +389,41 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
 
   // 2. Inline View Layout Container
   if (fieldData.diff_mode === "inline") {
-    // Condition A: bullet -> bullet
+    // Condition A: bullet -> bullet ----------------------------------------------------------
     if (
       Array.isArray(fieldData.old_value) &&
       Array.isArray(fieldData.new_value)
     ) {
       return (
-        <div className="flex flex-col gap-2 w-full p-2 border border-blue-100 bg-blue-50/30 rounded-lg relative">
+        <>
           {renderBulletToBulletDiff(
             fieldData.old_value as string[],
             fieldData.new_value as string[],
           )}
-        </div>
+        </>
       );
     }
 
-    // Condition B: para -> para
+    // Condition B: para -> para -------------------------------------------------------------
     return (
-      <div className="flex flex-col gap-2 w-full p-2 border border-blue-100 bg-blue-50/30 rounded-lg relative">
-        <div className="w-full text-xs text-text-primary">
-          {renderInlineDiff(
-            fieldData.old_value as string,
-            fieldData.new_value as string,
-          )}
-        </div>
-        <div className="flex items-center gap-2 mt-1">
+      <div className="relative w-full flex flex-col bg-blue-100">
+        {renderInlineDiff(
+          fieldData.old_value as string,
+          fieldData.new_value as string,
+        )}
+        <div className="flex items-center gap-2 mt-2 border border-red-400">
           <button
             onClick={handleAcceptField}
-            className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xxs font-semibold rounded shadow-sm transition-colors"
+            className="flex items-center gap-0.5 px-2 py-1 bg-[#027A48] hover:bg-green-700 border border-[#027A48] text-white text-tiny rounded-sm transition-colors cursor-pointer"
           >
-            <Icon icon="lucide:check" className="w-3 h-3" /> Accept
+            <Icon icon="tabler:check-filled" className="text-xs" />
+            Accept
           </button>
           <button
             onClick={handleRejectField}
-            className="flex items-center gap-1 px-3 py-1 bg-white hover:bg-red-50 text-red-600 border border-red-200 text-xxs font-semibold rounded shadow-sm transition-colors"
+            className="flex items-center gap-0.5 px-2 py-1 bg-[#FEF3F2] hover:bg-red-50 text-red-600 border border-[#FDA29B] text-tiny rounded-sm transition-colors cursor-pointer"
           >
-            <Icon icon="lucide:x" className="w-3 h-3" /> Reject
+            <Icon icon="iconamoon:close-duotone" className="text-xs" /> Reject
           </button>
         </div>
       </div>

@@ -24,8 +24,8 @@ const missingKeywords = [
 
 const ScorePanel = () => {
   return (
-    <aside className="w-[20vw] h-full p-2">
-      <div className="w-full flex flex-col space-y-4 rounded-3xl p-4 border border-black/10 bg-white shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
+    <aside className="w-[23vw] h-full bg-white border-l border-black/10">
+      <div className="w-full flex flex-col space-y-4 p-4 border-black/10  shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
         <div className="relative z-10 w-full flex items-center justify-center">
           <ResumeScoreCard score={75} />
         </div>

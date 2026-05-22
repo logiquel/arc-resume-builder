@@ -25,12 +25,12 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
   sectionLabel,
   entriesCount,
 }) => (
-  <div className="w-full flex items-center px-3 py-3 border-b border-black/5 cursor-pointer sticky -top-2 bg-white z-10">
+  <div className="w-full flex items-center px-4 py-3 border-b border-black/5 cursor-pointer sticky -top-2 bg-white z-10">
     <h1 className="text-xxs font-medium text-brand uppercase">
       {sectionLabel}
     </h1>
     {entriesCount !== undefined && (
-      <span className="w-5 h-5 flex items-center justify-center text-tiny font-medium text-muted-foreground ml-1 rounded-full bg-gray-100 border">
+      <span className="w-4 h-4 flex items-center justify-center text-tiny font-medium text-muted-foreground ml-1 rounded-full bg-gray-100 border">
         {entriesCount}
       </span>
     )}
@@ -206,16 +206,14 @@ function RouteComponent() {
   };
 
   return (
-    <div className="w-full h-full flex overflow-hidden bg-gray-50">
-      <aside className="w-[20vw] h-full border-r border-black/5 bg-white" />
-
-      <main className="h-full flex-1 overflow-y-auto hide-scrollbar space-y-4 py-4 px-6">
+    <div className="w-full h-full flex overflow-hidden">
+      <main className="h-full flex-1 overflow-y-auto hide-scrollbar space-y-4 p-2">
         {/* PROFILE SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading sectionLabel="Profile" />
-          <div className="w-full grid grid-cols-3 p-4 gap-4">
+          <div className="w-full grid grid-cols-3 p-4 gap-3">
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium mb-1">
+              <label className="text-tiny text-text-muted font-medium">
                 FIRST NAME
               </label>
               <input
@@ -233,7 +231,7 @@ function RouteComponent() {
             </fieldset>
 
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium mb-1">
+              <label className="text-tiny text-text-muted font-medium">
                 LAST NAME
               </label>
               <input
@@ -251,7 +249,7 @@ function RouteComponent() {
             </fieldset>
 
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium mb-1">
+              <label className="text-tiny text-text-muted font-medium">
                 EMAIL
               </label>
               <input
@@ -269,7 +267,7 @@ function RouteComponent() {
             </fieldset>
 
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium mb-1">
+              <label className="text-tiny text-text-muted font-medium">
                 PHONE
               </label>
               <input
@@ -287,7 +285,7 @@ function RouteComponent() {
             </fieldset>
 
             <fieldset className="flex flex-col">
-              <label className="text-tiny text-text-muted font-medium mb-1">
+              <label className="text-tiny text-text-muted font-medium">
                 LOCATION
               </label>
               <input
@@ -305,7 +303,7 @@ function RouteComponent() {
             </fieldset>
 
             <fieldset className="flex flex-col col-span-3">
-              <label className="text-tiny text-text-muted font-medium mb-1">
+              <label className="text-tiny text-text-muted font-medium">
                 PROFESSIONAL TITLE
               </label>
               <AiDiffField
@@ -322,7 +320,7 @@ function RouteComponent() {
             </fieldset>
 
             <fieldset className="flex flex-col col-span-3">
-              <label className="text-tiny text-text-muted font-medium mb-1">
+              <label className="text-tiny text-text-muted font-medium">
                 SUMMARY
               </label>
               <AiDiffField
@@ -336,7 +334,7 @@ function RouteComponent() {
         </section>
 
         {/* EDUCATION SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Education"
             entriesCount={education.entries?.length || 0}
@@ -348,9 +346,9 @@ function RouteComponent() {
                   #{idx + 1}
                 </span>
               </div>
-              <div className="w-full grid grid-cols-4 p-4 gap-4 border-b border-black/5 last:border-0 bg-white">
+              <div className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white">
                 <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     INSTITUTION
                   </label>
                   <input
@@ -367,7 +365,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     LOCATION
                   </label>
                   <input
@@ -384,7 +382,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     START DATE
                   </label>
                   <input
@@ -401,7 +399,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     END DATE
                   </label>
                   <input
@@ -418,7 +416,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     DEGREE
                   </label>
                   <AiDiffField
@@ -429,7 +427,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
                   <AiDiffField
@@ -445,7 +443,7 @@ function RouteComponent() {
         </section>
 
         {/* WORK EXPERIENCE SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Work Experience"
             entriesCount={experience.entries?.length || 0}
@@ -457,9 +455,9 @@ function RouteComponent() {
                   #{idx + 1}
                 </span>
               </div>
-              <div className="w-full grid grid-cols-4 p-4 gap-4 border-b border-black/5 last:border-0 bg-white">
+              <div className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white">
                 <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     COMPANY
                   </label>
                   <input
@@ -476,7 +474,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     LOCATION
                   </label>
                   <input
@@ -493,7 +491,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     START DATE
                   </label>
                   <input
@@ -510,7 +508,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     END DATE
                   </label>
                   <input
@@ -528,7 +526,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     POSITION
                   </label>
                   <AiDiffField
@@ -539,7 +537,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
                   <AiDiffField
@@ -555,7 +553,7 @@ function RouteComponent() {
         </section>
 
         {/* PROJECTS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Projects"
             entriesCount={projects.entries?.length || 0}
@@ -567,9 +565,9 @@ function RouteComponent() {
                   #{idx + 1}
                 </span>
               </div>
-              <div className="w-full grid grid-cols-4 p-4 gap-4 border-b border-black/5 last:border-0 bg-white">
+              <div className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white">
                 <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     TITLE
                   </label>
                   <input
@@ -586,7 +584,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     SUBTITLE
                   </label>
                   <AiDiffField
@@ -597,7 +595,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     START DATE
                   </label>
                   <input
@@ -614,7 +612,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-2">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     END DATE
                   </label>
                   <input
@@ -631,7 +629,7 @@ function RouteComponent() {
                   />
                 </fieldset>
                 <fieldset className="flex flex-col col-span-4">
-                  <label className="text-tiny text-text-muted font-medium mb-1">
+                  <label className="text-tiny text-text-muted font-medium">
                     DESCRIPTION
                   </label>
                   <AiDiffField
@@ -647,7 +645,7 @@ function RouteComponent() {
         </section>
 
         {/* SKILLS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Skills"
             entriesCount={skills.entries?.length || 0}
@@ -660,7 +658,7 @@ function RouteComponent() {
                   className="flex items-center gap-2 border-b border-black/5 pb-2"
                 >
                   <fieldset className="flex-1 flex flex-col">
-                    <label className="text-tiny text-text-muted font-medium mb-1">
+                    <label className="text-tiny text-text-muted font-medium">
                       SKILL
                     </label>
                     {skill.name?.old_value ? (
@@ -686,7 +684,7 @@ function RouteComponent() {
                     )}
                   </fieldset>
                   <fieldset className="flex-1 flex flex-col">
-                    <label className="text-tiny text-text-muted font-medium mb-1">
+                    <label className="text-tiny text-text-muted font-medium">
                       LEVEL
                     </label>
                     <input
@@ -709,7 +707,7 @@ function RouteComponent() {
         </section>
 
         {/* CERTIFICATES SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Certificates"
             entriesCount={certificates.entries?.length || 0}
@@ -717,10 +715,10 @@ function RouteComponent() {
           {certificates.entries?.map((cert: any, idx: number) => (
             <div
               key={cert.entry_id}
-              className="w-full grid grid-cols-4 p-4 gap-4 border-b border-black/5 last:border-0 bg-white"
+              className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white"
             >
               <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   NAME
                 </label>
                 <AiDiffField
@@ -731,7 +729,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   ISSUER
                 </label>
                 <input
@@ -748,7 +746,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   ISSUE DATE
                 </label>
                 <input
@@ -765,7 +763,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   EXPIRY DATE
                 </label>
                 <input
@@ -782,7 +780,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   DESCRIPTION
                 </label>
                 <AiDiffField
@@ -797,7 +795,7 @@ function RouteComponent() {
         </section>
 
         {/* LANGUAGES SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Languages"
             entriesCount={languages.entries?.length || 0}
@@ -810,7 +808,7 @@ function RouteComponent() {
                   className="flex items-center gap-4 border-b border-black/5 pb-2"
                 >
                   <fieldset className="flex-1 flex flex-col">
-                    <label className="text-tiny text-text-muted font-medium mb-1">
+                    <label className="text-tiny text-text-muted font-medium">
                       LANGUAGE
                     </label>
                     <input
@@ -827,7 +825,7 @@ function RouteComponent() {
                     />
                   </fieldset>
                   <fieldset className="flex-1 flex flex-col">
-                    <label className="text-tiny text-text-muted font-medium mb-1">
+                    <label className="text-tiny text-text-muted font-medium">
                       LEVEL
                     </label>
                     <input
@@ -850,7 +848,7 @@ function RouteComponent() {
         </section>
 
         {/* INTERESTS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Interests"
             entriesCount={interests.entries?.length || 0}
@@ -878,7 +876,7 @@ function RouteComponent() {
         </section>
 
         {/* AWARDS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Awards"
             entriesCount={awards.entries?.length || 0}
@@ -886,10 +884,10 @@ function RouteComponent() {
           {awards.entries?.map((award: any, idx: number) => (
             <div
               key={award.entry_id}
-              className="w-full grid grid-cols-4 p-4 gap-4 border-b border-black/5 last:border-0 bg-white"
+              className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white"
             >
               <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   TITLE
                 </label>
                 <AiDiffField
@@ -900,7 +898,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   AWARDER
                 </label>
                 <input
@@ -917,7 +915,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   DATE
                 </label>
                 <input
@@ -929,7 +927,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   DESCRIPTION
                 </label>
                 <AiDiffField
@@ -944,7 +942,7 @@ function RouteComponent() {
         </section>
 
         {/* PUBLICATIONS SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="Publications"
             entriesCount={publications.entries?.length || 0}
@@ -952,10 +950,10 @@ function RouteComponent() {
           {publications.entries?.map((pub: any, idx: number) => (
             <div
               key={pub.entry_id}
-              className="w-full grid grid-cols-4 p-4 gap-4 border-b border-black/5 last:border-0 bg-white"
+              className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white"
             >
               <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   TITLE
                 </label>
                 <AiDiffField
@@ -966,7 +964,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   PUBLISHER
                 </label>
                 <input
@@ -983,7 +981,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   DATE
                 </label>
                 <input
@@ -1000,7 +998,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   LINK
                 </label>
                 <input
@@ -1017,7 +1015,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-4">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   DESCRIPTION
                 </label>
                 <AiDiffField
@@ -1032,7 +1030,7 @@ function RouteComponent() {
         </section>
 
         {/* REFERENCES SECTION */}
-        <section className="w-full flex-col border border-black/10 bg-white rounded-2xl overflow-clip shadow-sm">
+        <section className="w-full flex-col border border-black/10 bg-white overflow-clip">
           <SectionHeading
             sectionLabel="References"
             entriesCount={references.entries?.length || 0}
@@ -1040,10 +1038,10 @@ function RouteComponent() {
           {references.entries?.map((ref: any, idx: number) => (
             <div
               key={ref.entry_id}
-              className="w-full grid grid-cols-4 p-4 gap-4 border-b border-black/5 last:border-0 bg-white"
+              className="w-full grid grid-cols-4 p-4 gap-3 border-b border-black/5 last:border-0 bg-white"
             >
               <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   NAME
                 </label>
                 <input
@@ -1060,7 +1058,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col col-span-2">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   POSITION
                 </label>
                 <input
@@ -1077,7 +1075,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   ORGANIZATION
                 </label>
                 <input
@@ -1094,7 +1092,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   EMAIL
                 </label>
                 <input
@@ -1111,7 +1109,7 @@ function RouteComponent() {
                 />
               </fieldset>
               <fieldset className="flex flex-col">
-                <label className="text-tiny text-text-muted font-medium mb-1">
+                <label className="text-tiny text-text-muted font-medium">
                   PHONE
                 </label>
                 <input
