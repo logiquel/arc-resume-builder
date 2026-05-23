@@ -17,10 +17,9 @@ export interface DiffField<T = string | string[]> {
 }
 
 interface AiDiffFieldProps {
-  fieldData: DiffField<string | string[]>;
+  fieldData: DiffField<string | string[]> | undefined;
   onUpdateValue: (newValue: string | string[]) => void;
 }
-
 type ResolutionState = "unresolved" | "resolved";
 
 const cloneValue = (value: string | string[] | undefined): string | string[] =>
@@ -169,6 +168,7 @@ export const AiDiffField: React.FC<AiDiffFieldProps> = ({
   fieldData,
   onUpdateValue,
 }) => {
+  if (!fieldData) return null;
   const [resolution, setResolution] = useState<ResolutionState>(
     fieldData.status === "pending" ? "unresolved" : "resolved",
   );

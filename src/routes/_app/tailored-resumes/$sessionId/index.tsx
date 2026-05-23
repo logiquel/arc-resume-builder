@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Icon } from "@iconify/react";
 import { tailoringSessionSampleData } from "#/types/resume/tailoringSessionSampleData";
 import ScorePanel from "#/components/pages/analysis/ScorePanel";
 import { AiDiffField } from "#/components/pages/analysis/AiDiffField";
 import { AutoSaveNotification } from "#/components/pages/analysis/AutoSaveNotification";
+import { Icon } from "@iconify/react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "#/components/addons/tooltip";
 
 export const Route = createFileRoute("/_app/tailored-resumes/$sessionId/")({
   component: RouteComponent,
@@ -55,20 +60,24 @@ const FieldStatusBadge: React.FC<{ status?: DiffStatus }> = ({ status }) => {
   const isAccepted = status === "accepted";
 
   return (
-    <span
-      className={[
-        "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[9px] font-medium uppercase tracking-wide border",
-        isAccepted
-          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-          : "bg-rose-50 text-rose-700 border-rose-200",
-      ].join(" ")}
-    >
-      <Icon
-        icon={isAccepted ? "tabler:check" : "tabler:x"}
-        className="text-[10px]"
-      />
-      {status}
-    </span>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={`flex items-center text-tiny font-medium uppercase border-l border-black/40 pl-2 ml-2 cursor-pointer ${isAccepted ? "text-emerald-700" : "text-red-600"}`}
+        >
+          <Icon
+            icon="akar-icons:info"
+            className="text-text-muted text-xxs mr-1"
+          />{" "}
+          {status}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="right" className="text-tiny!">
+        {isAccepted ? "Accepted" : "Rejected"} - This change has been{" "}
+        {isAccepted ? "accepted" : "rejected"} based on the AI suggestion and
+        your edits.
+      </TooltipContent>
+    </Tooltip>
   );
 };
 
@@ -76,7 +85,7 @@ const FieldLabel: React.FC<{
   label: string;
   status?: DiffStatus;
 }> = ({ label, status }) => (
-  <div className="flex items-center gap-1.5">
+  <div className="flex items-center">
     <label className="text-tiny text-text-muted font-medium">{label}</label>
     <FieldStatusBadge status={status} />
   </div>
@@ -92,19 +101,36 @@ function RouteComponent() {
   const [saveStatus, setSaveStatus] = useState<
     "saving" | "saved" | "error" | null
   >(null);
+  const [hydrated, setHydrated] = useState(false);
+  const [tailoringSession, setTailoringSession] = useState(
+    loaderTailoringSession,
+  );
 
-  const [tailoringSession, setTailoringSession] = useState(() => {
-    if (typeof window === "undefined") return loaderTailoringSession;
-
-    const persisted = localStorage.getItem(storageKey);
-    if (!persisted) return loaderTailoringSession;
+  useEffect(() => {
+    setHydrated(true);
 
     try {
-      return JSON.parse(persisted);
-    } catch {
-      return loaderTailoringSession;
+      const persisted = localStorage.getItem(storageKey);
+      if (!persisted) return;
+
+      setTailoringSession(JSON.parse(persisted));
+    } catch (error) {
+      console.error("Failed to load persisted tailoring session:", error);
     }
-  });
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
+    try {
+      setSaveStatus("saving");
+      localStorage.setItem(storageKey, JSON.stringify(tailoringSession));
+      setSaveStatus("saved");
+    } catch (error) {
+      console.error("Failed to persist tailoring session:", error);
+      setSaveStatus("error");
+    }
+  }, [hydrated, tailoringSession, storageKey]);
 
   const sections = tailoringSession.changes;
   const {
@@ -120,17 +146,6 @@ function RouteComponent() {
     publications,
     references,
   } = sections;
-
-  useEffect(() => {
-    try {
-      setSaveStatus("saving");
-      localStorage.setItem(storageKey, JSON.stringify(tailoringSession));
-      setSaveStatus("saved");
-    } catch (error) {
-      console.error("Failed to persist tailoring session:", error);
-      setSaveStatus("error");
-    }
-  }, [tailoringSession, storageKey]);
 
   const updateSession = (
     updater: (prev: typeof tailoringSession) => typeof tailoringSession,
@@ -148,10 +163,13 @@ function RouteComponent() {
       const next = structuredClone(prev);
 
       if (index === null) {
-        (next.changes[section] as Record<string, unknown>)[field] = value;
+        (next.changes[section] as unknown as Record<string, unknown>)[field] =
+          value;
       } else {
         const entries = (
-          next.changes[section] as { entries: Record<string, unknown>[] }
+          next.changes[section] as unknown as {
+            entries: Record<string, unknown>[];
+          }
         ).entries;
         entries[index] = {
           ...entries[index],
