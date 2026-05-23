@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import type { Format3Data } from "#/types/resume/resumeTypes";
-import { loadResumeFromDB } from "#/lib/storage";
-import { Route } from "#/routes/_app/preview/$reportId";
 
 import { ATSTemplate } from "#/components/templates/ATSTemplate";
 import { ModernTemplate } from "#/components/templates/ModernTemplate";
@@ -19,41 +17,25 @@ const TEMPLATE_MAP = {
   classic: ClassicTemplate,
 } as const;
 
-type TemplateKey = keyof typeof TEMPLATE_MAP;
+export type ResumePreviewTemplateKey = keyof typeof TEMPLATE_MAP;
 
-const TEMPLATE_OPTIONS: Array<{
-  key: TemplateKey;
-  label: string;
-  description: string;
-}> = [
-  {
-    key: "ats",
-    label: "ATS",
-    description: "Clean and scanner-friendly layout",
-  },
-  {
-    key: "modern",
-    label: "Modern",
-    description: "Balanced layout with strong hierarchy",
-  },
-  {
-    key: "classic",
-    label: "Classic",
-    description: "Traditional professional resume style",
-  },
-];
+interface ResumePreviewClientProps {
+  data: Format3Data;
+  selectedTemplate: ResumePreviewTemplateKey;
+  sessionId: string;
+}
 
-export default function ResumePreviewClient() {
-  const { reportId } = Route.useParams();
-
-  const [resumeData, setResumeData] = useState<Format3Data | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function ResumePreviewClient({
+  data,
+  selectedTemplate,
+  sessionId,
+}: ResumePreviewClientProps) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [numPages, setNumPages] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [isPanning, setIsPanning] = useState(false);
   const [reactPdf, setReactPdf] = useState<ReactPdfModule | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey>("ats");
+  const [isGenerating, setIsGenerating] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const startPos = useRef({ x: 0, y: 0 });
@@ -79,8 +61,10 @@ export default function ResumePreviewClient() {
     let active = true;
     let objectUrl: string | null = null;
 
-    const generatePdf = async (data: Format3Data) => {
+    const generatePdf = async () => {
       try {
+        setIsGenerating(true);
+
         const SelectedTemplate = TEMPLATE_MAP[selectedTemplate];
         const blob = await pdf(<SelectedTemplate data={data} />).toBlob();
         objectUrl = URL.createObjectURL(blob);
@@ -96,29 +80,26 @@ export default function ResumePreviewClient() {
         });
       } catch (err) {
         console.error("Error generating PDF:", err);
+        if (objectUrl) {
+          URL.revokeObjectURL(objectUrl);
+        }
+        if (active) {
+          setPdfUrl(null);
+        }
+      } finally {
+        if (active) {
+          setIsGenerating(false);
+        }
       }
     };
 
-    if (resumeData) generatePdf(resumeData);
+    generatePdf();
 
     return () => {
       active = false;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [resumeData, selectedTemplate]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await loadResumeFromDB(reportId);
-        if (data) setResumeData(data);
-      } catch (err) {
-        console.error("Error loading resume:", err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [reportId]);
+  }, [data, selectedTemplate]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -167,13 +148,13 @@ export default function ResumePreviewClient() {
 
     const link = document.createElement("a");
     link.href = pdfUrl;
-    link.download = `resume-${selectedTemplate}-${reportId}.pdf`;
+    link.download = `resume-${selectedTemplate}-${sessionId}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  if (loading || !reactPdf) {
+  if (!reactPdf) {
     return (
       <div className="flex h-full w-full items-center justify-center text-gray-500">
         Loading preview...
@@ -181,10 +162,18 @@ export default function ResumePreviewClient() {
     );
   }
 
-  if (!resumeData || !pdfUrl) {
+  if (isGenerating) {
+    return (
+      <div className="flex h-full w-full items-center justify-center text-gray-500">
+        Generating preview...
+      </div>
+    );
+  }
+
+  if (!pdfUrl) {
     return (
       <div className="flex h-full w-full items-center justify-center text-red-500">
-        No resume data found
+        Failed to generate preview
       </div>
     );
   }
@@ -195,7 +184,9 @@ export default function ResumePreviewClient() {
     <div className="flex h-full w-full flex-col">
       <div className="border-b bg-white">
         <div className="flex items-center justify-between px-6 py-3">
-          <h1 className="text-lg font-semibold">Resume Preview</h1>
+          <h1 className="text-lg font-semibold text-text-primary">
+            Resume Preview
+          </h1>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
@@ -240,92 +231,6 @@ export default function ResumePreviewClient() {
             >
               Download PDF
             </button>
-          </div>
-        </div>
-
-        <div className="border-t px-6 py-4">
-          <div className="mb-3">
-            <h2 className="text-sm font-medium text-gray-900">
-              Choose template
-            </h2>
-            <p className="text-xs text-gray-500">
-              Select a template to update the preview
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {TEMPLATE_OPTIONS.map((template) => {
-              const isSelected = selectedTemplate === template.key;
-
-              return (
-                <button
-                  key={template.key}
-                  type="button"
-                  onClick={() => setSelectedTemplate(template.key)}
-                  className={[
-                    "rounded-lg border p-4 text-left transition-all",
-                    "hover:border-gray-400 hover:bg-gray-50",
-                    "focus:outline-none focus:ring-2 focus:ring-blue-500",
-                    isSelected
-                      ? "border-blue-600 bg-blue-50 shadow-sm"
-                      : "border-gray-200 bg-white",
-                  ].join(" ")}
-                >
-                  <div className="mb-3 rounded border bg-gray-50 p-2">
-                    <div className="mx-auto h-16 w-12 rounded-sm border bg-white shadow-sm">
-                      <div className="p-1.5">
-                        <div
-                          className={`mb-1 h-1 rounded ${
-                            template.key === "modern"
-                              ? "bg-slate-700"
-                              : "bg-gray-500"
-                          }`}
-                        />
-                        <div className="mb-1 h-1 rounded bg-gray-300" />
-                        <div className="mb-1 h-1 rounded bg-gray-300" />
-                        {template.key === "ats" && (
-                          <>
-                            <div className="mb-1 h-1 rounded bg-gray-300" />
-                            <div className="h-1 rounded bg-gray-300" />
-                          </>
-                        )}
-                        {template.key === "modern" && (
-                          <>
-                            <div className="mb-1 h-2 w-3 rounded bg-teal-500" />
-                            <div className="h-1 rounded bg-gray-300" />
-                          </>
-                        )}
-                        {template.key === "classic" && (
-                          <>
-                            <div className="mx-auto mb-1 h-1 w-6 rounded bg-gray-500" />
-                            <div className="mx-auto h-1 w-5 rounded bg-gray-300" />
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-gray-900">
-                      {template.label}
-                    </span>
-
-                    <span
-                      className={[
-                        "h-3 w-3 rounded-full border",
-                        isSelected
-                          ? "border-blue-600 bg-blue-600"
-                          : "border-gray-300 bg-white",
-                      ].join(" ")}
-                    />
-                  </div>
-
-                  <p className="text-xs text-gray-600">
-                    {template.description}
-                  </p>
-                </button>
-              );
-            })}
           </div>
         </div>
       </div>

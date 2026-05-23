@@ -10,5 +10,5 @@ export const Route = createFileRoute("/_app/preview/$reportId")({
 });
 
 function RouteComponent() {
-  return <div className="w-full h-full"></div>;
+  return <div className="w-full h-full border"></div>;
 }
