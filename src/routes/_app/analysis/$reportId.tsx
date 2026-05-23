@@ -1,9 +1,11 @@
-// RouteComponent.tsx
-import { createFileRoute } from "@tanstack/react-router";
-import React, { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import React, { useState, useEffect } from "react";
 import { aiProcessedSampleData } from "../../../../ai_process_sample_dataV2";
 import ScorePanel from "#/components/pages/analysis/ScorePanel";
 import { AiDiffField } from "#/components/pages/analysis/AiDiffField";
+import { AutoSaveNotification } from "#/components/pages/analysis/AutoSaveNotification";
+import { convertToFormat3 } from "#/lib/resumeConverter";
+import { saveResumeToDB } from "#/lib/storage";
 
 export const Route = createFileRoute("/_app/analysis/$reportId")({
   loader: async ({ params }) => ({
@@ -38,7 +40,14 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
 );
 
 function RouteComponent() {
+  const navigate = useNavigate();
+  const { reportId } = Route.useParams();
   const initialData = aiProcessedSampleData[0].resume_review.sections;
+
+  // Notification state
+  const [saveStatus, setSaveStatus] = useState<
+    "saving" | "saved" | "error" | null
+  >(null);
 
   // State for all sections
   const [profile, setProfile] = useState(initialData.profile);
@@ -52,6 +61,55 @@ function RouteComponent() {
   const [awards, setAwards] = useState(initialData.awards);
   const [publications, setPublications] = useState(initialData.publications);
   const [references, setReferences] = useState(initialData.references);
+
+  // Save function
+  const saveToDatabase = async () => {
+    try {
+      setSaveStatus("saving");
+
+      const currentData = {
+        profile,
+        education,
+        experience,
+        projects,
+        skills,
+        certificates,
+        languages,
+        interests,
+        awards,
+        publications,
+        references,
+      };
+      console.log("🚀 ~ currentData:", currentData);
+
+      const format3Data = convertToFormat3(currentData);
+      await saveResumeToDB(reportId, format3Data);
+
+      // console.log("Saved data (format_3):", format3Data);
+
+      setSaveStatus("saved");
+    } catch (error) {
+      console.error("Save failed:", error);
+      setSaveStatus("error");
+    }
+  };
+
+  // Save whenever any state changes
+  useEffect(() => {
+    saveToDatabase();
+  }, [
+    profile,
+    education,
+    experience,
+    projects,
+    skills,
+    certificates,
+    languages,
+    interests,
+    awards,
+    publications,
+    references,
+  ]);
 
   // Handler for normal input fields (non-AI fields)
   const handlePrimitiveChange = (
@@ -205,15 +263,38 @@ function RouteComponent() {
     }
   };
 
+  // Preview button handler
+  const handlePreviewClick = async () => {
+    await saveToDatabase();
+    navigate({ to: `/preview/${reportId}` });
+  };
+
   return (
     <div className="w-full h-full flex overflow-hidden">
+      <AutoSaveNotification
+        status={saveStatus}
+        onClose={() => setSaveStatus(null)}
+      />
+
       <main className="h-full min-h-0 flex-1 flex flex-col">
         <div className="w-full flex flex-col p-3">
-          <h1 className="text-lg text-text-primary">Enhance Resume Report</h1>
-          <h3 className="text-xxs text-text-muted">
-            Review your change. Accept or edit AI suggestions to finalize your
-            resume.
-          </h3>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-lg text-text-primary">
+                Enhance Resume Report
+              </h1>
+              <h3 className="text-xxs text-text-muted">
+                Review your change. Accept or edit AI suggestions to finalize
+                your resume.
+              </h3>
+            </div>
+            <button
+              onClick={handlePreviewClick}
+              className="px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-hover text-xs transition-colors cursor-pointer"
+            >
+              Preview Resume
+            </button>
+          </div>
         </div>
         {/* PROFILE SECTION */}
         <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 p-2">

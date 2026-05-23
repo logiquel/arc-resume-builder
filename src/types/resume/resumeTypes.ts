@@ -1,4 +1,3 @@
-
 // ==================== DATA INTERFACES ====================
 
 export interface ProfileLink {
@@ -92,4 +91,28 @@ export interface ReferenceData {
   organization: string;
   email: string;
   phone: string;
+}
+
+export interface Format3Data {
+  profile: {
+    profile_picture: string;
+    first_name: string;
+    last_name: string;
+    professional_title: string;
+    email: string;
+    phone: string;
+    location: string;
+    links: ProfileLink[];
+    summary: string;
+  };
+  education: EducationData[];
+  experience: ExperienceData[];
+  projects: ProjectData[];
+  certificates: CertificateData[];
+  skills: SkillData[];
+  languages: LanguageData[];
+  interests: InterestData[];
+  awards: AwardData[];
+  publications: PublicationData[];
+  references: ReferenceData[];
 }
