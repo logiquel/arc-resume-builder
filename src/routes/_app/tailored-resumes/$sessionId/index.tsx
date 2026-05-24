@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { tailoringSessionSampleData } from "#/types/resume/tailoringSessionSampleData";
 import ScorePanel from "#/components/pages/analysis/ScorePanel";
 import { AiDiffField } from "#/components/pages/analysis/AiDiffField";
@@ -96,7 +96,6 @@ const FieldLabel: React.FC<{
 );
 
 function RouteComponent() {
-  const navigate = useNavigate();
   const { sessionId } = Route.useParams();
   const { tailoringSession: loaderTailoringSession } = Route.useLoaderData();
 
@@ -250,10 +249,6 @@ function RouteComponent() {
     });
   };
 
-  const handlePreviewClick = () => {
-    navigate({ to: `/tailored-resumes/${sessionId}/preview` });
-  };
-
   return (
     <div className="w-full h-full flex overflow-hidden">
       <AutoSaveNotification
@@ -275,7 +270,7 @@ function RouteComponent() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 p-3">
+          <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 px-3">
             <section
               className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
               style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
