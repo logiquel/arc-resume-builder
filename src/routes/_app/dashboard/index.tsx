@@ -3,7 +3,6 @@ import resumeMock1 from "../../../../public/sample_resume_image.jpg";
 import resumeMock2 from "../../../../public/sample_resume_image_2.jpg";
 import resumeMock3 from "../../../../public/sample_resume_image_3.jpg";
 import resumeMock4 from "../../../../public/sample_resume_image_4.jpg";
-import { sampleResume } from "../../../../sample_resume_data";
 import { Icon } from "@iconify/react";
 import { useRef, useState, useEffect } from "react";
 import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";

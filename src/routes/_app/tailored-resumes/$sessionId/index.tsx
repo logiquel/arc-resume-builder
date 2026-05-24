@@ -33,13 +33,17 @@ export const Route = createFileRoute("/_app/tailored-resumes/$sessionId/")({
 interface SectionHeadingProps {
   sectionLabel: string;
   entriesCount?: number;
+  sectionIcon?: string;
 }
 
 const SectionHeading: React.FC<SectionHeadingProps> = ({
   sectionLabel,
   entriesCount,
+  sectionIcon = "",
 }) => (
-  <div className="w-full flex items-center px-5 py-4 border-b border-black/10 top-0 bg-white z-10">
+  <div className="w-full flex items-center px-5 py-4 border-b border-black/10 top-0 bg-white z-10 shadow-[0_8px_16px_-8px_rgba(0,0,0,0.06),0_4px_8px_-4px_rgba(0,0,0,0.03)]">
+    <Icon icon={sectionIcon} className="text-xs text-text-muted mr-1" />
+
     <h1 className="text-xxs font-medium text-brand uppercase">
       {sectionLabel}
     </h1>
@@ -269,13 +273,6 @@ function RouteComponent() {
                 your resume.
               </h3>
             </div>
-
-            <button
-              onClick={handlePreviewClick}
-              className="px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand-hover text-xs transition-colors cursor-pointer"
-            >
-              Preview Resume
-            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 p-3">
@@ -283,7 +280,10 @@ function RouteComponent() {
               className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
               style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
             >
-              <SectionHeading sectionLabel="Profile" />
+              <SectionHeading
+                sectionLabel="Profile"
+                sectionIcon="ri:user-6-line"
+              />
 
               <div className="w-full grid grid-cols-3 p-5 gap-3">
                 <fieldset className="flex flex-col">
@@ -416,6 +416,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Education"
                 entriesCount={education.entries?.length}
+                sectionIcon="qlementine-icons:education-16"
               />
 
               {education.entries?.map((edu: any, idx: number) => (
@@ -537,6 +538,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Work Experience"
                 entriesCount={experience.entries?.length}
+                sectionIcon="famicons:briefcase-outline"
               />
 
               {experience.entries?.map((exp: any, idx: number) => (
@@ -662,6 +664,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Projects"
                 entriesCount={projects.entries?.length}
+                sectionIcon="famicons:cube-outline"
               />
 
               {projects.entries?.map((project: any, idx: number) => (
@@ -763,6 +766,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Skills"
                 entriesCount={skills.entries?.length}
+                sectionIcon="hugeicons:compass-01"
               />
 
               {skills.entries?.map((skill: any, idx: number) => (
@@ -828,6 +832,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Certificates"
                 entriesCount={certificates.entries?.length}
+                sectionIcon="ph:certificate"
               />
 
               {certificates.entries?.map((cert: any, idx: number) => (
@@ -927,6 +932,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Languages"
                 entriesCount={languages.entries?.length}
+                sectionIcon="heroicons:language-solid"
               />
 
               {languages.entries?.map((lang: any, idx: number) => (
@@ -980,6 +986,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Interests"
                 entriesCount={interests.entries?.length}
+                sectionIcon="solar:gamepad-linear"
               />
 
               <div className="w-full flex flex-wrap p-5 gap-2">
@@ -1008,6 +1015,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Awards"
                 entriesCount={awards.entries?.length}
+                sectionIcon="hugeicons:award-01"
               />
 
               {awards.entries?.map((award: any, idx: number) => (
@@ -1084,6 +1092,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="Publications"
                 entriesCount={publications.entries?.length}
+                sectionIcon="ph:books-light"
               />
 
               {publications.entries?.map((pub: any, idx: number) => (
@@ -1183,6 +1192,7 @@ function RouteComponent() {
               <SectionHeading
                 sectionLabel="References"
                 entriesCount={references.entries?.length}
+                sectionIcon="bi:people"
               />
 
               {references.entries?.map((ref: any, idx: number) => (

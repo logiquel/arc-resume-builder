@@ -51,8 +51,7 @@ export const tailoringSessionSampleData: TailoringSession = {
         old_format: "text",
         new_format: "text",
         diff_mode: "inline",
-        status: "accepted",
-        resolved_value: "Senior Full Stack Engineer",
+        status: "pending",
       },
       summary: {
         old_value:
@@ -82,8 +81,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             old_format: "text",
             new_format: "text",
             diff_mode: "inline",
-            status: "rejected",
-            resolved_value: "BS Computer Science",
+            status: "pending",
           },
           score: "3.8 GPA",
           description: {
@@ -97,12 +95,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             old_format: "para",
             new_format: "bullet_points",
             diff_mode: "structural",
-            status: "accepted",
-            resolved_value: [
-              "Graduated with 3.8 GPA, earning Dean's List honors for 6 consecutive semesters",
-              "Developed full-stack social media analytics tool using React and Python, processing 10,000+ daily posts",
-              "Led robotics club team of 15 members, winning 2nd place in regional competition",
-            ],
+            status: "pending",
           },
         },
       ],
@@ -136,13 +129,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             old_format: "para",
             new_format: "bullet_points",
             diff_mode: "structural",
-            status: "accepted",
-            resolved_value: [
-              "Architected and built 25+ responsive UI components using React and TypeScript, serving 1M+ daily active users",
-              "Collaborated with design team to implement pixel-perfect interfaces, reducing design-to-development handoff by 40%",
-              "Optimized web performance achieving 95+ Lighthouse score and reducing LCP from 3.2s to 1.1s",
-              "Integrated 15+ microservices APIs, enabling real-time data synchronization across 5 platforms",
-            ],
+            status: "pending",
           },
         },
         {

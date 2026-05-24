@@ -51,7 +51,7 @@ const ResumeScoreCard: React.FC<ResumeScoreCard> = ({ score }) => {
   return (
     <div className="relative z-10 w-full flex flex-col items-center justify-center">
       <h2 className="text-tiny font-medium text-brand">RESUME SCORE</h2>
-      <svg viewBox="0 0 100 54" className="w-[80%] overflow-visible">
+      <svg viewBox="0 0 100 54" className="w-[60%] overflow-visible">
         {segments.map((seg, i) => (
           <path
             key={i}
@@ -100,7 +100,7 @@ const ResumeScoreCard: React.FC<ResumeScoreCard> = ({ score }) => {
         />
       </svg>
       <div className="w-full mt-3 flex flex-col items-center justify-center text-center">
-        <div className="text-xl font-mono tracking-tight text-text-primary leading-none">
+        <div className="text-lg font-mono tracking-tight text-text-primary leading-none">
           {clampedScore}
           <span className="ml-0.5 text-base font-sans font-medium text-slate-400">
             %
