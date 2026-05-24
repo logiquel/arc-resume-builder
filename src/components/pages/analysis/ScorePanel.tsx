@@ -32,11 +32,11 @@ const ScorePanel = () => {
 
   return (
     <aside className="w-[23vw] h-full flex flex-col border-l border-black/10">
-      <div className="w-full flex-1  min-h-0 flex flex-col space-y-4 p-4 bg-white border-black/10  shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] relative overflow-y-scroll custom-scrollbar before:absolute before:inset-0 before:bg-linear-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
+      <div className="w-full flex-1  min-h-0 flex flex-col space-y-4 bg-white border-black/10 relative overflow-y-scroll custom-scrollbar before:absolute before:inset-0 before:bg-linear-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
         <div className="relative z-10 w-full flex items-center justify-center">
           <ResumeScoreCard score={75} />
         </div>
-        <div className="w-full flex flex-col space-y-4 mt-4">
+        <div className="w-full flex flex-col space-y-4 mt-4 px-4">
           <div className="w-full flex flex-col space-y-4">
             {/* MATCHED KEYWORDS */}
             <div className="w-full flex flex-col space-y-3">
@@ -76,14 +76,14 @@ const ScorePanel = () => {
           </div>
         </div>
       </div>
-      <div className="w-full flex aspect-[2/0.8] p-4 bg-white">
+      <div className="w-full flex aspect-2/1 p-3.5 bg-white">
         <div
           className="flex-1 w-full flex rounded-2xl border border-black/10 bg-white"
           style={{
             boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
           }}
         >
-          <div className="flex-1 h-full flex flex-col justify-between pl-3 py-3">
+          <div className="flex-1 h-full flex flex-col justify-center px-3">
             <div className="flex flex-col">
               <h2 className="text-sm font-semibold text-text-primary tracking-tight">
                 Ready to Download?

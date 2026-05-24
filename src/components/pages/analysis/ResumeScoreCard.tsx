@@ -50,7 +50,7 @@ const ResumeScoreCard: React.FC<ResumeScoreCard> = ({ score }) => {
   const needleY = cy - innerR * Math.sin(angle);
   return (
     <div className="relative z-10 w-full flex flex-col items-center justify-center">
-      <h2 className="text-tiny font-medium text-brand">RESUME SCORE</h2>
+      {/* <h2 className="text-tiny font-medium text-brand">RESUME SCORE</h2> */}
       <svg viewBox="0 0 100 54" className="w-[60%] overflow-visible">
         {segments.map((seg, i) => (
           <path

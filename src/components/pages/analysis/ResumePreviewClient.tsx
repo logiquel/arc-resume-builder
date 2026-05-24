@@ -192,7 +192,7 @@ export default function ResumePreviewClient({
 
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">
-      <header className="relative w-full shrink-0 py-1 flex items-center justify-center bg-white border-b shadow-[0_4px_12px_-2px_rgba(14,165,233,0.08)]">
+      <header className="relative w-full shrink-0 py-1 flex items-center justify-center ">
         <div className="h-auto flex items-center">
           <div className="h-full flex items-center gap-2 px-3">
             <button
@@ -206,7 +206,7 @@ export default function ResumePreviewClient({
               />
             </button>
 
-            <span className="w-12 text-center text-xxs text-brand font-medium  py-1 rounded-sm border border-black/5 bg-gray-50">
+            <span className="w-12 text-center text-xxs text-brand font-medium  py-1 rounded-sm border border-black/5 bg-white">
               {Math.round(zoom * 100)}%
             </span>
 

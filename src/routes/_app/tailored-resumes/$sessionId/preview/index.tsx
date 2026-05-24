@@ -87,14 +87,14 @@ function RouteComponent() {
 
   return (
     <div className="w-full h-full flex">
-      <aside className="w-[23vw] h-full flex flex-col gap-y-4 border-r bg-white">
+      <aside className="w-[23vw] h-full flex flex-col gap-y-4 border-r border-black/5">
         <h2 className="text-lg flex flex-col text-text-primary font-medium px-4 pt-4">
           Templates
           <span className="text-tiny text-text-muted font-normal">
             Choose template to preview how your tailored resume will look.
           </span>
         </h2>
-        <div className="w-full grid grid-cols-2 gap-x-6 gap-y-2 items-start overflow-y-scroll custom-scrollbar px-4">
+        <div className="w-full grid grid-cols-2 gap-x-6 gap-y-2 items-start overflow-y-scroll hide-scrollbar px-4">
           {TEMPLATE_OPTIONS.map((template, i) => (
             <div
               key={i}
