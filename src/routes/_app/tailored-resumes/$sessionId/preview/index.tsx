@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { tailoringSessionSampleData } from "#/types/resume/tailoringSessionSampleData";
 import type { TailoringSession } from "#/types/resume/tailorSessionTypes";
@@ -6,6 +6,7 @@ import ResumePreviewClient, {
   type ResumePreviewTemplateKey,
 } from "#/components/pages/analysis/ResumePreviewClient";
 import { resolveResumeToFormat3 } from "#/lib/resolveResumeConverter";
+import { Icon } from "@iconify/react";
 
 type TemplateOption = {
   key: ResumePreviewTemplateKey;
@@ -20,7 +21,14 @@ const TEMPLATE_OPTIONS: TemplateOption[] = [
     name: "ATS",
     description:
       "Clean and scanner-friendly layout for structured hiring flows.",
-    thumbnail: "/sample_resume_image.jpg",
+    thumbnail: "/ats_template_thumb.png",
+  },
+  {
+    key: "atsAesthetic",
+    name: "ATS Aesthetic",
+    description:
+      "Clean and scanner-friendly layout for structured hiring flows.",
+    thumbnail: "/ats_aesthetic_template_thumb.png",
   },
   {
     key: "modern",
@@ -31,6 +39,12 @@ const TEMPLATE_OPTIONS: TemplateOption[] = [
   {
     key: "classic",
     name: "Classic",
+    description: "Traditional professional resume style with familiar spacing.",
+    thumbnail: "/sample_resume_image_3.jpg",
+  },
+  {
+    key: "twoColumn",
+    name: "ATS Dual Column",
     description: "Traditional professional resume style with familiar spacing.",
     thumbnail: "/sample_resume_image_3.jpg",
   },
@@ -72,67 +86,55 @@ function RouteComponent() {
   );
 
   return (
-    <div className="w-full h-full flex overflow-hidden bg-[#F8FAFC]">
-      <aside className="w-[340px] min-w-[340px] h-full border-r border-black/10 bg-white p-4 overflow-y-auto">
-        <div className="mb-5">
-          <h1 className="text-base font-semibold text-text-primary">
-            Choose Template
-          </h1>
-          <p className="text-xs text-text-muted mt-1">
-            Select a template to preview your tailored resume.
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          {TEMPLATE_OPTIONS.map((template) => {
-            const isSelected = selectedTemplate === template.key;
-
-            return (
-              <button
-                key={template.key}
-                type="button"
+    <div className="w-full h-full flex">
+      <aside className="w-[23vw] h-full flex flex-col gap-y-4 border-r bg-white">
+        <h2 className="text-lg flex flex-col text-text-primary font-medium px-4 pt-4">
+          Templates
+          <span className="text-tiny text-text-muted font-normal">
+            Choose template to preview how your tailored resume will look.
+          </span>
+        </h2>
+        <div className="w-full grid grid-cols-2 gap-x-6 gap-y-2 items-start overflow-y-scroll custom-scrollbar px-4">
+          {TEMPLATE_OPTIONS.map((template, i) => (
+            <div
+              key={i}
+              className="relative flex-1 h-fit border-black/15 flex flex-col items-center bg-[#FAFAFA]/0 rounded-0 cursor-pointer transition-all duration-300 group"
+            >
+              <span className="w-fit ml-1 self-start text-tiny text-text-muted font-medium mb-1">
+                # {i + 1}.
+              </span>
+              <div
                 onClick={() => setSelectedTemplate(template.key)}
-                className={[
-                  "w-full text-left rounded-2xl border p-3 transition-all cursor-pointer",
-                  isSelected
-                    ? "border-brand bg-brand/5 shadow-sm"
-                    : "border-black/10 bg-white hover:border-black/20 hover:bg-gray-50",
-                ].join(" ")}
+                className={`relative w-full aspect-[1/1.414] bg-[#E7E8F1] rounded border ${selectedTemplate === template.key ? "border-[#0A65CC]" : "border-black/5"}  relative translate-y-2 group-hover:translate-y-0 transition-all duration-300`}
+                style={{
+                  boxShadow: "rgba(14, 165, 233, 0.15) 0px 7px 29px 0px",
+                }}
               >
-                <div className="w-full aspect-[3/4] overflow-hidden rounded-xl border border-black/10 bg-gray-100 mb-3">
-                  <img
-                    src={template.thumbnail}
-                    alt={`${template.name} template thumbnail`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                {/* Absolute positioning locks the image down to prevent container pushing */}
+                <img
+                  src={template.thumbnail}
+                  className="absolute top-0 left-0 w-full h-full object-cover object-top rounded-[inherit]"
+                />
 
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h2 className="text-sm font-semibold text-text-primary">
-                      {template.name}
-                    </h2>
-                    <p className="text-xs text-text-muted mt-1 leading-5">
-                      {template.description}
-                    </p>
+                {selectedTemplate === template.key && (
+                  <div className="w-4.5 h-4.5 rounded-full shadow-sm  bg-[#0A65CC] flex items-center justify-center absolute top-0 right-0 translate-x-1/3 -translate-y-1/3">
+                    <Icon
+                      icon="si:check-fill"
+                      className="text-white w-[60%] h-[60%]"
+                    />
                   </div>
-
-                  <span
-                    className={[
-                      "mt-0.5 h-3.5 w-3.5 rounded-full border shrink-0",
-                      isSelected
-                        ? "border-brand bg-brand"
-                        : "border-gray-300 bg-white",
-                    ].join(" ")}
-                  />
-                </div>
-              </button>
-            );
-          })}
+                )}
+              </div>
+              <div className="w-full flex flex-col bg-[#F9FBFC]/70 px-1.5 py-2 pt-[12%]">
+                <h2 className="text-xxs text-text-secondary">
+                  {template.name}
+                </h2>
+              </div>
+            </div>
+          ))}
         </div>
       </aside>
-
-      <main className="flex-1 min-w-0 h-full">
+      <main className="flex-1 min-w-0 min-h-0 h-full flex flex-col overflow-hidden">
         <ResumePreviewClient
           data={format3Data}
           selectedTemplate={selectedTemplate}

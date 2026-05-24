@@ -6,6 +6,7 @@ export interface ProfileLink {
   value: string;
   icon: string;
 }
+
 export interface ProfileData {
   profile_picture: string;
   first_name: string;
@@ -26,7 +27,7 @@ export interface EducationData {
   start_date: string | null;
   end_date: string | null;
   link: string;
-  description: string;
+  description: string | string[]; // Can be paragraph string or bullet points array
 }
 
 export interface ExperienceData {
@@ -35,7 +36,7 @@ export interface ExperienceData {
   location: string;
   start_date: string | null;
   end_date: string | null;
-  description: string;
+  description: string | string[]; // Can be paragraph string or bullet points array
 }
 
 export interface ProjectData {
@@ -44,7 +45,7 @@ export interface ProjectData {
   link: string;
   start_date: string | null;
   end_date: string | null;
-  description: string;
+  description: string | string[]; // Can be paragraph string or bullet points array
 }
 
 export interface CertificateData {
@@ -53,7 +54,7 @@ export interface CertificateData {
   issue_date: string | null;
   expiry_date: string | null;
   link: string;
-  description: string;
+  description: string; // Usually a single string for certificates
 }
 
 export interface SkillData {
@@ -74,7 +75,7 @@ export interface AwardData {
   title: string;
   awarder: string;
   date: string | null;
-  description: string;
+  description: string; // Usually a single string for awards
 }
 
 export interface PublicationData {
@@ -82,7 +83,7 @@ export interface PublicationData {
   publisher: string;
   date: string | null;
   link: string;
-  description: string;
+  description: string; // Usually a single string for publications
 }
 
 export interface ReferenceData {

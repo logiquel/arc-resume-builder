@@ -30,7 +30,7 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
   return (
     <div className="w-full flex items-center gap-x-2 bg-[#F9FBFC] mb-4 px-1">
       <h1 className="text-xs uppercase text-brand font-medium">{label}</h1>
-      <span className="flex-1 h-[0.025rem] bg-gray-300"></span>
+      <span className="flex-1 h-[0.025rem] bg-gray-300">{secondaryLabel}</span>
     </div>
   );
 };

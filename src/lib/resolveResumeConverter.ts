@@ -18,7 +18,22 @@ const resolveDiffValue = <T extends string | string[]>(
   if (!value) return fallback;
   if (!isDiffField(value)) return value as T;
 
-  return (value.resolved_value ?? value.old_value ?? fallback) as T;
+  // If resolved_value exists, use it
+  if (value.resolved_value !== undefined) {
+    return value.resolved_value as T;
+  }
+
+  // Otherwise use old_value or fallback based on status?
+  // Default to new_value if accepted, old_value if rejected
+  if (value.status === "accepted") {
+    return value.new_value ?? fallback;
+  }
+  if (value.status === "rejected") {
+    return value.old_value ?? fallback;
+  }
+
+  // For pending, use new_value as default
+  return value.new_value ?? value.old_value ?? fallback;
 };
 
 const toString = (value: string | string[] | null | undefined): string => {
@@ -26,11 +41,21 @@ const toString = (value: string | string[] | null | undefined): string => {
   return value ?? "";
 };
 
-const toMultilineString = (
-  value: string | string[] | null | undefined,
-): string => {
-  if (Array.isArray(value)) return value.filter(Boolean).join("\n");
-  return value ?? "";
+// Keep arrays as arrays - don't convert to string
+const resolveDescription = (
+  value: string | string[] | DiffField<string | string[]> | null | undefined,
+  fallback: string | string[] = "",
+): string | string[] => {
+  if (!value) return fallback;
+
+  if (!isDiffField(value)) {
+    // If it's already a string or array, return as-is
+    return value;
+  }
+
+  // Handle DiffField
+  const resolved = resolveDiffValue(value, fallback as string | string[]);
+  return resolved;
 };
 
 const mapProfileLinks = (
@@ -62,7 +87,7 @@ export const resolveResumeToFormat3 = (
       phone: changes.profile.phone ?? "",
       location: changes.profile.location ?? "",
       links: mapProfileLinks(changes.profile.links),
-      summary: toMultilineString(resolveDiffValue(changes.profile.summary, "")),
+      summary: toString(resolveDiffValue(changes.profile.summary, "")),
     },
 
     education: (changes.education.entries ?? []).map((item) => ({
@@ -73,10 +98,7 @@ export const resolveResumeToFormat3 = (
       link: item.link ?? "",
       degree: toString(resolveDiffValue(item.degree, "")),
       score: item.score ?? "",
-      description:
-        typeof item.description === "string"
-          ? item.description
-          : toMultilineString(resolveDiffValue(item.description, "")),
+      description: resolveDescription(item.description, ""),
     })),
 
     experience: (changes.experience.entries ?? []).map((item) => ({
@@ -85,10 +107,7 @@ export const resolveResumeToFormat3 = (
       start_date: item.start_date ?? "",
       end_date: item.end_date ?? "",
       position: toString(resolveDiffValue(item.position, "")),
-      description:
-        typeof item.description === "string"
-          ? item.description
-          : toMultilineString(resolveDiffValue(item.description, "")),
+      description: resolveDescription(item.description, ""),
     })),
 
     projects: (changes.projects.entries ?? []).map((item) => ({
@@ -97,10 +116,7 @@ export const resolveResumeToFormat3 = (
       start_date: item.start_date ?? "",
       end_date: item.end_date ?? "",
       subtitle: toString(resolveDiffValue(item.subtitle, "")),
-      description:
-        typeof item.description === "string"
-          ? item.description
-          : toMultilineString(resolveDiffValue(item.description, "")),
+      description: resolveDescription(item.description, ""),
     })),
 
     certificates: (changes.certificates.entries ?? []).map((item) => ({
@@ -109,7 +125,7 @@ export const resolveResumeToFormat3 = (
       issue_date: item.issue_date ?? "",
       expiry_date: item.expiry_date ?? "",
       link: item.link ?? "",
-      description: toMultilineString(resolveDiffValue(item.description, "")),
+      description: toString(resolveDiffValue(item.description, "")),
     })),
 
     skills: (changes.skills.entries ?? []).map((item) => ({
@@ -130,7 +146,7 @@ export const resolveResumeToFormat3 = (
       title: toString(resolveDiffValue(item.title, "")),
       awarder: item.awarder ?? "",
       date: item.date ?? "",
-      description: toMultilineString(resolveDiffValue(item.description, "")),
+      description: toString(resolveDiffValue(item.description, "")),
     })),
 
     publications: (changes.publications.entries ?? []).map((item) => ({
@@ -138,7 +154,7 @@ export const resolveResumeToFormat3 = (
       publisher: item.publisher ?? "",
       date: item.date ?? "",
       link: item.link ?? "",
-      description: toMultilineString(resolveDiffValue(item.description, "")),
+      description: toString(resolveDiffValue(item.description, "")),
     })),
 
     references: (changes.references.entries ?? []).map((item) => ({

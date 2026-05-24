@@ -1,12 +1,12 @@
 import type { TailoringSession } from "#/types/resume/tailorSessionTypes";
 
 export const tailoringSessionSampleData: TailoringSession = {
-  id: "tailor_session_001",
+  id: "sess_8f3kLm29QaX7vP1d",
   user_id: "user_001",
   base_resume_id: "res_123456",
   name: "Senior Full Stack Engineer - Stripe",
   created_at: "2026-05-23T09:00:00.000Z",
-  updated_at: "2026-05-23T09:45:00.000Z",
+  updated_at: "2026-05-24T07:37:48.520Z",
   analysis: {
     score: 87,
     matched_keywords: [
@@ -32,9 +32,18 @@ export const tailoringSessionSampleData: TailoringSession = {
       phone: "+1 (555) 123-4567",
       location: "San Francisco, CA",
       links: [
-        { type: "github", url: "https://github.com/johndoe" },
-        { type: "linkedin", url: "https://linkedin.com/in/johndoe" },
-        { type: "portfolio", url: "https://johndoe.dev" },
+        {
+          type: "github",
+          url: "https://github.com/johndoe",
+        },
+        {
+          type: "linkedin",
+          url: "https://linkedin.com/in/johndoe",
+        },
+        {
+          type: "portfolio",
+          url: "https://johndoe.dev",
+        },
       ],
       professional_title: {
         old_value: "Developer",
@@ -43,6 +52,7 @@ export const tailoringSessionSampleData: TailoringSession = {
         new_format: "text",
         diff_mode: "inline",
         status: "accepted",
+        resolved_value: "Senior Full Stack Engineer",
       },
       summary: {
         old_value:
@@ -53,6 +63,8 @@ export const tailoringSessionSampleData: TailoringSession = {
         new_format: "para",
         diff_mode: "inline",
         status: "accepted",
+        resolved_value:
+          "Results-driven Full Stack Engineer with 5+ years of experience building scalable web applications. Expert in React and Node.js with proven track record of delivering high-impact features. Passionate about creating intuitive user experiences and optimizing backend performance. Seeking senior engineering role to drive technical excellence.",
       },
     },
     education: {
@@ -71,6 +83,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "rejected",
+            resolved_value: "BS Computer Science",
           },
           score: "3.8 GPA",
           description: {
@@ -84,7 +97,12 @@ export const tailoringSessionSampleData: TailoringSession = {
             old_format: "para",
             new_format: "bullet_points",
             diff_mode: "structural",
-            status: "pending",
+            status: "accepted",
+            resolved_value: [
+              "Graduated with 3.8 GPA, earning Dean's List honors for 6 consecutive semesters",
+              "Developed full-stack social media analytics tool using React and Python, processing 10,000+ daily posts",
+              "Led robotics club team of 15 members, winning 2nd place in regional competition",
+            ],
           },
         },
       ],
@@ -104,6 +122,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value: "Senior Frontend Engineer",
           },
           description: {
             old_value:
@@ -118,6 +137,12 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "bullet_points",
             diff_mode: "structural",
             status: "accepted",
+            resolved_value: [
+              "Architected and built 25+ responsive UI components using React and TypeScript, serving 1M+ daily active users",
+              "Collaborated with design team to implement pixel-perfect interfaces, reducing design-to-development handoff by 40%",
+              "Optimized web performance achieving 95+ Lighthouse score and reducing LCP from 3.2s to 1.1s",
+              "Integrated 15+ microservices APIs, enabling real-time data synchronization across 5 platforms",
+            ],
           },
         },
         {
@@ -133,6 +158,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "rejected",
+            resolved_value: "Backend Developer",
           },
           description: {
             old_value: [
@@ -149,6 +175,11 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "bullet_points",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value: [
+              "Designed and deployed 30+ scalable REST APIs using Node.js and Express, handling 500,000+ daily requests with 99.95% uptime",
+              "Managed AWS infrastructure serving 2M+ customers, reducing cloud costs by 25% through EC2 optimization",
+              "Implemented comprehensive unit and integration tests achieving 92% code coverage across 50+ microservices",
+            ],
           },
         },
       ],
@@ -169,6 +200,8 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value:
+              "Full-stack e-commerce platform using React, Node.js, MongoDB, and Stripe API",
           },
           description: {
             old_value:
@@ -183,6 +216,12 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "bullet_points",
             diff_mode: "structural",
             status: "accepted",
+            resolved_value: [
+              "Engineered full-stack e-commerce platform serving 5,000+ monthly users with 15% conversion rate",
+              "Integrated Stripe payment API processing $50,000+ in transactions with PCI compliance",
+              "Built admin dashboard with real-time inventory tracking, reducing stockouts by 60%",
+              "Implemented JWT authentication and Redis caching, improving page load speed by 45%",
+            ],
           },
         },
         {
@@ -215,6 +254,11 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "bullet_points",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value: [
+              "Built real-time task management app with drag-drop interface, serving 2,000+ registered users",
+              "Implemented WebSocket connections enabling instant updates for 100+ concurrent users",
+              "Optimized database queries reducing API response time from 400ms to 80ms",
+            ],
           },
         },
       ],
@@ -234,6 +278,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value: "AWS Certified Solutions Architect – Associate",
           },
           description: {
             old_value:
@@ -244,6 +289,8 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "para",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value:
+              "Mastered designing cost-optimized, highly available distributed systems on AWS. Gained hands-on expertise in EC2, S3, VPC, Lambda, and CloudFormation for scalable cloud architecture.",
           },
         },
         {
@@ -258,7 +305,8 @@ export const tailoringSessionSampleData: TailoringSession = {
             old_format: "text",
             new_format: "text",
             diff_mode: "inline",
-            status: "pending",
+            status: "accepted",
+            resolved_value: "Meta Frontend Developer Professional Certificate",
           },
           description: {
             old_value:
@@ -269,6 +317,8 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "para",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value:
+              "Completed comprehensive training in React, Redux, and Jest testing. Built 5 production-ready frontend applications as part of capstone projects.",
           },
         },
       ],
@@ -284,6 +334,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value: "React",
           },
           level: "Advanced",
         },
@@ -296,6 +347,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value: "Node.js",
           },
           level: "Advanced",
         },
@@ -308,6 +360,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value: "Python",
           },
           level: "Intermediate",
         },
@@ -319,7 +372,8 @@ export const tailoringSessionSampleData: TailoringSession = {
             old_format: "text",
             new_format: "text",
             diff_mode: "inline",
-            status: "pending",
+            status: "accepted",
+            resolved_value: "AWS (EC2, S3, Lambda)",
           },
           level: "Intermediate",
         },
@@ -383,6 +437,7 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value: "Best Innovation Award – Google Hackathon 2023",
           },
           description: {
             old_value:
@@ -393,6 +448,8 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "para",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value:
+              "Recognized among 500+ participants for developing a carbon footprint tracking app. Selected by executive panel for outstanding technical execution and business impact.",
           },
         },
       ],
@@ -412,6 +469,8 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "text",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value:
+              "Optimizing Web Application Performance: A Comprehensive Study of Modern Techniques",
           },
           description: {
             old_value:
@@ -422,6 +481,8 @@ export const tailoringSessionSampleData: TailoringSession = {
             new_format: "para",
             diff_mode: "inline",
             status: "accepted",
+            resolved_value:
+              "Published research on web performance optimization analyzing 10+ techniques including code splitting, lazy loading, and CDN strategies. Cited by 25+ researchers and presented at International Conference on Web Engineering.",
           },
         },
       ],

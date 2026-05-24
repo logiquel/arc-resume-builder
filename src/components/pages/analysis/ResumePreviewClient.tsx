@@ -8,13 +8,18 @@ import { ClassicTemplate } from "#/components/templates/ClassicTemplate";
 
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { Icon } from "@iconify/react";
+import TwoColumnTemplate from "#/components/templates/TwoColumnTemplate";
+import { ATSAesthetic } from "#/components/templates/ATSAestheticTemplate";
 
 type ReactPdfModule = typeof import("react-pdf");
 
 const TEMPLATE_MAP = {
   ats: ATSTemplate,
+  atsAesthetic: ATSAesthetic,
   modern: ModernTemplate,
-  classic: ClassicTemplate,
+  classic: ClassicTemplate, //OG
+  twoColumn: TwoColumnTemplate,
 } as const;
 
 export type ResumePreviewTemplateKey = keyof typeof TEMPLATE_MAP;
@@ -32,23 +37,25 @@ export default function ResumePreviewClient({
 }: ResumePreviewClientProps) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [numPages, setNumPages] = useState(0);
-  const [zoom, setZoom] = useState(1);
-  const [isPanning, setIsPanning] = useState(false);
+  // const [zoom, setZoom] = useState(0.6);
+  const [zoom, setZoom] = useState(0.8);
   const [reactPdf, setReactPdf] = useState<ReactPdfModule | null>(null);
   const [isGenerating, setIsGenerating] = useState(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const startPos = useRef({ x: 0, y: 0 });
-  const startScroll = useRef({ left: 0, top: 0 });
 
   const PDF_BASE_WIDTH = 794;
+  const PDF_BASE_HEIGHT = 1123;
+  const CANVAS_PADDING_X = 32 * 2;
+  const CANVAS_PADDING_Y = 32 * 2;
+  const PAGE_GAP = 32;
+  const TOOLBAR_HEIGHT = 0;
 
   useEffect(() => {
     let mounted = true;
 
     import("react-pdf").then((mod) => {
       mod.pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${mod.pdfjs.version}/build/pdf.worker.min.mjs`;
-
       if (mounted) setReactPdf(mod);
     });
 
@@ -80,16 +87,10 @@ export default function ResumePreviewClient({
         });
       } catch (err) {
         console.error("Error generating PDF:", err);
-        if (objectUrl) {
-          URL.revokeObjectURL(objectUrl);
-        }
-        if (active) {
-          setPdfUrl(null);
-        }
+        if (objectUrl) URL.revokeObjectURL(objectUrl);
+        if (active) setPdfUrl(null);
       } finally {
-        if (active) {
-          setIsGenerating(false);
-        }
+        if (active) setIsGenerating(false);
       }
     };
 
@@ -119,29 +120,38 @@ export default function ResumePreviewClient({
     return () => el.removeEventListener("wheel", handleWheel);
   }, []);
 
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (zoom <= 1 || !containerRef.current) return;
+  const getFitWidthZoom = () => {
+    const el = containerRef.current;
+    if (!el) return 0.65;
 
-    setIsPanning(true);
-    startPos.current = { x: e.clientX, y: e.clientY };
-    startScroll.current = {
-      left: containerRef.current.scrollLeft,
-      top: containerRef.current.scrollTop,
-    };
+    const availableWidth = el.clientWidth - CANVAS_PADDING_X;
+    const nextZoom = availableWidth / PDF_BASE_WIDTH;
 
-    e.currentTarget.setPointerCapture(e.pointerId);
+    return Math.min(3, Math.max(0.5, Math.round(nextZoom * 100) / 100));
   };
 
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isPanning || !containerRef.current) return;
+  const getFitPageZoom = () => {
+    const el = containerRef.current;
+    if (!el) return 0.65;
 
-    containerRef.current.scrollLeft =
-      startScroll.current.left - (e.clientX - startPos.current.x);
-    containerRef.current.scrollTop =
-      startScroll.current.top - (e.clientY - startPos.current.y);
+    const availableWidth = el.clientWidth - CANVAS_PADDING_X;
+    const availableHeight =
+      el.clientHeight - CANVAS_PADDING_Y - PAGE_GAP - TOOLBAR_HEIGHT;
+
+    const widthZoom = availableWidth / PDF_BASE_WIDTH;
+    const heightZoom = availableHeight / PDF_BASE_HEIGHT;
+    const nextZoom = Math.min(widthZoom, heightZoom);
+
+    return Math.min(3, Math.max(0.5, Math.round(nextZoom * 100) / 100));
   };
 
-  const stopPan = () => setIsPanning(false);
+  const handleFitWidth = () => {
+    setZoom(getFitWidthZoom());
+  };
+
+  const handleReset = () => {
+    setZoom(getFitPageZoom());
+  };
 
   const handleDownload = () => {
     if (!pdfUrl) return;
@@ -181,73 +191,79 @@ export default function ResumePreviewClient({
   const { Document, Page } = reactPdf;
 
   return (
-    <div className="flex h-full w-full flex-col">
-      <div className="border-b bg-white">
-        <div className="flex items-center justify-between px-6 py-3">
-          <h1 className="text-lg font-semibold text-text-primary">
-            Resume Preview
-          </h1>
+    <div className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">
+      <header className="relative w-full shrink-0 py-1 flex items-center justify-center bg-white border-b shadow-[0_4px_12px_-2px_rgba(14,165,233,0.08)]">
+        <div className="h-auto flex items-center">
+          <div className="h-full flex items-center gap-2 px-3">
+            <button
+              onClick={() => setZoom((z) => Math.max(0.5, z - 0.05))}
+              disabled={zoom <= 0.5}
+              className="rounded h-full flex items-center justify-center aspect-square border-black/10 group cursor-pointer disabled:cursor-not-allowed disabled:opacity-20"
+            >
+              <Icon
+                icon="tabler:minus"
+                className="text-xs text-text-primary group-hover:text-brand"
+              />
+            </button>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setZoom((z) => Math.max(0.5, z - 0.25))}
-                disabled={zoom <= 0.5}
-                className="rounded border px-2 py-1 text-sm hover:bg-gray-50 disabled:opacity-50"
-              >
-                −
-              </button>
-
-              <span className="min-w-[52px] text-center text-sm">
-                {Math.round(zoom * 100)}%
-              </span>
-
-              <button
-                onClick={() => setZoom((z) => Math.min(3, z + 0.25))}
-                disabled={zoom >= 3}
-                className="rounded border px-2 py-1 text-sm hover:bg-gray-50 disabled:opacity-50"
-              >
-                +
-              </button>
-
-              <button
-                onClick={() => setZoom(1)}
-                className="rounded border px-2 py-1 text-sm hover:bg-gray-50"
-              >
-                Reset
-              </button>
-            </div>
-
-            {numPages > 0 && (
-              <div className="border-l pl-4 text-sm text-gray-600">
-                {numPages} page{numPages > 1 ? "s" : ""}
-              </div>
-            )}
+            <span className="w-12 text-center text-xxs text-brand font-medium  py-1 rounded-sm border border-black/5 bg-gray-50">
+              {Math.round(zoom * 100)}%
+            </span>
 
             <button
-              onClick={handleDownload}
-              disabled={!pdfUrl}
-              className="rounded border px-4 py-1.5 text-sm hover:bg-gray-50 disabled:opacity-50"
+              onClick={() => setZoom((z) => Math.min(3, z + 0.05))}
+              disabled={zoom >= 3}
+              className="rounded h-full flex items-center justify-center aspect-square border-black/10 cursor-pointer group disabled:cursor-not-allowed"
             >
-              Download PDF
+              <Icon
+                icon="tabler:plus"
+                className="text-xs text-text-primary group-hover:text-brand"
+              />
             </button>
           </div>
+
+          <button
+            onClick={handleFitWidth}
+            className="h-full flex items-center px-3 py-1 border-x group border-black/20 gap-1 cursor-pointer"
+          >
+            <Icon
+              icon="material-symbols:fit-width-rounded"
+              className="text-xs text-text-primary group-hover:text-brand"
+            />
+          </button>
+
+          <button
+            onClick={handleReset}
+            className="h-full flex items-center px-3 py-1 rounded-sm gap-1 group border-black/10 cursor-pointer"
+          >
+            <Icon
+              icon="radix-icons:reset"
+              className="text-xs text-text-primary group-hover:text-brand"
+            />
+            <span className="text-text-primary text-xs group-hover:text-brand">
+              Reset
+            </span>
+          </button>
         </div>
-      </div>
+        <button
+          onClick={handleDownload}
+          className="absolute right-0 h-[80%] bg-brand flex items-center px-2 mr-2 py-1 rounded-sm gap-1 group border border-black/5 cursor-pointer"
+        >
+          <Icon
+            icon="mdi:download-outline"
+            className="text-xs text-white group-hover:text-brand"
+          />
+          <span className="text-white text-xxs group-hover:text-brand">
+            Download
+          </span>
+        </button>
+      </header>
 
       <div
         ref={containerRef}
-        className="flex-1 overflow-auto bg-gray-100 select-none"
-        style={{
-          cursor: zoom > 1 ? (isPanning ? "grabbing" : "grab") : "default",
-        }}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={stopPan}
-        onPointerLeave={stopPan}
-        onPointerCancel={stopPan}
+        className="flex-1 min-w-0 min-h-0 overflow-auto select-none custom-scrollbar p-8"
       >
-        <div className="flex justify-center p-8">
+        <div className="w-max min-w-full flex justify-center">
           <Document
             file={pdfUrl}
             onLoadSuccess={({ numPages }: { numPages: number }) => {
@@ -259,7 +275,10 @@ export default function ResumePreviewClient({
             {Array.from({ length: numPages }, (_, index) => (
               <div
                 key={`page_${index + 1}`}
-                className="mb-8 overflow-hidden rounded bg-white shadow-lg last:mb-0"
+                className="mb-8 overflow-hidden last:mb-0 border rounded-none"
+                style={{
+                  boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
+                }}
               >
                 <Page
                   pageNumber={index + 1}
@@ -275,3 +294,4 @@ export default function ResumePreviewClient({
     </div>
   );
 }
+//OG

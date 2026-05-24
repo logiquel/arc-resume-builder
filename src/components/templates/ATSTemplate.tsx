@@ -1,3 +1,4 @@
+import React from "react";
 import type { Format3Data } from "#/types/resume/resumeTypes";
 import {
   Document,
@@ -6,165 +7,263 @@ import {
   Text,
   StyleSheet,
   Font,
+  Link,
 } from "@react-pdf/renderer";
 
-// Register default fonts (ATS-friendly)
 Font.register({
-  family: "Helvetica",
+  family: "Outfit",
   fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0b.ttf",
-    },
+    { src: "/fonts/Outfit/Outfit-Regular.ttf", fontWeight: 400 },
+    { src: "/fonts/Outfit/Outfit-Medium.ttf", fontWeight: 500 },
+    { src: "/fonts/Outfit/Outfit-SemiBold.ttf", fontWeight: 600 },
+    { src: "/fonts/Outfit/Outfit-Bold.ttf", fontWeight: 700 },
   ],
 });
 
+// UNIFORM SPACING SYSTEM - Consistent vertical rhythm matching Professional Summary
+const SPACING = {
+  page: 30,
+  sectionTitleBottom: 4, // Space below section title (matches summary)
+  itemBottom: 8, // Space below each item
+  elementGap: 3, // Small gap between related elements
+  lineHeight: 1.45, // Consistent line height for all text
+};
+
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
-    fontFamily: "Helvetica",
+    padding: SPACING.page,
     backgroundColor: "#ffffff",
+    fontFamily: "Outfit",
+    color: "#333333",
   },
-  // Header
+
   header: {
-    marginBottom: 20,
-    borderBottom: "1px solid #cccccc",
-    paddingBottom: 15,
+    width: "100%",
+    marginBottom: 10,
+    paddingBottom: 10,
+    borderBottom: "1px solid #d9d9d9",
   },
   name: {
     fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 6,
-    color: "#000000",
+    color: "#111827",
+    fontWeight: 500,
+    marginBottom: 2,
   },
   title: {
     fontSize: 14,
-    color: "#333333",
-    marginBottom: 10,
+    color: "#374151",
+    fontWeight: 500,
+    marginBottom: 8,
   },
   contactRow: {
+    width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 8,
-    gap: 15,
+    rowGap: 6,
+    columnGap: 16,
   },
   contactText: {
-    fontSize: 9,
-    color: "#555555",
+    fontSize: 9.5,
+    color: "#4b5563",
   },
-  // Sections
+  contactLink: {
+    fontSize: 9.5,
+    color: "#0a65cc",
+    textDecoration: "none",
+  },
+
   section: {
-    marginTop: 15,
+    width: "100%",
+    marginBottom: 0,
   },
   sectionTitle: {
-    fontSize: 13,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: "#000000",
-    textTransform: "uppercase",
-    letterSpacing: 1,
+    fontSize: 11,
+    marginTop: 10,
+    marginBottom: SPACING.sectionTitleBottom, // Consistent with summary spacing
+    color: "#0a65cc",
+    letterSpacing: 1.5,
+    fontWeight: 600,
   },
-  // Items
+
+  summary: {
+    fontSize: 9.8,
+    color: "#374151",
+    lineHeight: SPACING.lineHeight,
+  },
+
   item: {
-    marginBottom: 12,
+    width: "100%",
+    marginBottom: SPACING.itemBottom,
   },
   itemHeader: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 4,
+    marginBottom: SPACING.elementGap,
+    gap: 10,
   },
   itemTitle: {
-    fontSize: 11,
-    fontWeight: "bold",
-    color: "#000000",
+    fontSize: 10.5,
+    color: "#111827",
+    fontWeight: 600,
+  },
+  itemDate: {
+    fontSize: 9,
+    color: "#6b7280",
+    textAlign: "right",
+  },
+  itemSubHeader: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: SPACING.elementGap,
+    gap: 10,
   },
   itemSubtitle: {
-    fontSize: 10,
-    color: "#555555",
-    marginBottom: 2,
+    fontSize: 9.5,
+    color: "#374151",
   },
-  date: {
+  itemLocation: {
     fontSize: 9,
-    color: "#777777",
+    color: "#6b7280",
+    textAlign: "right",
   },
-  location: {
-    fontSize: 9,
-    color: "#777777",
-    fontStyle: "italic",
-  },
+
   description: {
-    fontSize: 9,
-    lineHeight: 1.4,
-    color: "#333333",
-    marginTop: 4,
+    fontSize: 9.5,
+    color: "#374151",
+    lineHeight: SPACING.lineHeight,
+    marginTop: SPACING.elementGap,
   },
-  // Skills
-  skillsContainer: {
+  // Updated bullet text style with proper spacing
+  bulletText: {
+    fontSize: 9.5,
+    color: "#374151",
+    lineHeight: SPACING.lineHeight,
+    marginBottom: 2,
+    flexDirection: "row",
+  },
+  bulletPoint: {
+    width: 8,
+    fontSize: 9.5,
+    color: "#0a65cc",
+    marginRight: 0,
+  },
+  bulletContent: {
+    fontSize: 9.5,
+    color: "#374151",
+    lineHeight: SPACING.lineHeight,
+    flex: 1,
+  },
+
+  skillWrap: {
+    width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 6,
-    marginTop: 5,
-  },
-  skillItem: {
-    fontSize: 9,
-    color: "#333333",
-    paddingRight: 10,
-  },
-  skillDot: {
-    fontSize: 9,
-    color: "#555555",
-    marginRight: 4,
-  },
-  // Two column layout for some sections
-  twoColumn: {
-    flexDirection: "row",
-    gap: 20,
-  },
-  leftColumn: {
-    width: "45%",
-  },
-  rightColumn: {
-    width: "55%",
-  },
-  // Lists
-  bulletPoint: {
-    flexDirection: "row",
-    marginBottom: 4,
-  },
-  bulletSymbol: {
-    width: 10,
-    fontSize: 9,
-    color: "#555555",
-  },
-  bulletText: {
-    flex: 1,
-    fontSize: 9,
-    lineHeight: 1.4,
-    color: "#333333",
-  },
-  // Certifications & Awards
-  certItem: {
-    marginBottom: 8,
-  },
-  certName: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: "#000000",
-  },
-  certDetails: {
-    fontSize: 8,
-    color: "#777777",
+    columnGap: 10,
+    rowGap: 4,
     marginTop: 2,
   },
-  // Horizontal rule
-  hr: {
-    borderBottom: "1px solid #eeeeee",
-    marginVertical: 8,
+  skillItem: {
+    fontSize: 9.5,
+    color: "#374151",
+  },
+
+  smallText: {
+    fontSize: 9,
+    color: "#6b7280",
+    marginTop: SPACING.elementGap,
+  },
+
+  linkText: {
+    fontSize: 9,
+    color: "#0a65cc",
+    textDecoration: "none",
+    marginTop: SPACING.elementGap,
   },
 });
 
 interface ATSTemplateProps {
   data: Format3Data;
 }
+
+const safeArray = <T,>(value: T[] | null | undefined): T[] =>
+  Array.isArray(value) ? value : [];
+
+const hasText = (value?: string | null) =>
+  typeof value === "string" && value.trim().length > 0;
+
+const formatDate = (date?: string | null) => {
+  if (!date || !date.trim()) return "Present";
+
+  const [year, month] = date.split("-");
+  if (month) {
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const monthIndex = Number(month) - 1;
+    if (monthIndex >= 0 && monthIndex < 12) {
+      return `${monthNames[monthIndex]} ${year}`;
+    }
+  }
+
+  return year || date;
+};
+
+const normalizeHref = (value?: string | null) => {
+  if (!value || !value.trim()) return null;
+  const trimmed = value.trim();
+
+  if (
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("https://") ||
+    trimmed.startsWith("mailto:") ||
+    trimmed.startsWith("tel:")
+  ) {
+    return trimmed;
+  }
+
+  if (trimmed.includes("@")) return `mailto:${trimmed}`;
+  return `https://${trimmed}`;
+};
+
+// Updated renderDescription function with guaranteed bullet points using View layout
+const renderDescription = (description?: string | string[] | null) => {
+  if (!description) return null;
+
+  if (Array.isArray(description)) {
+    const items = description.filter((item) => hasText(item));
+    if (!items.length) return null;
+
+    return items.map((item, idx) => (
+      <View key={idx} style={styles.bulletText}>
+        <Text style={styles.bulletPoint}>•</Text>
+        <Text style={styles.bulletContent}>{item}</Text>
+      </View>
+    ));
+  }
+
+  if (!hasText(description)) return null;
+
+  // For single string, render with bullet point as well for consistency
+  return (
+    <View style={styles.bulletText}>
+      <Text style={styles.bulletPoint}>•</Text>
+      <Text style={styles.bulletContent}>{description}</Text>
+    </View>
+  );
+};
 
 export const ATSTemplate: React.FC<ATSTemplateProps> = ({ data }) => {
   const {
@@ -180,290 +279,284 @@ export const ATSTemplate: React.FC<ATSTemplateProps> = ({ data }) => {
     references,
   } = data;
 
-  // Helper to format date
-  const formatDate = (date: string | null) => {
-    if (!date) return "Present";
-    const [year, month] = date.split("-");
-    if (month) {
-      const monthNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      return `${monthNames[parseInt(month) - 1]} ${year}`;
-    }
-    return year;
-  };
-
-  // Parse description (could be string or array)
-  const renderDescription = (description: string | string[]) => {
-    if (Array.isArray(description)) {
-      return description.map((bullet, idx) => (
-        <View key={idx} style={styles.bulletPoint}>
-          <Text style={styles.bulletSymbol}>•</Text>
-          <Text style={styles.bulletText}>{bullet}</Text>
-        </View>
-      ));
-    }
-    return <Text style={styles.description}>{description}</Text>;
-  };
+  const profileLinks = safeArray(profile?.links);
 
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        {/* HEADER */}
         <View style={styles.header}>
           <Text style={styles.name}>
-            {profile.first_name} {profile.last_name}
+            {[profile?.first_name, profile?.last_name]
+              .filter(Boolean)
+              .join(" ")}
           </Text>
-          <Text style={styles.title}>{profile.professional_title}</Text>
+
+          {hasText(profile?.professional_title) && (
+            <Text style={styles.title}>{profile.professional_title}</Text>
+          )}
+
           <View style={styles.contactRow}>
-            {profile.email && (
-              <Text style={styles.contactText}>{profile.email}</Text>
+            {hasText(profile?.email) && (
+              <Link src={`mailto:${profile.email}`} style={styles.contactLink}>
+                {profile.email}
+              </Link>
             )}
-            {profile.phone && (
+
+            {hasText(profile?.phone) && (
               <Text style={styles.contactText}>{profile.phone}</Text>
             )}
-            {profile.location && (
+
+            {hasText(profile?.location) && (
               <Text style={styles.contactText}>{profile.location}</Text>
             )}
-            {profile.links?.map((link, idx) => (
-              <Text key={idx} style={styles.contactText}>
-                {link.value}
-              </Text>
-            ))}
+
+            {profileLinks.map((link, idx) => {
+              if (!hasText(link?.value)) return null;
+              const href = normalizeHref(link.value);
+              if (!href) return null;
+
+              return (
+                <Link key={idx} src={href} style={styles.contactLink}>
+                  {link.value}
+                </Link>
+              );
+            })}
           </View>
         </View>
 
-        {/* SUMMARY / PROFILE */}
-        {profile.summary && (
+        {hasText(profile?.summary) && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Professional Summary</Text>
-            <Text style={styles.description}>{profile.summary}</Text>
+            <Text style={styles.sectionTitle}>PROFESSIONAL SUMMARY</Text>
+            <View style={styles.item}>
+              <Text style={styles.summary}>{profile.summary}</Text>
+            </View>
           </View>
         )}
 
-        {/* WORK EXPERIENCE */}
-        {experience.length > 0 && (
+        {safeArray(experience).length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Work Experience</Text>
-            {experience.map((exp, idx) => (
+            <Text style={styles.sectionTitle}>WORK EXPERIENCE</Text>
+
+            {safeArray(experience).map((exp, idx) => (
               <View key={idx} style={styles.item}>
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemTitle}>{exp.position}</Text>
-                  <Text style={styles.date}>
+                  <Text style={styles.itemDate}>
                     {formatDate(exp.start_date)} - {formatDate(exp.end_date)}
                   </Text>
                 </View>
-                <View style={styles.itemHeader}>
+
+                <View style={styles.itemSubHeader}>
                   <Text style={styles.itemSubtitle}>{exp.company}</Text>
-                  {exp.location && (
-                    <Text style={styles.location}>{exp.location}</Text>
+                  {hasText(exp.location) && (
+                    <Text style={styles.itemLocation}>{exp.location}</Text>
                   )}
                 </View>
+
                 {renderDescription(exp.description)}
               </View>
             ))}
           </View>
         )}
 
-        {/* EDUCATION */}
-        {education.length > 0 && (
+        {safeArray(projects).length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Education</Text>
-            {education.map((edu, idx) => (
+            <Text style={styles.sectionTitle}>PROJECTS</Text>
+
+            {safeArray(projects).map((project, idx) => (
+              <View key={idx} style={styles.item}>
+                <View style={styles.itemHeader}>
+                  <Text style={styles.itemTitle}>{project.title}</Text>
+                  <Text style={styles.itemDate}>
+                    {formatDate(project.start_date)} -{" "}
+                    {formatDate(project.end_date)}
+                  </Text>
+                </View>
+
+                {hasText(project.subtitle) && (
+                  <Text style={styles.itemSubtitle}>{project.subtitle}</Text>
+                )}
+
+                {renderDescription(project.description)}
+
+                {hasText(project.link) && normalizeHref(project.link) && (
+                  <Link
+                    src={normalizeHref(project.link)!}
+                    style={styles.linkText}
+                  >
+                    {project.link}
+                  </Link>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
+
+        {safeArray(education).length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>EDUCATION</Text>
+
+            {safeArray(education).map((edu, idx) => (
               <View key={idx} style={styles.item}>
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemTitle}>{edu.degree}</Text>
-                  <Text style={styles.date}>
+                  <Text style={styles.itemDate}>
                     {formatDate(edu.start_date)} - {formatDate(edu.end_date)}
                   </Text>
                 </View>
-                <Text style={styles.itemSubtitle}>{edu.institution}</Text>
-                {edu.location && (
-                  <Text style={styles.location}>{edu.location}</Text>
+
+                <View style={styles.itemSubHeader}>
+                  <Text style={styles.itemSubtitle}>{edu.institution}</Text>
+                  {hasText(edu.location) && (
+                    <Text style={styles.itemLocation}>{edu.location}</Text>
+                  )}
+                </View>
+
+                {hasText(edu.score) && (
+                  <Text style={styles.smallText}>Score: {edu.score}</Text>
                 )}
-                {edu.score && (
-                  <Text style={styles.description}>GPA/Score: {edu.score}</Text>
-                )}
+
                 {renderDescription(edu.description)}
               </View>
             ))}
           </View>
         )}
 
-        {/* PROJECTS */}
-        {projects.length > 0 && (
+        {safeArray(skills).length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Projects</Text>
-            {projects.map((project, idx) => (
-              <View key={idx} style={styles.item}>
-                <View style={styles.itemHeader}>
-                  <Text style={styles.itemTitle}>{project.title}</Text>
-                  <Text style={styles.date}>
-                    {formatDate(project.start_date)} -{" "}
-                    {formatDate(project.end_date)}
-                  </Text>
-                </View>
-                {project.subtitle && (
-                  <Text style={styles.itemSubtitle}>{project.subtitle}</Text>
-                )}
-                {renderDescription(project.description)}
-                {project.link && (
-                  <Text style={styles.certDetails}>Link: {project.link}</Text>
-                )}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* SKILLS */}
-        {skills.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Skills</Text>
-            <View style={styles.skillsContainer}>
-              {skills.map((skill, idx) => (
-                <View key={idx} style={{ flexDirection: "row" }}>
-                  <Text style={styles.skillDot}>•</Text>
-                  <Text style={styles.skillItem}>
-                    {skill.name}
-                    {skill.level ? ` (${skill.level})` : ""}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {/* CERTIFICATIONS */}
-        {certificates.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Certifications</Text>
-            {certificates.map((cert, idx) => (
-              <View key={idx} style={styles.certItem}>
-                <Text style={styles.certName}>{cert.name}</Text>
-                <Text style={styles.certDetails}>
-                  {cert.issuer}
-                  {cert.issue_date &&
-                    ` • Issued: ${formatDate(cert.issue_date)}`}
-                  {cert.expiry_date &&
-                    ` • Expires: ${formatDate(cert.expiry_date)}`}
+            <Text style={styles.sectionTitle}>SKILLS</Text>
+            <View style={styles.skillWrap}>
+              {safeArray(skills).map((skill, idx) => (
+                <Text key={idx} style={styles.skillItem}>
+                  • {skill.name}
+                  {hasText(skill.level) ? ` (${skill.level})` : ""}
                 </Text>
-                {cert.description && (
-                  <Text style={styles.description}>{cert.description}</Text>
-                )}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* LANGUAGES */}
-        {languages.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Languages</Text>
-            <View style={styles.skillsContainer}>
-              {languages.map((lang, idx) => (
-                <View key={idx} style={{ flexDirection: "row" }}>
-                  <Text style={styles.skillDot}>•</Text>
-                  <Text style={styles.skillItem}>
-                    {lang.name} {lang.level ? `(${lang.level})` : ""}
-                  </Text>
-                </View>
               ))}
             </View>
           </View>
         )}
 
-        {/* AWARDS */}
-        {awards.length > 0 && (
+        {safeArray(certificates).length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Awards & Recognition</Text>
-            {awards.map((award, idx) => (
+            <Text style={styles.sectionTitle}>CERTIFICATIONS</Text>
+
+            {safeArray(certificates).map((cert, idx) => (
+              <View key={idx} style={styles.item}>
+                <Text style={styles.itemTitle}>{cert.name}</Text>
+
+                {hasText(cert.issuer) && (
+                  <Text style={styles.itemSubtitle}>{cert.issuer}</Text>
+                )}
+
+                {(hasText(cert.issue_date) || hasText(cert.expiry_date)) && (
+                  <Text style={styles.smallText}>
+                    {hasText(cert.issue_date)
+                      ? `Issued: ${formatDate(cert.issue_date)}`
+                      : ""}
+                    {hasText(cert.issue_date) && hasText(cert.expiry_date)
+                      ? " • "
+                      : ""}
+                    {hasText(cert.expiry_date)
+                      ? `Expires: ${formatDate(cert.expiry_date)}`
+                      : ""}
+                  </Text>
+                )}
+
+                {renderDescription(cert.description)}
+              </View>
+            ))}
+          </View>
+        )}
+
+        {safeArray(languages).length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>LANGUAGES</Text>
+            <View style={styles.skillWrap}>
+              {safeArray(languages).map((lang, idx) => (
+                <Text key={idx} style={styles.skillItem}>
+                  • {lang.name}
+                  {hasText(lang.level) ? ` (${lang.level})` : ""}
+                </Text>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {safeArray(awards).length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>AWARDS</Text>
+
+            {safeArray(awards).map((award, idx) => (
               <View key={idx} style={styles.item}>
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemTitle}>{award.title}</Text>
-                  {award.date && (
-                    <Text style={styles.date}>{formatDate(award.date)}</Text>
+                  {hasText(award.date) && (
+                    <Text style={styles.itemDate}>
+                      {formatDate(award.date)}
+                    </Text>
                   )}
                 </View>
-                <Text style={styles.itemSubtitle}>{award.awarder}</Text>
-                {award.description && (
-                  <Text style={styles.description}>{award.description}</Text>
+
+                {hasText(award.awarder) && (
+                  <Text style={styles.itemSubtitle}>{award.awarder}</Text>
                 )}
+
+                {renderDescription(award.description)}
               </View>
             ))}
           </View>
         )}
 
-        {/* PUBLICATIONS */}
-        {publications.length > 0 && (
+        {safeArray(publications).length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Publications</Text>
-            {publications.map((pub, idx) => (
+            <Text style={styles.sectionTitle}>PUBLICATIONS</Text>
+
+            {safeArray(publications).map((pub, idx) => (
               <View key={idx} style={styles.item}>
                 <View style={styles.itemHeader}>
                   <Text style={styles.itemTitle}>{pub.title}</Text>
-                  {pub.date && (
-                    <Text style={styles.date}>{formatDate(pub.date)}</Text>
+                  {hasText(pub.date) && (
+                    <Text style={styles.itemDate}>{formatDate(pub.date)}</Text>
                   )}
                 </View>
-                <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
-                {pub.description && (
-                  <Text style={styles.description}>{pub.description}</Text>
+
+                {hasText(pub.publisher) && (
+                  <Text style={styles.itemSubtitle}>{pub.publisher}</Text>
                 )}
-                {pub.link && (
-                  <Text style={styles.certDetails}>Link: {pub.link}</Text>
+
+                {renderDescription(pub.description)}
+
+                {hasText(pub.link) && normalizeHref(pub.link) && (
+                  <Link src={normalizeHref(pub.link)!} style={styles.linkText}>
+                    {pub.link}
+                  </Link>
                 )}
               </View>
             ))}
           </View>
         )}
 
-        {/* REFERENCES */}
-        {references.length > 0 && (
+        {safeArray(references).length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>References</Text>
-            <View style={styles.twoColumn}>
-              <View style={styles.leftColumn}>
-                {references
-                  .filter((_, i) => i % 2 === 0)
-                  .map((ref, idx) => (
-                    <View key={idx} style={styles.item}>
-                      <Text style={styles.itemTitle}>{ref.name}</Text>
-                      <Text style={styles.itemSubtitle}>{ref.position}</Text>
-                      <Text style={styles.itemSubtitle}>
-                        {ref.organization}
-                      </Text>
-                      <Text style={styles.contactText}>{ref.email}</Text>
-                      <Text style={styles.contactText}>{ref.phone}</Text>
-                    </View>
-                  ))}
+            <Text style={styles.sectionTitle}>REFERENCES</Text>
+
+            {safeArray(references).map((ref, idx) => (
+              <View key={idx} style={styles.item}>
+                <Text style={styles.itemTitle}>{ref.name}</Text>
+
+                <Text style={styles.itemSubtitle}>
+                  {[ref.position, ref.organization].filter(Boolean).join(" • ")}
+                </Text>
+
+                {hasText(ref.email) && (
+                  <Text style={styles.smallText}>{ref.email}</Text>
+                )}
+
+                {hasText(ref.phone) && (
+                  <Text style={styles.smallText}>{ref.phone}</Text>
+                )}
               </View>
-              <View style={styles.rightColumn}>
-                {references
-                  .filter((_, i) => i % 2 === 1)
-                  .map((ref, idx) => (
-                    <View key={idx} style={styles.item}>
-                      <Text style={styles.itemTitle}>{ref.name}</Text>
-                      <Text style={styles.itemSubtitle}>{ref.position}</Text>
-                      <Text style={styles.itemSubtitle}>
-                        {ref.organization}
-                      </Text>
-                      <Text style={styles.contactText}>{ref.email}</Text>
-                      <Text style={styles.contactText}>{ref.phone}</Text>
-                    </View>
-                  ))}
-              </View>
-            </View>
+            ))}
           </View>
         )}
       </Page>
