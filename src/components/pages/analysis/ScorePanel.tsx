@@ -1,6 +1,7 @@
 import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";
 import { Link, useParams } from "@tanstack/react-router";
 import ResumeScoreCard from "./ResumeScoreCard";
+import { Icon } from "@iconify/react";
 
 const matchedKeywords = [
   "JavaScript",
@@ -39,7 +40,8 @@ const ScorePanel = () => {
           <div className="w-full flex flex-col space-y-4">
             {/* MATCHED KEYWORDS */}
             <div className="w-full flex flex-col space-y-3">
-              <h2 className="text-tiny font-medium text-brand">
+              <h2 className="flex items-center gap-x-0.5 text-tiny font-medium text-brand">
+                <Icon icon="lucide:list-check" className="text-xs" />
                 MATCHED KEYWORDS
               </h2>
               <div className="w-full flex-1 flex flex-wrap gap-2">
@@ -56,7 +58,8 @@ const ScorePanel = () => {
 
             {/* MISSING KEYWORDS */}
             <div className="w-full flex flex-col space-y-3">
-              <h2 className="text-tiny font-medium text-brand">
+              <h2 className="flex items-center gap-x-0.5 text-tiny font-medium text-brand">
+                <Icon icon="lucide:list-x" className="text-xs" />
                 MISSING KEYWORDS
               </h2>
               <div className="w-full flex-1 flex flex-wrap gap-2">
