@@ -5,6 +5,8 @@ import {
   type SignInRequest,
   type VerifyOtpRequest,
 } from "./auth.schemas";
+import { useNavigate } from "@tanstack/react-router";
+import { logoutFn } from "./auth.functions";
 
 export function useSignUpMutation() {
   return useMutation({
@@ -30,3 +32,19 @@ export function useVerifyOtpMutation() {
     },
   });
 }
+
+export const useLogoutMutation = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: () => logoutFn(),
+    onSuccess: () => {
+      queryClient.clear();
+      navigate({ to: "/", replace: true });
+    },
+    onError: (error) => {
+      console.error("Logout error:", error);
+    },
+  });
+};

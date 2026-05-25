@@ -18,6 +18,7 @@ import { Route as ApiResumesReportIdRouteImport } from './routes/api/resumes/$re
 import { Route as ApiAuthVerifyOtpRouteImport } from './routes/api/auth/verify-otp'
 import { Route as ApiAuthSignUpRouteImport } from './routes/api/auth/sign-up'
 import { Route as ApiAuthSignInRouteImport } from './routes/api/auth/sign-in'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api/auth/logout'
 import { Route as AppTailoredResumesSessionIdIndexRouteImport } from './routes/_app/tailored-resumes/$sessionId/index'
 import { Route as AppTailoredResumesSessionIdPreviewIndexRouteImport } from './routes/_app/tailored-resumes/$sessionId/preview/index'
 
@@ -66,6 +67,11 @@ const ApiAuthSignInRoute = ApiAuthSignInRouteImport.update({
   path: '/api/auth/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppTailoredResumesSessionIdIndexRoute =
   AppTailoredResumesSessionIdIndexRouteImport.update({
     id: '/tailored-resumes/$sessionId/',
@@ -81,6 +87,7 @@ const AppTailoredResumesSessionIdPreviewIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof GatewayIndexRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute
   '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof GatewayIndexRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute
   '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteRouteWithChildren
   '/_gateway/': typeof GatewayIndexRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute
   '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api/auth/logout'
     | '/api/auth/sign-in'
     | '/api/auth/sign-up'
     | '/api/auth/verify-otp'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api/auth/logout'
     | '/api/auth/sign-in'
     | '/api/auth/sign-up'
     | '/api/auth/verify-otp'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/_gateway/'
+    | '/api/auth/logout'
     | '/api/auth/sign-in'
     | '/api/auth/sign-up'
     | '/api/auth/verify-otp'
@@ -160,6 +172,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   GatewayIndexRoute: typeof GatewayIndexRoute
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
   ApiAuthSignInRoute: typeof ApiAuthSignInRoute
   ApiAuthSignUpRoute: typeof ApiAuthSignUpRoute
   ApiAuthVerifyOtpRoute: typeof ApiAuthVerifyOtpRoute
@@ -233,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/tailored-resumes/$sessionId/': {
       id: '/_app/tailored-resumes/$sessionId/'
       path: '/tailored-resumes/$sessionId'
@@ -270,6 +290,7 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   GatewayIndexRoute: GatewayIndexRoute,
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
   ApiAuthSignInRoute: ApiAuthSignInRoute,
   ApiAuthSignUpRoute: ApiAuthSignUpRoute,
   ApiAuthVerifyOtpRoute: ApiAuthVerifyOtpRoute,

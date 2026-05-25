@@ -11,40 +11,19 @@ import AppBreadcrumb from "./AppBreadcrumb";
 import LogiquelWordMark from "../common/LogiquelWordMark";
 import { getActiveRoute } from "@/config/routeConfig";
 import { supabase } from "#/utils/supabase"; // Ensure path to your supabase client is correct
-import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useLogoutMutation } from "#/api/auth/auth.mutations";
 
 const AppLayout = () => {
   const router = useRouter();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { pathname } = useLocation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const activeRoute = getActiveRoute(pathname);
   const activeRouteLabel = activeRoute?.label ?? "Page";
 
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-
-      // 1. Terminate Supabase session
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
-      // 2. Wipe the React Query auth caches instantly
-      queryClient.setQueryData(["auth", "session"], null);
-      queryClient.removeQueries({ queryKey: ["auth"] });
-
-      // 3. Clear application memory history & bounce to sign-in
-      navigate({ to: "/", replace: true });
-    } catch (error) {
-      console.error("Logout execution fault:", error);
-      alert("Failed to sign out. Please try again.");
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
+  const logout = useLogoutMutation();
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden bg-[#F9FBFC]">
@@ -76,7 +55,7 @@ const AppLayout = () => {
 
             {/* --- Logout Action Item Push --- */}
             <button
-              onClick={handleLogout}
+              onClick={() => logout.mutate()}
               disabled={isLoggingOut}
               className="ml-auto h-[60%] px-3 gap-1.5 flex items-center justify-center border rounded-md text-xs font-medium text-destructive border-red-100 bg-red-50/30 hover:bg-red-50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >

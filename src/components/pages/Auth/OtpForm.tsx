@@ -1,137 +1,122 @@
 // OtpForm.tsx
 import { Icon } from "@iconify/react";
 import { useForm } from "@tanstack/react-form";
+import { useState } from "react";
 
 interface OtpFormData {
-  otp: string;
+  otp: string[];
 }
 
 interface OtpFormProps {
   email: string;
-  onVerify: (otp: string) => void | Promise<void>;
+  onVerify: (otp: string) => Promise<void>;
   onBack: () => void;
-  title?: string;
-  description?: string;
-  backLabel?: string;
-  submitLabel?: string;
-  submittingLabel?: string;
-  isSubmitting?: boolean; // Added to intercept external mutation status cleanly
+  isSubmitting?: boolean;
 }
 
 const OtpForm = ({
   email,
   onVerify,
   onBack,
-  title = "Verify Your Email",
-  description,
-  backLabel = "Back to registration",
-  submitLabel = "Verify OTP",
-  submittingLabel = "Verifying...",
-  isSubmitting: externalIsSubmitting, // Map external loading states
+  isSubmitting = false,
 }: OtpFormProps) => {
-  const form = useForm({
-    defaultValues: {
-      otp: "",
-    } satisfies OtpFormData,
-    onSubmit: async ({ value }) => {
-      await onVerify(value.otp);
+  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) return;
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...otpValues];
+    newOtp[index] = value;
+    setOtpValues(newOtp);
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-${index - 1}`);
+      prevInput?.focus();
+    }
+  };
+
+  const handleSubmit = async () => {
+    const otp = otpValues.join("");
+    if (otp.length === 6) {
+      await onVerify(otp);
+    }
+  };
+
+  const maskedEmail = email.replace(
+    /(.{3})(.*)(@.*)/,
+    (_, first, middle, last) => {
+      return first + "*".repeat(Math.min(middle.length, 5)) + last;
     },
-  });
+  );
 
   return (
     <>
-      <div className="mb-8">
-        <h1 className="text-lg font-semibold text-text-primary">{title}</h1>
-        <p className="text-xs text-text-muted mt-1">
-          {description ?? `Enter the OTP sent to ${email}`}
+      <h2 className="flex flex-col text-text-primary text-lg font-medium">
+        Check Your Email
+        <p className="self-start flex flex-col gap-x-1 text-xxs text-text-muted font-normal mt-1">
+          We have sent you a 6-digit verification code to your email,
+          <span className="text-brand font-normal">{maskedEmail}</span>
         </p>
-      </div>
-
-      <button
-        type="button"
-        onClick={onBack}
-        disabled={externalIsSubmitting}
-        className="mb-6 text-xs text-brand hover:text-brand-hover flex items-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        <Icon icon="akar-icons:arrow-left" className="text-tiny" />
-        {backLabel}
-      </button>
-
-      <form.Field
-        name="otp"
-        validators={{
-          onChange: ({ value }) => {
-            if (!value.trim()) return "OTP is required";
-            if (value.length !== 8) return "OTP must be 8 digits";
-            return undefined;
-          },
-        }}
-      >
-        {(field) => (
-          <div className="mb-6">
-            <label className="text-tiny font-medium text-brand mb-1 block">
-              OTP CODE
-            </label>
+      </h2>
+      <div className="w-full flex-1 grid grid-cols-2 gap-x-4 gap-y-4 content-start mt-6">
+        <fieldset className="w-full flex justify-center gap-3 col-span-2">
+          {otpValues.map((value, index) => (
             <input
+              key={index}
+              id={`otp-${index}`}
               type="text"
               inputMode="numeric"
-              maxLength={8}
-              value={field.state.value}
-              onChange={(e) =>
-                field.handleChange(e.target.value.replace(/\D/g, ""))
-              }
-              onBlur={field.handleBlur}
-              disabled={externalIsSubmitting} // Lock input during verification
-              className="w-full outline-none border-b border-gray-200 placeholder:text-text-muted/50 placeholder:text-xxs focus:border-brand text-xs py-1 mt-1 transition-colors disabled:opacity-60"
-              placeholder="000000"
+              maxLength={1}
+              value={value}
+              onChange={(e) => handleOtpChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              disabled={isSubmitting}
+              className="h-12 w-12 text-center bg-gray-50 outline-none text-text-primary text-lg font-mono border-2 border-transparent focus:border-brand rounded-md disabled:opacity-50"
             />
-            {field.state.meta.isTouched &&
-              field.state.meta.errors.length > 0 && (
-                <span className="text-tiny text-destructive mt-1 block">
-                  {field.state.meta.errors.join(", ")}
-                </span>
-              )}
-          </div>
-        )}
-      </form.Field>
-
-      <form.Subscribe
-        selector={(state) => ({
-          internalSubmitting: state.isSubmitting,
-          canSubmit: state.canSubmit,
-        })}
-      >
-        {({ internalSubmitting, canSubmit }) => {
-          // Combine both form submission state and query mutation states safely
-          const loading = internalSubmitting || externalIsSubmitting;
-
-          return (
-            <button
-              type="button"
-              onClick={() => form.handleSubmit()}
-              disabled={!canSubmit || loading}
-              className="flex items-center rounded-full gap-2 bg-brand p-0.5 transition-all hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            >
-              <span className="text-xs text-white pl-4">
-                {loading ? submittingLabel : submitLabel}
-              </span>
-              <div className="h-8 aspect-square flex items-center justify-center bg-brand-hover rounded-full p-2">
-                {loading ? (
-                  <Icon
-                    icon="eos-icons:loading"
-                    className="text-white animate-spin"
-                  />
-                ) : (
-                  <Icon
-                    icon="akar-icons:arrow-up"
-                    className="text-white rotate-45"
-                  />
-                )}
-              </div>
-            </button>
-          );
-        }}
-      </form.Subscribe>
+          ))}
+        </fieldset>
+        <div className="w-full flex flex-col col-span-2 mt-6">
+          <button
+            onClick={handleSubmit}
+            disabled={otpValues.join("").length !== 6 || isSubmitting}
+            className="w-full px-2 py-2 gap-x-2 flex items-center justify-center rounded-full bg-brand hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all"
+          >
+            <span className="w-fit h-fit text-xxs text-white">
+              {isSubmitting ? "Verifying..." : "Verify OTP"}
+            </span>
+            {isSubmitting && (
+              <Icon
+                icon="mingcute:loading-2-line"
+                className="size-4 animate-spin text-white"
+              />
+            )}
+          </button>
+          <button
+            onClick={onBack}
+            disabled={isSubmitting}
+            className="w-full mt-3 px-2 py-2 gap-x-2 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 disabled:opacity-50 cursor-pointer transition-all"
+          >
+            <span className="w-fit h-fit text-xxs text-text-secondary">
+              Back to registration
+            </span>
+          </button>
+          <span className="w-full mt-6 px-2 gap-x-0.5 text-tiny text-text-muted text-center">
+            By signing up, you agree to the Terms of Service and Privacy Policy
+          </span>
+        </div>
+      </div>
     </>
   );
 };

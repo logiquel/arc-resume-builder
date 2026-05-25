@@ -26,7 +26,7 @@ export const authResponseSchema = z.object({
 
 export const verifyOtpRequestSchema = z.object({
   email: z.string().email(),
-  token: z.string().length(8, "OTP must be exactly 8 digits"),
+  token: z.string().length(6, "OTP must be exactly 6 digits"),
   profile: profileFieldsSchema.optional(), // Safe verification property across registration chains
 });
 
