@@ -1,4 +1,4 @@
-import LoginPage from "#/components/pages/Auth/LoginPage";
+import LoginPage from "#/components/pages/Auth/SignInPage";
 import { supabase } from "#/utils/supabase";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 

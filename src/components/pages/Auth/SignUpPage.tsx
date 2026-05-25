@@ -1,4 +1,4 @@
-// RegisterPage.tsx
+// SignUpPage.tsx
 import { Icon } from "@iconify/react";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
@@ -9,17 +9,17 @@ import {
   useVerifyOtpMutation,
 } from "#/api/auth/auth.mutations";
 
-interface RegisterFormData {
+interface SignUpFormData {
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
 }
 
-const RegisterPage = () => {
+const SignUpPage = () => {
   const [showOtpForm, setShowOtpForm] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState("");
-  const [formData, setFormData] = useState<RegisterFormData | null>(null);
+  const [registeredEmail, setSignUpedEmail] = useState("");
+  const [formData, setFormData] = useState<SignUpFormData | null>(null);
   const navigate = useNavigate();
 
   const signUpMutation = useSignUpMutation();
@@ -31,7 +31,7 @@ const RegisterPage = () => {
       lastName: "",
       email: "",
       phone: "",
-    } satisfies RegisterFormData,
+    } satisfies SignUpFormData,
     onSubmit: async ({ value }) => {
       // route registration workflow through your backend proxy
       signUpMutation.mutate(
@@ -39,7 +39,7 @@ const RegisterPage = () => {
         {
           onSuccess: () => {
             setFormData(value);
-            setRegisteredEmail(value.email);
+            setSignUpedEmail(value.email);
             setShowOtpForm(true);
             console.log(
               "OTP successfully sent via server proxy to:",
@@ -108,7 +108,7 @@ const RegisterPage = () => {
           <>
             <div className="mb-6">
               <h1 className="text-lg font-semibold text-text-primary">
-                Register
+                SignUp
               </h1>
               <p className="text-xxs text-text-muted font-normal mt-1">
                 Fill in details to get started
@@ -294,4 +294,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default SignUpPage;

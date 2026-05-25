@@ -1,6 +1,6 @@
-// LoginPage.tsx
+// SignInPage.tsx
 import { Icon } from "@iconify/react";
-import loginPageBg from "/login_screen_bg.jpg";
+import SignInPageBg from "/SignIn_screen_bg.jpg";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
@@ -10,11 +10,11 @@ import {
   useVerifyOtpMutation,
 } from "#/api/auth/auth.mutations";
 
-interface LoginFormData {
+interface SignInFormData {
   email: string;
 }
 
-const LoginPage = () => {
+const SignInPage = () => {
   const [showOtpForm, setShowOtpForm] = useState(false);
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
@@ -23,10 +23,10 @@ const LoginPage = () => {
   const requestOtpMutation = useSignInMutation();
   const verifyOtpMutation = useVerifyOtpMutation();
 
-  const loginForm = useForm({
+  const SignInForm = useForm({
     defaultValues: {
       email: "",
-    } satisfies LoginFormData,
+    } satisfies SignInFormData,
     onSubmit: async ({ value }) => {
       // Calls authService.signIn(payload) safely now
       requestOtpMutation.mutate(
@@ -35,10 +35,10 @@ const LoginPage = () => {
           onSuccess: () => {
             setEmail(value.email);
             setShowOtpForm(true);
-            console.log("Login OTP requested successfully for:", value.email);
+            console.log("SignIn OTP requested successfully for:", value.email);
           },
           onError: (error: any) => {
-            console.error("Login challenge error:", error);
+            console.error("SignIn challenge error:", error);
             alert(
               error.message ||
                 "Failed to dispatch verification code. Please try again.",
@@ -62,7 +62,7 @@ const LoginPage = () => {
           navigate({ to: "/dashboard" });
         },
         onError: (error: any) => {
-          console.error("Login OTP validation error:", error);
+          console.error("SignIn OTP validation error:", error);
           alert(error.message || "Invalid or expired OTP code entered.");
         },
       },
@@ -76,9 +76,9 @@ const LoginPage = () => {
     <div className="w-full h-full flex">
       <div className="flex-1 h-full">
         <img
-          src={loginPageBg}
+          src={SignInPageBg}
           className="h-full object-cover"
-          alt="Login Background"
+          alt="SignIn Background"
         />
       </div>
 
@@ -87,21 +87,18 @@ const LoginPage = () => {
           <>
             <h1 className="text-lg font-semibold text-text-primary">Sign In</h1>
             <p className="text-xs text-text-muted mt-1">
-              Enter your email address to login
+              Enter your email address to SignIn
             </p>
 
             <span className="block mt-3 mb-6 text-xs text-text-muted">
               Don&apos;t have an account yet?{" "}
-              <Link
-                to="/register"
-                className="text-brand hover:text-brand-hover"
-              >
-                Register
+              <Link to="/sign-up" className="text-brand hover:text-brand-hover">
+                SignUp
               </Link>
             </span>
 
             <div className="w-full flex flex-col gap-y-3 mb-4">
-              <loginForm.Field
+              <SignInForm.Field
                 name="email"
                 validators={{
                   onChange: ({ value }) => {
@@ -134,10 +131,10 @@ const LoginPage = () => {
                     </span>
                   </fieldset>
                 )}
-              </loginForm.Field>
+              </SignInForm.Field>
             </div>
 
-            <loginForm.Subscribe
+            <SignInForm.Subscribe
               selector={(state) => ({
                 canSubmit: state.canSubmit,
               })}
@@ -145,12 +142,12 @@ const LoginPage = () => {
               {({ canSubmit }) => (
                 <button
                   type="button"
-                  onClick={() => loginForm.handleSubmit()}
+                  onClick={() => SignInForm.handleSubmit()}
                   disabled={!canSubmit || isPendingRequest}
                   className="flex items-center rounded-full gap-2 bg-brand p-0.5 transition-all hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <span className="text-xs text-white pl-4">
-                    {requestOtpMutation.isPending ? "Sending OTP..." : "Login"}
+                    {requestOtpMutation.isPending ? "Sending OTP..." : "SignIn"}
                   </span>
                   <div className="h-8 aspect-square flex items-center justify-center bg-brand-hover rounded-full p-2">
                     {requestOtpMutation.isPending ? (
@@ -167,7 +164,7 @@ const LoginPage = () => {
                   </div>
                 </button>
               )}
-            </loginForm.Subscribe>
+            </SignInForm.Subscribe>
           </>
         ) : (
           <OtpForm
@@ -176,7 +173,7 @@ const LoginPage = () => {
             onBack={() => setShowOtpForm(false)}
             title="Sign In"
             description={`Enter the OTP sent to ${email}`}
-            backLabel="Back to login"
+            backLabel="Back to SignIn"
             submitLabel="Verify OTP"
             submittingLabel="Verifying..."
             isSubmitting={verifyOtpMutation.isPending}
@@ -187,4 +184,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default SignInPage;
