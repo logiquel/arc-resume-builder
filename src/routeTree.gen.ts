@@ -11,9 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as GatewayIndexRouteImport } from './routes/_gateway/index'
+import { Route as GatewayRegisterIndexRouteImport } from './routes/_gateway/register/index'
 import { Route as AppDashboardIndexRouteImport } from './routes/_app/dashboard/index'
 import { Route as ApiTailoredResumesSessionIdRouteImport } from './routes/api/tailored-resumes/$sessionId'
 import { Route as ApiResumesReportIdRouteImport } from './routes/api/resumes/$reportId'
+import { Route as ApiAuthVerifyOtpRouteImport } from './routes/api/auth/verify-otp'
+import { Route as ApiAuthSignUpRouteImport } from './routes/api/auth/sign-up'
+import { Route as ApiAuthSignInRouteImport } from './routes/api/auth/sign-in'
 import { Route as AppTailoredResumesSessionIdIndexRouteImport } from './routes/_app/tailored-resumes/$sessionId/index'
 import { Route as AppTailoredResumesSessionIdPreviewIndexRouteImport } from './routes/_app/tailored-resumes/$sessionId/preview/index'
 
@@ -24,6 +28,11 @@ const AppRouteRoute = AppRouteRouteImport.update({
 const GatewayIndexRoute = GatewayIndexRouteImport.update({
   id: '/_gateway/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GatewayRegisterIndexRoute = GatewayRegisterIndexRouteImport.update({
+  id: '/_gateway/register/',
+  path: '/register/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppDashboardIndexRoute = AppDashboardIndexRouteImport.update({
@@ -42,6 +51,21 @@ const ApiResumesReportIdRoute = ApiResumesReportIdRouteImport.update({
   path: '/api/resumes/$reportId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthVerifyOtpRoute = ApiAuthVerifyOtpRouteImport.update({
+  id: '/api/auth/verify-otp',
+  path: '/api/auth/verify-otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSignUpRoute = ApiAuthSignUpRouteImport.update({
+  id: '/api/auth/sign-up',
+  path: '/api/auth/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthSignInRoute = ApiAuthSignInRouteImport.update({
+  id: '/api/auth/sign-in',
+  path: '/api/auth/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppTailoredResumesSessionIdIndexRoute =
   AppTailoredResumesSessionIdIndexRouteImport.update({
     id: '/tailored-resumes/$sessionId/',
@@ -57,17 +81,25 @@ const AppTailoredResumesSessionIdPreviewIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof GatewayIndexRoute
+  '/api/auth/sign-in': typeof ApiAuthSignInRoute
+  '/api/auth/sign-up': typeof ApiAuthSignUpRoute
+  '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/dashboard/': typeof AppDashboardIndexRoute
+  '/register/': typeof GatewayRegisterIndexRoute
   '/tailored-resumes/$sessionId/': typeof AppTailoredResumesSessionIdIndexRoute
   '/tailored-resumes/$sessionId/preview/': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof GatewayIndexRoute
+  '/api/auth/sign-in': typeof ApiAuthSignInRoute
+  '/api/auth/sign-up': typeof ApiAuthSignUpRoute
+  '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/dashboard': typeof AppDashboardIndexRoute
+  '/register': typeof GatewayRegisterIndexRoute
   '/tailored-resumes/$sessionId': typeof AppTailoredResumesSessionIdIndexRoute
   '/tailored-resumes/$sessionId/preview': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -75,9 +107,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteRouteWithChildren
   '/_gateway/': typeof GatewayIndexRoute
+  '/api/auth/sign-in': typeof ApiAuthSignInRoute
+  '/api/auth/sign-up': typeof ApiAuthSignUpRoute
+  '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/_app/dashboard/': typeof AppDashboardIndexRoute
+  '/_gateway/register/': typeof GatewayRegisterIndexRoute
   '/_app/tailored-resumes/$sessionId/': typeof AppTailoredResumesSessionIdIndexRoute
   '/_app/tailored-resumes/$sessionId/preview/': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -85,26 +121,38 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api/auth/sign-in'
+    | '/api/auth/sign-up'
+    | '/api/auth/verify-otp'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/dashboard/'
+    | '/register/'
     | '/tailored-resumes/$sessionId/'
     | '/tailored-resumes/$sessionId/preview/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api/auth/sign-in'
+    | '/api/auth/sign-up'
+    | '/api/auth/verify-otp'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/dashboard'
+    | '/register'
     | '/tailored-resumes/$sessionId'
     | '/tailored-resumes/$sessionId/preview'
   id:
     | '__root__'
     | '/_app'
     | '/_gateway/'
+    | '/api/auth/sign-in'
+    | '/api/auth/sign-up'
+    | '/api/auth/verify-otp'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/_app/dashboard/'
+    | '/_gateway/register/'
     | '/_app/tailored-resumes/$sessionId/'
     | '/_app/tailored-resumes/$sessionId/preview/'
   fileRoutesById: FileRoutesById
@@ -112,8 +160,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   GatewayIndexRoute: typeof GatewayIndexRoute
+  ApiAuthSignInRoute: typeof ApiAuthSignInRoute
+  ApiAuthSignUpRoute: typeof ApiAuthSignUpRoute
+  ApiAuthVerifyOtpRoute: typeof ApiAuthVerifyOtpRoute
   ApiResumesReportIdRoute: typeof ApiResumesReportIdRoute
   ApiTailoredResumesSessionIdRoute: typeof ApiTailoredResumesSessionIdRoute
+  GatewayRegisterIndexRoute: typeof GatewayRegisterIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -130,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof GatewayIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_gateway/register/': {
+      id: '/_gateway/register/'
+      path: '/register'
+      fullPath: '/register/'
+      preLoaderRoute: typeof GatewayRegisterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/dashboard/': {
@@ -151,6 +210,27 @@ declare module '@tanstack/react-router' {
       path: '/api/resumes/$reportId'
       fullPath: '/api/resumes/$reportId'
       preLoaderRoute: typeof ApiResumesReportIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/verify-otp': {
+      id: '/api/auth/verify-otp'
+      path: '/api/auth/verify-otp'
+      fullPath: '/api/auth/verify-otp'
+      preLoaderRoute: typeof ApiAuthVerifyOtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/sign-up': {
+      id: '/api/auth/sign-up'
+      path: '/api/auth/sign-up'
+      fullPath: '/api/auth/sign-up'
+      preLoaderRoute: typeof ApiAuthSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/sign-in': {
+      id: '/api/auth/sign-in'
+      path: '/api/auth/sign-in'
+      fullPath: '/api/auth/sign-in'
+      preLoaderRoute: typeof ApiAuthSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/tailored-resumes/$sessionId/': {
@@ -190,8 +270,12 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   GatewayIndexRoute: GatewayIndexRoute,
+  ApiAuthSignInRoute: ApiAuthSignInRoute,
+  ApiAuthSignUpRoute: ApiAuthSignUpRoute,
+  ApiAuthVerifyOtpRoute: ApiAuthVerifyOtpRoute,
   ApiResumesReportIdRoute: ApiResumesReportIdRoute,
   ApiTailoredResumesSessionIdRoute: ApiTailoredResumesSessionIdRoute,
+  GatewayRegisterIndexRoute: GatewayRegisterIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

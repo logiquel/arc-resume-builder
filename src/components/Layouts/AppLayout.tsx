@@ -1,16 +1,50 @@
-import { Outlet, useRouter, useLocation } from "@tanstack/react-router";
+// AppLayout.tsx
+import {
+  Outlet,
+  useRouter,
+  useLocation,
+  useNavigate,
+} from "@tanstack/react-router";
 import Sidebar from "./Sidebar";
 import { Icon } from "@iconify/react";
 import AppBreadcrumb from "./AppBreadcrumb";
 import LogiquelWordMark from "../common/LogiquelWordMark";
 import { getActiveRoute } from "@/config/routeConfig";
+import { supabase } from "#/utils/supabase"; // Ensure path to your supabase client is correct
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 const AppLayout = () => {
   const router = useRouter();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { pathname } = useLocation();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const activeRoute = getActiveRoute(pathname);
   const activeRouteLabel = activeRoute?.label ?? "Page";
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+
+      // 1. Terminate Supabase session
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      // 2. Wipe the React Query auth caches instantly
+      queryClient.setQueryData(["auth", "session"], null);
+      queryClient.removeQueries({ queryKey: ["auth"] });
+
+      // 3. Clear application memory history & bounce to sign-in
+      navigate({ to: "/", replace: true });
+    } catch (error) {
+      console.error("Logout execution fault:", error);
+      alert("Failed to sign out. Please try again.");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden bg-[#F9FBFC]">
@@ -20,7 +54,7 @@ const AppLayout = () => {
 
         {/* --- Main Content --- */}
         <main className="flex-1 min-w-0 h-full flex flex-col">
-          <header className="h-16 w-full flex items-center gap-2.5 px-2 pt-2 pb-1.5 bg-white border-b">
+          <header className="h-16 w-full flex items-center gap-2.5 px-4 pt-2 pb-1.5 bg-white border-b">
             <button
               onClick={() => router.history.back()}
               className="h-[60%] aspect-square shrink-0 flex items-center justify-center border rounded-md bg-gray-50 hover:bg-gray-100 cursor-pointer"
@@ -39,7 +73,25 @@ const AppLayout = () => {
               </p>
               <AppBreadcrumb />
             </div>
+
+            {/* --- Logout Action Item Push --- */}
+            <button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="ml-auto h-[60%] px-3 gap-1.5 flex items-center justify-center border rounded-md text-xs font-medium text-destructive border-red-100 bg-red-50/30 hover:bg-red-50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isLoggingOut ? (
+                <Icon
+                  icon="eos-icons:loading"
+                  className="text-sm animate-spin"
+                />
+              ) : (
+                <Icon icon="solar:logout-3-linear" className="text-sm" />
+              )}
+              <span>{isLoggingOut ? "Leaving..." : "Logout"}</span>
+            </button>
           </header>
+
           <div className="flex-1 min-h-0 min-w-0">
             <Outlet />
           </div>

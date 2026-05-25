@@ -1,8 +1,8 @@
-import LoginPage from "#/components/pages/Auth/LoginPage";
-import { supabase } from "#/utils/supabase";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import RegisterPage from "#/components/pages/Auth/RegisterPage";
+import { supabase } from "#/utils/supabase";
 
-export const Route = createFileRoute("/_gateway/")({
+export const Route = createFileRoute("/_gateway/register/")({
   beforeLoad: async () => {
     // Check session before the component even starts rendering
     const {
@@ -16,5 +16,5 @@ export const Route = createFileRoute("/_gateway/")({
       });
     }
   },
-  component: LoginPage,
+  component: RegisterPage,
 });
