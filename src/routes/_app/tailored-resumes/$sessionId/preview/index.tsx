@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { tailoringSessionSampleData } from "#/types/resume/tailoringSessionSampleData";
-import type { TailoringSession } from "#/types/resume/tailorSessionTypes";
+import type { TailoringSession } from "#/types/resume/tailorSession.types";
 import ResumePreviewClient, {
   type ResumePreviewTemplateKey,
-} from "#/components/pages/analysis/ResumePreviewClient";
+} from "#/components/pages/PreviewResume/ResumePreviewClient";
 import { resolveResumeToFormat3 } from "#/lib/resolveResumeConverter";
 import { Icon } from "@iconify/react";
+import { tailor_session_sample_data } from "#/data/tailor_resume_data";
 
 type TemplateOption = {
   key: ResumePreviewTemplateKey;
@@ -57,7 +57,7 @@ export const Route = createFileRoute(
 
   loader: async ({ params }) => {
     const tailoringSession: TailoringSession = {
-      ...tailoringSessionSampleData,
+      ...tailor_session_sample_data,
       id: params.sessionId,
     };
 

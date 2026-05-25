@@ -1,9 +1,9 @@
-import type { Format3Data, ProfileLink } from "#/types/resume/resumeTypes";
+import type { Format3Data, ProfileLink } from "#/types/resume/resume.types";
 import type {
   DiffField,
   MaybeDiffField,
   TailoringSession,
-} from "#/types/resume/tailorSessionTypes";
+} from "#/types/resume/tailorSession.types";
 
 const isDiffField = <T extends string | string[]>(
   value: MaybeDiffField<T> | undefined,

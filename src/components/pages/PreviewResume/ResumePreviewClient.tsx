@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
-import type { Format3Data } from "#/types/resume/resumeTypes";
+import type { Format3Data } from "#/types/resume/resume.types";
 
 import { ATSTemplate } from "#/components/templates/ATSTemplate";
 import { ModernTemplate } from "#/components/templates/ModernTemplate";

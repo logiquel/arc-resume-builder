@@ -1,8 +1,18 @@
 // sample-resume-data.ts
 
-import type { AwardData, CertificateData, EducationData, ExperienceData, InterestData, LanguageData, ProfileData, ProjectData, PublicationData, ReferenceData, SkillData } from "#/types/resume/resumeTypes";
-
-
+import type {
+  AwardData,
+  CertificateData,
+  EducationData,
+  ExperienceData,
+  InterestData,
+  LanguageData,
+  ProfileData,
+  ProjectData,
+  PublicationData,
+  ReferenceData,
+  SkillData,
+} from "#/types/resume/resume.types";
 
 export const sampleProfile: ProfileData & { id: string } = {
   id: "profile-001",
@@ -16,9 +26,19 @@ export const sampleProfile: ProfileData & { id: string } = {
   summary:
     "Passionate full stack engineer with 4+ years of experience building scalable web applications. Skilled in React, TypeScript, and Node.js with a strong focus on clean architecture, performance, and developer experience.",
   links: [
-    { id: "link-001", name: "LinkedIn", value: "linkedin.com/in/arjunmehta", icon: "" },
-    { id: "link-002", name: "GitHub",   value: "github.com/arjunmehta",     icon: "" },
-    { id: "link-003", name: "Portfolio", value: "arjunmehta.dev",           icon: "" },
+    {
+      id: "link-001",
+      name: "LinkedIn",
+      value: "linkedin.com/in/arjunmehta",
+      icon: "",
+    },
+    {
+      id: "link-002",
+      name: "GitHub",
+      value: "github.com/arjunmehta",
+      icon: "",
+    },
+    { id: "link-003", name: "Portfolio", value: "arjunmehta.dev", icon: "" },
   ],
 };
 
@@ -138,26 +158,26 @@ export const sampleCertificates: Array<CertificateData & { id: string }> = [
 ];
 
 export const sampleSkills: Array<SkillData & { id: string }> = [
-  { id: "skill-001", name: "TypeScript",    level: "expert"      },
-  { id: "skill-002", name: "React",         level: "expert"      },
-  { id: "skill-003", name: "Node.js",       level: "proficient"  },
-  { id: "skill-004", name: "PostgreSQL",    level: "proficient"  },
-  { id: "skill-005", name: "Docker",        level: "competent"   },
-  { id: "skill-006", name: "AWS",           level: "competent"   },
-  { id: "skill-007", name: "GraphQL",       level: "proficient"  },
-  { id: "skill-008", name: "Figma",         level: "amateur"     },
+  { id: "skill-001", name: "TypeScript", level: "expert" },
+  { id: "skill-002", name: "React", level: "expert" },
+  { id: "skill-003", name: "Node.js", level: "proficient" },
+  { id: "skill-004", name: "PostgreSQL", level: "proficient" },
+  { id: "skill-005", name: "Docker", level: "competent" },
+  { id: "skill-006", name: "AWS", level: "competent" },
+  { id: "skill-007", name: "GraphQL", level: "proficient" },
+  { id: "skill-008", name: "Figma", level: "amateur" },
 ];
 
 export const sampleLanguages: Array<LanguageData & { id: string }> = [
-  { id: "lang-001", name: "English", level: "fluent"       },
-  { id: "lang-002", name: "Hindi",   level: "native"       },
+  { id: "lang-001", name: "English", level: "fluent" },
+  { id: "lang-002", name: "Hindi", level: "native" },
   { id: "lang-003", name: "Kannada", level: "intermediate" },
 ];
 
 export const sampleInterests: Array<InterestData & { id: string }> = [
   { id: "int-001", name: "Open Source Contributing" },
-  { id: "int-002", name: "Technical Blogging"       },
-  { id: "int-003", name: "Rock Climbing"            },
+  { id: "int-002", name: "Technical Blogging" },
+  { id: "int-003", name: "Rock Climbing" },
 ];
 
 export const sampleAwards: Array<AwardData & { id: string }> = [
@@ -221,15 +241,15 @@ export const sampleReferences: Array<ReferenceData & { id: string }> = [
 
 // ---- Composed full resume (as it would come from DB) ----
 export const sampleResume = {
-  profile:      sampleProfile,
-  education:    sampleEducation,
-  experience:   sampleExperience,
-  projects:     sampleProjects,
+  profile: sampleProfile,
+  education: sampleEducation,
+  experience: sampleExperience,
+  projects: sampleProjects,
   certificates: sampleCertificates,
-  skills:       sampleSkills,
-  languages:    sampleLanguages,
-  interests:    sampleInterests,
-  awards:       sampleAwards,
+  skills: sampleSkills,
+  languages: sampleLanguages,
+  interests: sampleInterests,
+  awards: sampleAwards,
   publications: samplePublications,
-  references:   sampleReferences,
+  references: sampleReferences,
 };

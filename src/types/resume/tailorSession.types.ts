@@ -11,7 +11,7 @@ import type {
   PublicationData,
   ReferenceData,
   SkillData,
-} from "#/types/resume/resumeTypes";
+} from "#/types/resume/resume.types";
 
 export type DiffFormat = "text" | "para" | "bullet_points";
 export type DiffMode = "inline" | "structural";

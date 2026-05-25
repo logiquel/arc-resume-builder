@@ -1,5 +1,5 @@
 import React from "react";
-import type { Format3Data } from "#/types/resume/resumeTypes";
+import type { Format3Data } from "#/types/resume/resume.types";
 import {
   Document,
   Page,

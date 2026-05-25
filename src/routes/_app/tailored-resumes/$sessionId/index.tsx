@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { tailoringSessionSampleData } from "#/types/resume/tailoringSessionSampleData";
-import ScorePanel from "#/components/pages/analysis/ScorePanel";
-import { AiDiffField } from "#/components/pages/analysis/AiDiffField";
-import { AutoSaveNotification } from "#/components/pages/analysis/AutoSaveNotification";
+import ScorePanel from "#/components/pages/TailoredResume/ScorePanel";
+import { AiDiffField } from "#/components/pages/TailoredResume/AiDiffField";
+import { AutoSaveNotification } from "#/components/pages/TailoredResume/AutoSaveNotification";
 import { Icon } from "@iconify/react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "#/components/addons/tooltip";
+import { tailor_session_sample_data } from "#/data/tailor_resume_data";
 
 export const Route = createFileRoute("/_app/tailored-resumes/$sessionId/")({
   component: RouteComponent,
 
   loader: async ({ params }) => {
     const tailoringSession = {
-      ...tailoringSessionSampleData,
+      ...tailor_session_sample_data,
       id: params.sessionId,
     };
 
@@ -270,7 +270,7 @@ function RouteComponent() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 px-3">
+          <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 px-3 pb-3">
             <section
               className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
               style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}

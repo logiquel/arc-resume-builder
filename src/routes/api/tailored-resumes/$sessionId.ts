@@ -1,5 +1,5 @@
 // src/routes/api/tailored-resumes/$sessionId.tsx
-import { tailoringSessionSampleData } from "#/types/resume/tailoringSessionSampleData";
+import { tailor_session_sample_data } from "#/data/tailor_resume_data";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
@@ -7,7 +7,7 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
     handlers: {
       GET: async ({ params }) => {
         const data = {
-          ...tailoringSessionSampleData,
+          ...tailor_session_sample_data,
           id: params.sessionId,
         };
 

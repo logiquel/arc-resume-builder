@@ -6,7 +6,7 @@ import {
   View,
   Link,
 } from "@react-pdf/renderer";
-import type { Format3Data } from "#/types/resume/resumeTypes";
+import type { Format3Data } from "#/types/resume/resume.types";
 
 type Props = {
   data: Format3Data;

@@ -1,6 +1,6 @@
-import type { TailoringSession } from "#/types/resume/tailorSessionTypes";
+import type { TailoringSession } from "#/types/resume/tailorSession.types";
 
-export const tailoringSessionSampleData: TailoringSession = {
+export const tailor_session_sample_data: TailoringSession = {
   id: "sess_8f3kLm29QaX7vP1d",
   user_id: "user_001",
   base_resume_id: "res_123456",

@@ -11,12 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as GatewayIndexRouteImport } from './routes/_gateway/index'
-import { Route as AppEnhanceResumeIndexRouteImport } from './routes/_app/enhance-resume/index'
 import { Route as AppDashboardIndexRouteImport } from './routes/_app/dashboard/index'
 import { Route as ApiTailoredResumesSessionIdRouteImport } from './routes/api/tailored-resumes/$sessionId'
 import { Route as ApiResumesReportIdRouteImport } from './routes/api/resumes/$reportId'
-import { Route as AppPreviewReportIdRouteImport } from './routes/_app/preview/$reportId'
-import { Route as AppAnalysisReportIdRouteImport } from './routes/_app/analysis/$reportId'
 import { Route as AppTailoredResumesSessionIdIndexRouteImport } from './routes/_app/tailored-resumes/$sessionId/index'
 import { Route as AppTailoredResumesSessionIdPreviewIndexRouteImport } from './routes/_app/tailored-resumes/$sessionId/preview/index'
 
@@ -28,11 +25,6 @@ const GatewayIndexRoute = GatewayIndexRouteImport.update({
   id: '/_gateway/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AppEnhanceResumeIndexRoute = AppEnhanceResumeIndexRouteImport.update({
-  id: '/enhance-resume/',
-  path: '/enhance-resume/',
-  getParentRoute: () => AppRouteRoute,
 } as any)
 const AppDashboardIndexRoute = AppDashboardIndexRouteImport.update({
   id: '/dashboard/',
@@ -50,16 +42,6 @@ const ApiResumesReportIdRoute = ApiResumesReportIdRouteImport.update({
   path: '/api/resumes/$reportId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppPreviewReportIdRoute = AppPreviewReportIdRouteImport.update({
-  id: '/preview/$reportId',
-  path: '/preview/$reportId',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-const AppAnalysisReportIdRoute = AppAnalysisReportIdRouteImport.update({
-  id: '/analysis/$reportId',
-  path: '/analysis/$reportId',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppTailoredResumesSessionIdIndexRoute =
   AppTailoredResumesSessionIdIndexRouteImport.update({
     id: '/tailored-resumes/$sessionId/',
@@ -75,23 +57,17 @@ const AppTailoredResumesSessionIdPreviewIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof GatewayIndexRoute
-  '/analysis/$reportId': typeof AppAnalysisReportIdRoute
-  '/preview/$reportId': typeof AppPreviewReportIdRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/dashboard/': typeof AppDashboardIndexRoute
-  '/enhance-resume/': typeof AppEnhanceResumeIndexRoute
   '/tailored-resumes/$sessionId/': typeof AppTailoredResumesSessionIdIndexRoute
   '/tailored-resumes/$sessionId/preview/': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof GatewayIndexRoute
-  '/analysis/$reportId': typeof AppAnalysisReportIdRoute
-  '/preview/$reportId': typeof AppPreviewReportIdRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/dashboard': typeof AppDashboardIndexRoute
-  '/enhance-resume': typeof AppEnhanceResumeIndexRoute
   '/tailored-resumes/$sessionId': typeof AppTailoredResumesSessionIdIndexRoute
   '/tailored-resumes/$sessionId/preview': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -99,12 +75,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteRouteWithChildren
   '/_gateway/': typeof GatewayIndexRoute
-  '/_app/analysis/$reportId': typeof AppAnalysisReportIdRoute
-  '/_app/preview/$reportId': typeof AppPreviewReportIdRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/_app/dashboard/': typeof AppDashboardIndexRoute
-  '/_app/enhance-resume/': typeof AppEnhanceResumeIndexRoute
   '/_app/tailored-resumes/$sessionId/': typeof AppTailoredResumesSessionIdIndexRoute
   '/_app/tailored-resumes/$sessionId/preview/': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -112,35 +85,26 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/analysis/$reportId'
-    | '/preview/$reportId'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/dashboard/'
-    | '/enhance-resume/'
     | '/tailored-resumes/$sessionId/'
     | '/tailored-resumes/$sessionId/preview/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/analysis/$reportId'
-    | '/preview/$reportId'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/dashboard'
-    | '/enhance-resume'
     | '/tailored-resumes/$sessionId'
     | '/tailored-resumes/$sessionId/preview'
   id:
     | '__root__'
     | '/_app'
     | '/_gateway/'
-    | '/_app/analysis/$reportId'
-    | '/_app/preview/$reportId'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/_app/dashboard/'
-    | '/_app/enhance-resume/'
     | '/_app/tailored-resumes/$sessionId/'
     | '/_app/tailored-resumes/$sessionId/preview/'
   fileRoutesById: FileRoutesById
@@ -168,13 +132,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GatewayIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/enhance-resume/': {
-      id: '/_app/enhance-resume/'
-      path: '/enhance-resume'
-      fullPath: '/enhance-resume/'
-      preLoaderRoute: typeof AppEnhanceResumeIndexRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/_app/dashboard/': {
       id: '/_app/dashboard/'
       path: '/dashboard'
@@ -196,20 +153,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiResumesReportIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/preview/$reportId': {
-      id: '/_app/preview/$reportId'
-      path: '/preview/$reportId'
-      fullPath: '/preview/$reportId'
-      preLoaderRoute: typeof AppPreviewReportIdRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/analysis/$reportId': {
-      id: '/_app/analysis/$reportId'
-      path: '/analysis/$reportId'
-      fullPath: '/analysis/$reportId'
-      preLoaderRoute: typeof AppAnalysisReportIdRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/_app/tailored-resumes/$sessionId/': {
       id: '/_app/tailored-resumes/$sessionId/'
       path: '/tailored-resumes/$sessionId'
@@ -228,19 +171,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
-  AppAnalysisReportIdRoute: typeof AppAnalysisReportIdRoute
-  AppPreviewReportIdRoute: typeof AppPreviewReportIdRoute
   AppDashboardIndexRoute: typeof AppDashboardIndexRoute
-  AppEnhanceResumeIndexRoute: typeof AppEnhanceResumeIndexRoute
   AppTailoredResumesSessionIdIndexRoute: typeof AppTailoredResumesSessionIdIndexRoute
   AppTailoredResumesSessionIdPreviewIndexRoute: typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
-  AppAnalysisReportIdRoute: AppAnalysisReportIdRoute,
-  AppPreviewReportIdRoute: AppPreviewReportIdRoute,
   AppDashboardIndexRoute: AppDashboardIndexRoute,
-  AppEnhanceResumeIndexRoute: AppEnhanceResumeIndexRoute,
   AppTailoredResumesSessionIdIndexRoute: AppTailoredResumesSessionIdIndexRoute,
   AppTailoredResumesSessionIdPreviewIndexRoute:
     AppTailoredResumesSessionIdPreviewIndexRoute,

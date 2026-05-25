@@ -14,7 +14,7 @@ const ResumeStackMock = () => {
           height="278.122"
           rx="15"
           fill="white"
-          shape-rendering="crispEdges"
+          shapeRendering="crispEdges"
         />
         <rect
           x="33.6328"
@@ -23,8 +23,8 @@ const ResumeStackMock = () => {
           height="277.622"
           rx="14.75"
           stroke="black"
-          stroke-width="0.5"
-          shape-rendering="crispEdges"
+          strokeWidth="0.5"
+          shapeRendering="crispEdges"
         />
         <line
           x1="94.8187"
@@ -32,8 +32,8 @@ const ResumeStackMock = () => {
           x2="159.301"
           y2="49.6334"
           stroke="#E5E6EA"
-          stroke-width="6.60622"
-          stroke-linecap="round"
+          strokeWidth="6.60622"
+          strokeLinecap="round"
         />
         <line
           x1="66.9398"
@@ -41,8 +41,8 @@ const ResumeStackMock = () => {
           x2="187.18"
           y2="59.5426"
           stroke="#E5E6EA"
-          stroke-width="6.60622"
-          stroke-linecap="round"
+          strokeWidth="6.60622"
+          strokeLinecap="round"
         />
         <line
           x1="49.7336"
@@ -50,8 +50,8 @@ const ResumeStackMock = () => {
           x2="78.683"
           y2="94.0615"
           stroke="#E5E6EA"
-          stroke-width="6.60622"
-          stroke-linecap="round"
+          strokeWidth="6.60622"
+          strokeLinecap="round"
         />
         <line
           x1="46.76"
@@ -59,8 +59,8 @@ const ResumeStackMock = () => {
           x2="146.844"
           y2="101.659"
           stroke="#E5E6EA"
-          stroke-width="0.660622"
-          stroke-linecap="round"
+          strokeWidth="0.660622"
+          strokeLinecap="round"
         />
         <line
           x1="48.5767"
@@ -68,8 +68,8 @@ const ResumeStackMock = () => {
           x2="145.028"
           y2="112.064"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="48.5767"
@@ -77,9 +77,9 @@ const ResumeStackMock = () => {
           x2="130.659"
           y2="120.322"
           stroke="#0A65CC"
-          stroke-opacity="0.5"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeOpacity="0.5"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="48.5773"
@@ -87,8 +87,8 @@ const ResumeStackMock = () => {
           x2="90.0784"
           y2="128.591"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="186.814"
@@ -96,8 +96,8 @@ const ResumeStackMock = () => {
           x2="214.89"
           y2="104.314"
           stroke="#E5E6EA"
-          stroke-width="3.96373"
-          stroke-linecap="round"
+          strokeWidth="3.96373"
+          strokeLinecap="round"
         />
         <line
           x1="186.814"
@@ -105,8 +105,8 @@ const ResumeStackMock = () => {
           x2="214.89"
           y2="128.757"
           stroke="#E5E6EA"
-          stroke-width="3.96373"
-          stroke-linecap="round"
+          strokeWidth="3.96373"
+          strokeLinecap="round"
         />
         <line
           x1="51.55"
@@ -114,8 +114,8 @@ const ResumeStackMock = () => {
           x2="80.4994"
           y2="150.833"
           stroke="#E5E6EA"
-          stroke-width="6.60622"
-          stroke-linecap="round"
+          strokeWidth="6.60622"
+          strokeLinecap="round"
         />
         <line
           x1="48.5764"
@@ -123,8 +123,8 @@ const ResumeStackMock = () => {
           x2="214.723"
           y2="158.431"
           stroke="#E5E6EA"
-          stroke-width="0.660622"
-          stroke-linecap="round"
+          strokeWidth="0.660622"
+          strokeLinecap="round"
         />
         <line
           x1="50.3931"
@@ -132,8 +132,8 @@ const ResumeStackMock = () => {
           x2="125.465"
           y2="168.835"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="50.3931"
@@ -141,8 +141,8 @@ const ResumeStackMock = () => {
           x2="125.465"
           y2="177.093"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="138.018"
@@ -150,8 +150,8 @@ const ResumeStackMock = () => {
           x2="213.09"
           y2="168.835"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="138.018"
@@ -159,8 +159,8 @@ const ResumeStackMock = () => {
           x2="213.09"
           y2="177.093"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="51.55"
@@ -168,8 +168,8 @@ const ResumeStackMock = () => {
           x2="80.4994"
           y2="255.756"
           stroke="#E5E6EA"
-          stroke-width="6.60622"
-          stroke-linecap="round"
+          strokeWidth="6.60622"
+          strokeLinecap="round"
         />
         <line
           x1="48.5764"
@@ -177,8 +177,8 @@ const ResumeStackMock = () => {
           x2="214.723"
           y2="263.354"
           stroke="#E5E6EA"
-          stroke-width="0.660622"
-          stroke-linecap="round"
+          strokeWidth="0.660622"
+          strokeLinecap="round"
         />
         <line
           x1="50.3931"
@@ -186,9 +186,9 @@ const ResumeStackMock = () => {
           x2="125.465"
           y2="273.758"
           stroke="#0A65CC"
-          stroke-opacity="0.5"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeOpacity="0.5"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="50.3931"
@@ -196,8 +196,8 @@ const ResumeStackMock = () => {
           x2="125.465"
           y2="282.016"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="138.018"
@@ -205,8 +205,8 @@ const ResumeStackMock = () => {
           x2="213.09"
           y2="273.758"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="138.018"
@@ -214,8 +214,8 @@ const ResumeStackMock = () => {
           x2="213.09"
           y2="282.016"
           stroke="#E5E6EA"
-          stroke-width="4.29405"
-          stroke-linecap="round"
+          strokeWidth="4.29405"
+          strokeLinecap="round"
         />
         <line
           x1="48.4116"
@@ -223,8 +223,8 @@ const ResumeStackMock = () => {
           x2="129.668"
           y2="200.648"
           stroke="#E5E6EA"
-          stroke-width="3.96373"
-          stroke-linecap="round"
+          strokeWidth="3.96373"
+          strokeLinecap="round"
         />
         <line
           x1="48.4116"
@@ -232,8 +232,8 @@ const ResumeStackMock = () => {
           x2="129.668"
           y2="208.906"
           stroke="#E5E6EA"
-          stroke-width="3.96373"
-          stroke-linecap="round"
+          strokeWidth="3.96373"
+          strokeLinecap="round"
         />
         <line
           x1="48.4116"
@@ -241,8 +241,8 @@ const ResumeStackMock = () => {
           x2="129.668"
           y2="217.164"
           stroke="#E5E6EA"
-          stroke-width="3.96373"
-          stroke-linecap="round"
+          strokeWidth="3.96373"
+          strokeLinecap="round"
         />
         <line
           x1="48.907"
@@ -250,8 +250,8 @@ const ResumeStackMock = () => {
           x2="129.173"
           y2="224.926"
           stroke="#E5E6EA"
-          stroke-width="4.95467"
-          stroke-linecap="round"
+          strokeWidth="4.95467"
+          strokeLinecap="round"
         />
         <line
           x1="48.4116"
@@ -259,8 +259,8 @@ const ResumeStackMock = () => {
           x2="129.668"
           y2="233.679"
           stroke="#E5E6EA"
-          stroke-width="3.96373"
-          stroke-linecap="round"
+          strokeWidth="3.96373"
+          strokeLinecap="round"
         />
         <line
           x1="168.646"
@@ -268,8 +268,8 @@ const ResumeStackMock = () => {
           x2="214.889"
           y2="204.942"
           stroke="#E5E6EA"
-          stroke-width="3.96373"
-          stroke-linecap="round"
+          strokeWidth="3.96373"
+          strokeLinecap="round"
         />
         <line
           x1="169.141"
@@ -277,9 +277,9 @@ const ResumeStackMock = () => {
           x2="214.394"
           y2="216.668"
           stroke="#0A65CC"
-          stroke-opacity="0.5"
-          stroke-width="4.95467"
-          stroke-linecap="round"
+          strokeOpacity="0.5"
+          strokeWidth="4.95467"
+          strokeLinecap="round"
         />
         <line
           x1="168.646"
@@ -287,8 +287,8 @@ const ResumeStackMock = () => {
           x2="214.889"
           y2="229.385"
           stroke="#E5E6EA"
-          stroke-width="3.96373"
-          stroke-linecap="round"
+          strokeWidth="3.96373"
+          strokeLinecap="round"
         />
       </g>
       <rect
@@ -306,8 +306,8 @@ const ResumeStackMock = () => {
         height="277.622"
         rx="13.6231"
         stroke="black"
-        stroke-opacity="0.2"
-        stroke-width="0.5"
+        strokeOpacity="0.2"
+        strokeWidth="0.5"
       />
       <line
         x1="76.4359"
@@ -315,8 +315,8 @@ const ResumeStackMock = () => {
         x2="140.918"
         y2="68.7115"
         stroke="#E5E6EA"
-        stroke-width="6.60622"
-        stroke-linecap="round"
+        strokeWidth="6.60622"
+        strokeLinecap="round"
       />
       <line
         x1="48.557"
@@ -324,8 +324,8 @@ const ResumeStackMock = () => {
         x2="168.797"
         y2="78.6207"
         stroke="#E5E6EA"
-        stroke-width="6.60622"
-        stroke-linecap="round"
+        strokeWidth="6.60622"
+        strokeLinecap="round"
       />
       <line
         x1="31.3508"
@@ -333,8 +333,8 @@ const ResumeStackMock = () => {
         x2="60.3001"
         y2="113.14"
         stroke="#E5E6EA"
-        stroke-width="6.60622"
-        stroke-linecap="round"
+        strokeWidth="6.60622"
+        strokeLinecap="round"
       />
       <line
         x1="28.3772"
@@ -342,8 +342,8 @@ const ResumeStackMock = () => {
         x2="128.461"
         y2="120.737"
         stroke="#E5E6EA"
-        stroke-width="0.660622"
-        stroke-linecap="round"
+        strokeWidth="0.660622"
+        strokeLinecap="round"
       />
       <line
         x1="30.1939"
@@ -351,8 +351,8 @@ const ResumeStackMock = () => {
         x2="126.645"
         y2="131.142"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="30.1939"
@@ -360,9 +360,9 @@ const ResumeStackMock = () => {
         x2="112.276"
         y2="139.4"
         stroke="#0A65CC"
-        stroke-opacity="0.5"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeOpacity="0.5"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="30.1944"
@@ -370,8 +370,8 @@ const ResumeStackMock = () => {
         x2="71.6956"
         y2="147.669"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="168.431"
@@ -379,8 +379,8 @@ const ResumeStackMock = () => {
         x2="196.508"
         y2="123.392"
         stroke="#E5E6EA"
-        stroke-width="3.96373"
-        stroke-linecap="round"
+        strokeWidth="3.96373"
+        strokeLinecap="round"
       />
       <line
         x1="168.431"
@@ -388,8 +388,8 @@ const ResumeStackMock = () => {
         x2="196.508"
         y2="147.836"
         stroke="#E5E6EA"
-        stroke-width="3.96373"
-        stroke-linecap="round"
+        strokeWidth="3.96373"
+        strokeLinecap="round"
       />
       <line
         x1="33.1672"
@@ -397,8 +397,8 @@ const ResumeStackMock = () => {
         x2="62.1166"
         y2="169.911"
         stroke="#E5E6EA"
-        stroke-width="6.60622"
-        stroke-linecap="round"
+        strokeWidth="6.60622"
+        strokeLinecap="round"
       />
       <line
         x1="30.1936"
@@ -406,8 +406,8 @@ const ResumeStackMock = () => {
         x2="196.34"
         y2="177.51"
         stroke="#E5E6EA"
-        stroke-width="0.660622"
-        stroke-linecap="round"
+        strokeWidth="0.660622"
+        strokeLinecap="round"
       />
       <line
         x1="32.0103"
@@ -415,8 +415,8 @@ const ResumeStackMock = () => {
         x2="107.082"
         y2="187.914"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="32.0103"
@@ -424,8 +424,8 @@ const ResumeStackMock = () => {
         x2="107.082"
         y2="196.171"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="119.635"
@@ -433,8 +433,8 @@ const ResumeStackMock = () => {
         x2="194.707"
         y2="187.914"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="119.635"
@@ -442,8 +442,8 @@ const ResumeStackMock = () => {
         x2="194.707"
         y2="196.171"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="33.1672"
@@ -451,8 +451,8 @@ const ResumeStackMock = () => {
         x2="62.1166"
         y2="274.834"
         stroke="#E5E6EA"
-        stroke-width="6.60622"
-        stroke-linecap="round"
+        strokeWidth="6.60622"
+        strokeLinecap="round"
       />
       <line
         x1="30.1936"
@@ -460,8 +460,8 @@ const ResumeStackMock = () => {
         x2="196.34"
         y2="282.432"
         stroke="#E5E6EA"
-        stroke-width="0.660622"
-        stroke-linecap="round"
+        strokeWidth="0.660622"
+        strokeLinecap="round"
       />
       <line
         x1="32.0103"
@@ -469,9 +469,9 @@ const ResumeStackMock = () => {
         x2="107.082"
         y2="292.836"
         stroke="#0A65CC"
-        stroke-opacity="0.5"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeOpacity="0.5"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="32.0103"
@@ -479,8 +479,8 @@ const ResumeStackMock = () => {
         x2="107.082"
         y2="301.094"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="119.635"
@@ -488,8 +488,8 @@ const ResumeStackMock = () => {
         x2="194.707"
         y2="292.836"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="119.635"
@@ -497,8 +497,8 @@ const ResumeStackMock = () => {
         x2="194.707"
         y2="301.094"
         stroke="#E5E6EA"
-        stroke-width="4.29405"
-        stroke-linecap="round"
+        strokeWidth="4.29405"
+        strokeLinecap="round"
       />
       <line
         x1="30.0287"
@@ -506,8 +506,8 @@ const ResumeStackMock = () => {
         x2="111.285"
         y2="219.726"
         stroke="#E5E6EA"
-        stroke-width="3.96373"
-        stroke-linecap="round"
+        strokeWidth="3.96373"
+        strokeLinecap="round"
       />
       <line
         x1="30.0287"
@@ -515,8 +515,8 @@ const ResumeStackMock = () => {
         x2="111.285"
         y2="227.984"
         stroke="#E5E6EA"
-        stroke-width="3.96373"
-        stroke-linecap="round"
+        strokeWidth="3.96373"
+        strokeLinecap="round"
       />
       <line
         x1="30.0287"
@@ -524,8 +524,8 @@ const ResumeStackMock = () => {
         x2="111.285"
         y2="236.242"
         stroke="#E5E6EA"
-        stroke-width="3.96373"
-        stroke-linecap="round"
+        strokeWidth="3.96373"
+        strokeLinecap="round"
       />
       <line
         x1="30.5242"
@@ -533,8 +533,8 @@ const ResumeStackMock = () => {
         x2="110.79"
         y2="244.004"
         stroke="#E5E6EA"
-        stroke-width="4.95467"
-        stroke-linecap="round"
+        strokeWidth="4.95467"
+        strokeLinecap="round"
       />
       <line
         x1="30.0287"
@@ -542,8 +542,8 @@ const ResumeStackMock = () => {
         x2="111.285"
         y2="252.757"
         stroke="#E5E6EA"
-        stroke-width="3.96373"
-        stroke-linecap="round"
+        strokeWidth="3.96373"
+        strokeLinecap="round"
       />
       <line
         x1="150.263"
@@ -551,8 +551,8 @@ const ResumeStackMock = () => {
         x2="196.507"
         y2="224.02"
         stroke="#E5E6EA"
-        stroke-width="3.96373"
-        stroke-linecap="round"
+        strokeWidth="3.96373"
+        strokeLinecap="round"
       />
       <line
         x1="150.759"
@@ -560,9 +560,9 @@ const ResumeStackMock = () => {
         x2="196.011"
         y2="235.746"
         stroke="#0A65CC"
-        stroke-opacity="0.5"
-        stroke-width="4.95467"
-        stroke-linecap="round"
+        strokeOpacity="0.5"
+        strokeWidth="4.95467"
+        strokeLinecap="round"
       />
       <line
         x1="150.263"
@@ -570,8 +570,8 @@ const ResumeStackMock = () => {
         x2="196.507"
         y2="248.463"
         stroke="#E5E6EA"
-        stroke-width="3.96373"
-        stroke-linecap="round"
+        strokeWidth="3.96373"
+        strokeLinecap="round"
       />
       <path
         d="M183.483 74.6654C183.537 74.1714 184.202 74.1714 184.256 74.6654L184.712 78.8097C185.3 84.161 189.21 88.3801 194.169 89.015L198.009 89.5068C198.467 89.5654 198.467 90.2823 198.009 90.3409L194.169 90.8327C189.21 91.4676 185.3 95.6867 184.712 101.038L184.256 105.182C184.202 105.676 183.537 105.676 183.483 105.182L183.027 101.038C182.439 95.6867 178.529 91.4676 173.57 90.8327L169.73 90.3409C169.272 90.2823 169.272 89.5654 169.73 89.5068L173.57 89.015C178.529 88.3801 182.439 84.161 183.027 78.8097L183.483 74.6654Z"
@@ -589,9 +589,9 @@ const ResumeStackMock = () => {
           width="264.093"
           height="345.68"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"

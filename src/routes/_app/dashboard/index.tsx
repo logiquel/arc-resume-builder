@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import resumeMock1 from "../../../../public/sample_resume_image.jpg";
-import resumeMock2 from "../../../../public/sample_resume_image_2.jpg";
-import resumeMock3 from "../../../../public/sample_resume_image_3.jpg";
-import resumeMock4 from "../../../../public/sample_resume_image_4.jpg";
+import resumeMock1 from "/sample_resume_image.jpg";
+import resumeMock2 from "/sample_resume_image_2.jpg";
+import resumeMock3 from "/sample_resume_image_3.jpg";
+import resumeMock4 from "/sample_resume_image_4.jpg";
 import { Icon } from "@iconify/react";
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";
 import FileFolderIcon from "#/components/common/Icons/FileFolderIcon";
 import {
@@ -263,21 +263,22 @@ function RouteComponent() {
               {/* Locked Right Paginator Dots Indicator — Completely separated from the cards so it stays dead-still */}
               <div className="absolute left-full pl-1.5 flex flex-col items-center justify-center gap-y-1 h-40 w-5">
                 {dummyResumes.map((_, dotIdx) => (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div
-                        key={dotIdx}
-                        className={`rounded-full w-1.5 aspect-square transition-all duration-200 ${
-                          dotIdx === activeIndex
-                            ? "bg-brand scale-110"
-                            : "bg-gray-300"
-                        }`}
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="text-xxs!">
-                      Swipe cards to shuffle
-                    </TooltipContent>
-                  </Tooltip>
+                  <React.Fragment key={dotIdx}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className={`rounded-full w-1.5 aspect-square transition-all duration-200 ${
+                            dotIdx === activeIndex
+                              ? "bg-brand scale-110"
+                              : "bg-gray-300"
+                          }`}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xxs!">
+                        Swipe cards to shuffle
+                      </TooltipContent>
+                    </Tooltip>
+                  </React.Fragment>
                 ))}
               </div>
             </div>
