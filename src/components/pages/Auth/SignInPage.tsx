@@ -1,4 +1,3 @@
-// SignInPage.tsx
 import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
@@ -27,42 +26,22 @@ const SignInPage = () => {
       email: "praveenlohar.in@gmail.com",
     } satisfies SignInFormData,
     onSubmit: async ({ value }) => {
-      requestOtpMutation.mutate(
-        { email: value.email },
-        {
-          onSuccess: () => {
-            setEmail(value.email);
-            setShowOtpForm(true);
-            console.log("SignIn OTP requested successfully for:", value.email);
-          },
-          onError: (error: any) => {
-            console.error("SignIn challenge error:", error);
-            alert(
-              error.message ||
-                "Failed to dispatch verification code. Please try again.",
-            );
-          },
-        },
-      );
+      await requestOtpMutation.mutateAsync({ email: value.email });
+
+      setEmail(value.email);
+      setShowOtpForm(true);
+
+      console.log("SignIn OTP requested successfully for:", value.email);
     },
   });
 
   const handleVerifyOtp = async (otp: string) => {
-    verifyOtpMutation.mutate(
-      {
-        email: email,
-        token: otp,
-      },
-      {
-        onSuccess: (data) => {
-          navigate({ to: "/dashboard", replace: true });
-        },
-        onError: (error: any) => {
-          console.error("SignIn OTP validation error:", error);
-          alert(error.message || "Invalid or expired OTP code entered.");
-        },
-      },
-    );
+    await verifyOtpMutation.mutateAsync({
+      email,
+      token: otp,
+    });
+
+    navigate({ to: "/dashboard", replace: true });
   };
 
   const isPendingRequest =
@@ -82,6 +61,7 @@ const SignInPage = () => {
               <AppLogo />
             </div>
           </header>
+
           <div className="flex-1 w-full h-full flex flex-col gap-y-4 p-6">
             {!showOtpForm ? (
               <>
@@ -98,7 +78,15 @@ const SignInPage = () => {
                     </Link>
                   </span>
                 </h2>
-                <div className="w-full flex-1 grid grid-cols-1 gap-y-4 content-start mt-2">
+
+                <form
+                  className="w-full flex-1 grid grid-cols-1 gap-y-4 content-start mt-2"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    signInForm.handleSubmit();
+                  }}
+                >
                   <signInForm.Field
                     name="email"
                     validators={{
@@ -142,7 +130,7 @@ const SignInPage = () => {
                     >
                       {({ canSubmit }) => (
                         <button
-                          onClick={() => signInForm.handleSubmit()}
+                          type="submit"
                           disabled={!canSubmit || isPendingRequest}
                           className="w-full px-2 py-2 gap-x-2 flex items-center justify-center rounded-full bg-brand hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all"
                         >
@@ -160,12 +148,13 @@ const SignInPage = () => {
                         </button>
                       )}
                     </signInForm.Subscribe>
+
                     <span className="w-full mt-4 px-2 gap-x-0.5 text-tiny text-text-muted text-center">
                       By signing in, you agree to the Terms of Service and
                       Privacy Policy
                     </span>
                   </div>
-                </div>
+                </form>
               </>
             ) : (
               <OtpForm
@@ -177,6 +166,7 @@ const SignInPage = () => {
             )}
           </div>
         </section>
+
         <section className="relative w-[60%] h-full rounded-[inherit] overflow-clip flex flex-col justify-end p-12">
           <img
             src="/login_screen_bg.jpg"

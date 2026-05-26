@@ -12,6 +12,10 @@ import appCss from "../styles.css?url";
 import type { QueryClient } from "@tanstack/react-query";
 import { TooltipProvider } from "#/components/addons/tooltip";
 import { getCurrentUserFn } from "#/api/auth/auth.functions";
+import {
+  AnchoredToastProvider,
+  ToastProvider,
+} from "#/components/addons/toast";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -55,9 +59,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="h-full overflow-hidden font-sans antialiased">
-        <TooltipProvider>
-          <div className="w-full h-full">{children}</div>
-        </TooltipProvider>
+        <ToastProvider position="top-right">
+          <AnchoredToastProvider>
+            <TooltipProvider>
+              <div className="w-full h-full">{children}</div>
+            </TooltipProvider>
+          </AnchoredToastProvider>
+        </ToastProvider>
         <Scripts />
       </body>
     </html>

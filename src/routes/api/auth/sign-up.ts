@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { signUpRequestSchema } from "../../../api/auth/auth.schemas";
 import { createClient } from "#/utils/supabase/server";
+import { createAdminClient } from "#/utils/supabase/admin";
+import { errorResponse, successResponse } from "#/lib/api-response";
 
 export const Route = createFileRoute("/api/auth/sign-up")({
   server: {
@@ -8,76 +10,84 @@ export const Route = createFileRoute("/api/auth/sign-up")({
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-
           const validation = signUpRequestSchema.safeParse(body);
+
           if (!validation.success) {
-            return new Response(
-              JSON.stringify({
-                error: "Validation failed.",
-                details: validation.error.format(),
-              }),
-              {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-              },
+            const fieldErrors = validation.error.flatten().fieldErrors;
+            const details = Object.values(fieldErrors).flat().filter(Boolean);
+
+            return errorResponse(
+              400,
+              "Validation failed",
+              "VALIDATION_ERROR",
+              details.length > 0 ? details : ["Invalid registration payload."],
             );
           }
 
           const { email } = validation.data;
 
           const supabase = createClient();
+          const admin = createAdminClient();
 
-          // Strict Registration Gate: Verify uniqueness in our user record tables
-          const { data: existingUser } = await supabase
-            .from("users")
-            .select("email")
-            .eq("email", email)
-            .maybeSingle();
+          const { data: authUser, error: authUserError } =
+            await admin.auth.admin.listUsers();
 
-          if (existingUser) {
-            return new Response(
-              JSON.stringify({
-                error:
-                  "User with this email already exists. Please login instead.",
-              }),
-              {
-                status: 409,
-                headers: { "Content-Type": "application/json" },
-              },
+          if (authUserError) {
+            return errorResponse(
+              500,
+              "Failed to validate user registration state",
+              "USER_LOOKUP_FAILED",
+              [authUserError.message],
             );
           }
 
-          // Trigger novel user sign up OTP workflow
+          const existingUser = authUser.users.find(
+            (user) => user.email?.toLowerCase() === email.toLowerCase(),
+          );
+
+          if (existingUser) {
+            return errorResponse(
+              409,
+              "User already exists. Please sign in instead.",
+              "USER_ALREADY_EXISTS",
+              [
+                "An account with this email already exists. Please sign in instead.",
+              ],
+            );
+          }
+
+          const origin = request.headers.get("origin");
+
           const { error: otpError } = await supabase.auth.signInWithOtp({
             email,
             options: {
               shouldCreateUser: true,
-              emailRedirectTo: request.headers.get("origin") || undefined,
+              emailRedirectTo: origin || undefined,
             },
           });
 
-          if (otpError) throw otpError;
+          if (otpError) {
+            return errorResponse(
+              400,
+              "Failed to dispatch registration OTP",
+              "OTP_SIGN_UP_FAILED",
+              [otpError.message],
+            );
+          }
 
-          return new Response(
-            JSON.stringify({
-              success: true,
-              message: "Registration OTP sent successfully.",
-            }),
-            {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            },
+          return successResponse(
+            200,
+            "Registration OTP sent successfully.",
+            null,
           );
         } catch (error: any) {
           console.error("[SIGN_UP_OTP_FAILURE]:", error);
-          return new Response(
-            JSON.stringify({
-              error: error.message || "Failed to dispatch registration OTP.",
-            }),
-            {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            },
+
+          return errorResponse(
+            500,
+            "Internal server error",
+            "INTERNAL_SERVER_ERROR",
+            [error?.message || "Failed to dispatch registration OTP."],
           );
         }
       },

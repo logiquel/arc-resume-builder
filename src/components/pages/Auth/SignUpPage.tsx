@@ -1,4 +1,3 @@
-// SignUpPage.tsx
 import { Icon } from "@iconify/react";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
@@ -34,48 +33,31 @@ const SignUpPage = () => {
       phone: "",
     } satisfies SignUpFormData,
     onSubmit: async ({ value }) => {
-      signUpMutation.mutate(
-        { email: value.email },
-        {
-          onSuccess: () => {
-            setFormData(value);
-            setRegisteredEmail(value.email);
-            setShowOtpForm(true);
-            console.log("OTP successfully sent to:", value.email);
-          },
-          onError: (error: any) => {
-            console.error("Registration error:", error);
-            alert(error.message || "Failed to send OTP. Please try again.");
-          },
-        },
-      );
+      const response = await signUpMutation.mutateAsync({ email: value.email });
+
+      setFormData(value);
+      setRegisteredEmail(value.email);
+      setShowOtpForm(true);
+
+      console.log("OTP successfully sent to:", value.email, response);
     },
   });
 
   const handleVerifyOtp = async (otp: string) => {
     if (!formData) return;
 
-    verifyOtpMutation.mutate(
-      {
-        email: registeredEmail,
-        token: otp,
-        profile: {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone,
-        },
+    await verifyOtpMutation.mutateAsync({
+      email: registeredEmail,
+      token: otp,
+      profile: {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
       },
-      {
-        onSuccess: () => {
-          console.log("User registered successfully");
-          navigate({ to: "/dashboard" });
-        },
-        onError: (error: any) => {
-          console.error("OTP verification error:", error);
-          alert(error.message || "Invalid or expired OTP. Please try again.");
-        },
-      },
-    );
+    });
+
+    console.log("User registered successfully");
+    navigate({ to: "/dashboard" });
   };
 
   const isPendingRequest =
@@ -95,6 +77,7 @@ const SignUpPage = () => {
               <AppLogo />
             </div>
           </header>
+
           <div className="flex-1 w-full h-full flex flex-col gap-y-4 p-6">
             {!showOtpForm ? (
               <>
@@ -111,7 +94,15 @@ const SignUpPage = () => {
                     </Link>
                   </span>
                 </h2>
-                <div className="w-full flex-1 grid grid-cols-2 gap-x-4 gap-y-2 content-start mt-2">
+
+                <form
+                  className="w-full flex-1 grid grid-cols-2 gap-x-4 gap-y-2 content-start mt-2"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    form.handleSubmit();
+                  }}
+                >
                   <form.Field
                     name="firstName"
                     validators={{
@@ -248,7 +239,7 @@ const SignUpPage = () => {
                     >
                       {({ canSubmit }) => (
                         <button
-                          onClick={() => form.handleSubmit()}
+                          type="submit"
                           disabled={!canSubmit || isPendingRequest}
                           className="w-full px-2 py-2 gap-x-2 flex items-center justify-center rounded-full bg-brand hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all"
                         >
@@ -266,12 +257,13 @@ const SignUpPage = () => {
                         </button>
                       )}
                     </form.Subscribe>
+
                     <span className="w-full mt-4 px-2 gap-x-0.5 text-tiny text-text-muted text-center">
                       By signing up, you agree to the Terms of Service and
                       Privacy Policy
                     </span>
                   </div>
-                </div>
+                </form>
               </>
             ) : (
               <OtpForm
@@ -283,6 +275,7 @@ const SignUpPage = () => {
             )}
           </div>
         </section>
+
         <section className="relative w-[60%] h-full rounded-[inherit] overflow-clip flex flex-col justify-end p-12">
           <img
             src="/login_screen_bg.jpg"

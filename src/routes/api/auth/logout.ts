@@ -1,6 +1,7 @@
 // src/routes/api/auth/logout.ts
 import { createClient } from "#/utils/supabase/server";
 import { createFileRoute } from "@tanstack/react-router";
+import { errorResponse, successResponse } from "#/lib/api-response";
 
 export const Route = createFileRoute("/api/auth/logout")({
   server: {
@@ -12,38 +13,23 @@ export const Route = createFileRoute("/api/auth/logout")({
           const { error } = await supabase.auth.signOut({ scope: "local" });
 
           if (error) {
-            return new Response(
-              JSON.stringify({
-                error: error.message,
-              }),
-              {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-              },
-            );
+            return errorResponse(400, "Logout failed", "LOGOUT_FAILED", [
+              error.message,
+            ]);
           }
 
-          return new Response(
-            JSON.stringify({
-              success: true,
-              message: "Logged out successfully.",
-            }),
-            {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            },
-          );
-        } catch (error) {
+          return successResponse(200, "Logged out successfully.", null);
+        } catch (error: any) {
           console.error("[LOGOUT_FAILURE]:", error);
 
-          return new Response(
-            JSON.stringify({
-              error: "Internal engine fault handling logout request.",
-            }),
-            {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            },
+          return errorResponse(
+            500,
+            "Internal server error",
+            "INTERNAL_SERVER_ERROR",
+            [
+              error?.message ||
+                "Internal engine fault handling logout request.",
+            ],
           );
         }
       },

@@ -1,6 +1,5 @@
-// OtpForm.tsx
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface OtpFormProps {
   email: string;
@@ -9,26 +8,30 @@ interface OtpFormProps {
   isSubmitting?: boolean;
 }
 
+const OTP_LENGTH = 6;
+
 const OtpForm = ({
   email,
   onVerify,
   onBack,
   isSubmitting = false,
 }: OtpFormProps) => {
-  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
+  const [otpValues, setOtpValues] = useState(Array(OTP_LENGTH).fill(""));
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
 
   const handleOtpChange = (index: number, value: string) => {
-    if (value.length > 1) return;
-    if (!/^\d*$/.test(value)) return;
+    if (!/^\d?$/.test(value)) return;
 
-    const newOtp = [...otpValues];
-    newOtp[index] = value;
-    setOtpValues(newOtp);
+    const nextOtp = [...otpValues];
+    nextOtp[index] = value;
+    setOtpValues(nextOtp);
 
-    // Auto-focus next input
-    if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
-      nextInput?.focus();
+    if (value && index < OTP_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
@@ -37,23 +40,51 @@ const OtpForm = ({
     e: React.KeyboardEvent<HTMLInputElement>,
   ) => {
     if (e.key === "Backspace" && !otpValues[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`);
-      prevInput?.focus();
+      inputRefs.current[index - 1]?.focus();
+    }
+
+    if (e.key === "ArrowLeft" && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+
+    if (e.key === "ArrowRight" && index < OTP_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    const pasted = e.clipboardData
+      .getData("text")
+      .replace(/\D/g, "")
+      .slice(0, OTP_LENGTH);
+    if (!pasted) return;
+
+    const nextOtp = Array(OTP_LENGTH).fill("");
+    pasted.split("").forEach((char, index) => {
+      nextOtp[index] = char;
+    });
+
+    setOtpValues(nextOtp);
+
+    const focusIndex = Math.min(pasted.length, OTP_LENGTH) - 1;
+    if (focusIndex >= 0) {
+      inputRefs.current[focusIndex]?.focus();
     }
   };
 
   const handleSubmit = async () => {
     const otp = otpValues.join("");
-    if (otp.length === 6) {
+    if (otp.length === OTP_LENGTH) {
       await onVerify(otp);
     }
   };
 
   const maskedEmail = email.replace(
     /(.{3})(.*)(@.*)/,
-    (_, first, middle, last) => {
-      return first + "*".repeat(Math.min(middle.length, 5)) + last;
-    },
+    (_, first, middle, last) =>
+      first + "*".repeat(Math.min(middle.length, 5)) + last,
   );
 
   return (
@@ -65,27 +96,34 @@ const OtpForm = ({
           <span className="text-brand font-normal">{maskedEmail}</span>
         </p>
       </h2>
+
       <div className="w-full flex-1 grid grid-cols-2 gap-x-4 gap-y-4 content-start mt-6">
         <fieldset className="w-full flex justify-center gap-3 col-span-2">
           {otpValues.map((value, index) => (
             <input
               key={index}
-              id={`otp-${index}`}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
               type="text"
               inputMode="numeric"
+              autoComplete={index === 0 ? "one-time-code" : "off"}
               maxLength={1}
               value={value}
               onChange={(e) => handleOtpChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
+              onPaste={handlePaste}
               disabled={isSubmitting}
+              aria-label={`OTP digit ${index + 1}`}
               className="h-12 w-12 text-center bg-gray-50 outline-none text-text-primary text-lg font-mono border-2 border-transparent focus:border-brand rounded-md disabled:opacity-50"
             />
           ))}
         </fieldset>
+
         <div className="w-full flex flex-col col-span-2 mt-6">
           <button
             onClick={handleSubmit}
-            disabled={otpValues.join("").length !== 6 || isSubmitting}
+            disabled={otpValues.join("").length !== OTP_LENGTH || isSubmitting}
             className="w-full px-2 py-2 gap-x-2 flex items-center justify-center rounded-full bg-brand hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all"
           >
             <span className="w-fit h-fit text-xxs text-white">
@@ -98,17 +136,19 @@ const OtpForm = ({
               />
             )}
           </button>
+
           <button
             onClick={onBack}
             disabled={isSubmitting}
             className="w-full mt-3 px-2 py-2 gap-x-2 flex items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50 disabled:opacity-50 cursor-pointer transition-all"
           >
             <span className="w-fit h-fit text-xxs text-text-secondary">
-              Back to registration
+              Back
             </span>
           </button>
+
           <span className="w-full mt-6 px-2 gap-x-0.5 text-tiny text-text-muted text-center">
-            By signing up, you agree to the Terms of Service and Privacy Policy
+            By continuing, you agree to the Terms of Service and Privacy Policy
           </span>
         </div>
       </div>

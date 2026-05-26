@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { verifyOtpRequestSchema } from "../../../api/auth/auth.schemas";
 import { createClient } from "#/utils/supabase/server";
+import { errorResponse, successResponse } from "#/lib/api-response";
 
 export const Route = createFileRoute("/api/auth/verify-otp")({
   server: {
@@ -10,21 +11,22 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
           const body = await request.json();
 
           const validation = verifyOtpRequestSchema.safeParse(body);
+
           if (!validation.success) {
-            return new Response(
-              JSON.stringify({
-                error: "Invalid properties verification state payload.",
-                details: validation.error.format(),
-              }),
-              {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-              },
+            const fieldErrors = validation.error.flatten().fieldErrors;
+            const details = Object.values(fieldErrors).flat().filter(Boolean);
+
+            return errorResponse(
+              400,
+              "Validation failed",
+              "VALIDATION_ERROR",
+              details.length > 0
+                ? details
+                : ["Invalid OTP verification payload."],
             );
           }
 
           const { email, token, profile } = validation.data;
-
           const supabase = createClient();
 
           const { data: sessionData, error: sessionError } =
@@ -35,20 +37,32 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
             });
 
           if (sessionError) {
-            return new Response(
-              JSON.stringify({ error: sessionError.message }),
-              {
-                status: 401,
-                headers: { "Content-Type": "application/json" },
-              },
+            const rawMessage = sessionError.message.toLowerCase();
+
+            const friendlyMessage =
+              rawMessage.includes("expired") || rawMessage.includes("invalid")
+                ? "This verification code is invalid or has expired. Please request a new code and try again."
+                : "We couldn’t verify your code. Please try again.";
+
+            return errorResponse(
+              401,
+              "OTP verification failed",
+              "OTP_VERIFICATION_FAILED",
+              [friendlyMessage],
             );
           }
 
           const authUser = sessionData.user;
-          if (!authUser)
-            throw new Error("Auth execution session resolve drop exception.");
 
-          // Profile provisioning strategy if running a sign-up action sequence
+          if (!authUser) {
+            return errorResponse(
+              500,
+              "Authenticated user resolution failed",
+              "AUTH_USER_MISSING",
+              ["Auth execution session resolved without a user object."],
+            );
+          }
+
           if (profile) {
             const { error: insertError } = await supabase.from("users").insert({
               id: authUser.id,
@@ -59,46 +73,34 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
             });
 
             if (insertError) {
-              // Roll back newly initialized authentication user instance if row profiling insertion breaches integrity constraints
-              await supabase.auth.admin.deleteUser(authUser.id);
-              return new Response(
-                JSON.stringify({
-                  error:
-                    "Account setup collapsed establishing profile row parameters.",
-                }),
-                {
-                  status: 500,
-                  headers: { "Content-Type": "application/json" },
-                },
+              return errorResponse(
+                500,
+                "Account setup failed while creating user profile",
+                "PROFILE_INSERT_FAILED",
+                [insertError.message],
               );
             }
           }
 
-          return new Response(
-            JSON.stringify({
-              success: true,
-              user: {
-                id: authUser.id,
-                email: authUser.email,
-                firstName: profile?.firstName || null,
-                lastName: profile?.lastName || null,
-              },
-            }),
-            {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
+          return successResponse(200, "OTP verified successfully.", {
+            user: {
+              id: authUser.id,
+              email: authUser.email,
+              firstName: profile?.firstName ?? null,
+              lastName: profile?.lastName ?? null,
             },
-          );
+          });
         } catch (error: any) {
           console.error("[VERIFY_OTP_CORE_FAILURE]:", error);
-          return new Response(
-            JSON.stringify({
-              error: "Verification operations sequence halted internally.",
-            }),
-            {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            },
+
+          return errorResponse(
+            500,
+            "Internal server error",
+            "INTERNAL_SERVER_ERROR",
+            [
+              error?.message ||
+                "Verification operations sequence halted internally.",
+            ],
           );
         }
       },
