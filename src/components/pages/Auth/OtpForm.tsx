@@ -1,11 +1,6 @@
 // OtpForm.tsx
 import { Icon } from "@iconify/react";
-import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-
-interface OtpFormData {
-  otp: string[];
-}
 
 interface OtpFormProps {
   email: string;

@@ -24,7 +24,7 @@ const SignInPage = () => {
 
   const signInForm = useForm({
     defaultValues: {
-      email: "",
+      email: "praveenlohar.in@gmail.com",
     } satisfies SignInFormData,
     onSubmit: async ({ value }) => {
       requestOtpMutation.mutate(
@@ -55,8 +55,7 @@ const SignInPage = () => {
       },
       {
         onSuccess: (data) => {
-          console.log("User successfully authenticated session:", data.user);
-          navigate({ to: "/dashboard" });
+          navigate({ to: "/dashboard", replace: true });
         },
         onError: (error: any) => {
           console.error("SignIn OTP validation error:", error);
