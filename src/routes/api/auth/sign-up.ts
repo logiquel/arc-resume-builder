@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabase } from "#/utils/supabase";
 import { signUpRequestSchema } from "../../../api/auth/auth.schemas";
+import { createClient } from "#/utils/supabase/server";
 
 export const Route = createFileRoute("/api/auth/sign-up")({
   server: {
@@ -24,6 +24,8 @@ export const Route = createFileRoute("/api/auth/sign-up")({
           }
 
           const { email } = validation.data;
+
+          const supabase = createClient();
 
           // Strict Registration Gate: Verify uniqueness in our user record tables
           const { data: existingUser } = await supabase

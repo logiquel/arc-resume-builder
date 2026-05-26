@@ -15,6 +15,7 @@ import {
 
 const mockImages = [resumeMock1, resumeMock2, resumeMock3, resumeMock4];
 export const Route = createFileRoute("/_app/dashboard/")({
+  pendingComponent: () => <div>Loading...</div>,
   component: RouteComponent,
 });
 

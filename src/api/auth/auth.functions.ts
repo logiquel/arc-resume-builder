@@ -1,13 +1,19 @@
-// src/features/auth/logout.ts
-import { supabase } from "#/utils/supabase";
 import { createServerFn } from "@tanstack/react-start";
+import { createClient } from "#/utils/supabase/server";
 
-export const logoutFn = createServerFn({ method: "POST" }).handler(async () => {
-  const { error } = await supabase.auth.signOut();
+export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const supabase = createClient();
 
-  if (error) {
-    throw new Error(error.message);
-  }
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
-  return { success: true };
-});
+    if (error) {
+      return null;
+    }
+
+    return user ?? null;
+  },
+);

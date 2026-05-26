@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabase } from "#/utils/supabase";
 import { signInRequestSchema } from "../../../api/auth/auth.schemas";
+import { createClient } from "#/utils/supabase/server";
 
 export const Route = createFileRoute("/api/auth/sign-in")({
   server: {
@@ -21,6 +21,7 @@ export const Route = createFileRoute("/api/auth/sign-in")({
           }
 
           const { email } = validation.data;
+          const supabase = createClient();
 
           // Sign in flow prevents arbitrary new user instances from spawning inside Auth
           const { error: otpError } = await supabase.auth.signInWithOtp({

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabase } from "#/utils/supabase";
 import { verifyOtpRequestSchema } from "../../../api/auth/auth.schemas";
+import { createClient } from "#/utils/supabase/server";
 
 export const Route = createFileRoute("/api/auth/verify-otp")({
   server: {
@@ -24,6 +24,8 @@ export const Route = createFileRoute("/api/auth/verify-otp")({
           }
 
           const { email, token, profile } = validation.data;
+
+          const supabase = createClient();
 
           const { data: sessionData, error: sessionError } =
             await supabase.auth.verifyOtp({

@@ -11,12 +11,20 @@ import appCss from "../styles.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
 import { TooltipProvider } from "#/components/addons/tooltip";
+import { getCurrentUserFn } from "#/api/auth/auth.functions";
 
 interface MyRouterContext {
   queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  beforeLoad: async () => {
+    const user = await getCurrentUserFn();
+
+    return {
+      user,
+    };
+  },
   head: () => ({
     meta: [
       {

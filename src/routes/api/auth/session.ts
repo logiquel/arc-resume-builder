@@ -1,23 +1,27 @@
-// src/routes/api/auth/logout.ts
-import { createClient } from "#/utils/supabase/server";
 import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "#/utils/supabase/server";
 
-export const Route = createFileRoute("/api/auth/logout")({
+export const Route = createFileRoute("/api/auth/session")({
   server: {
     handlers: {
-      POST: async () => {
+      GET: async () => {
         try {
           const supabase = createClient();
 
-          const { error } = await supabase.auth.signOut({ scope: "local" });
+          const {
+            data: { user },
+            error,
+          } = await supabase.auth.getUser();
 
           if (error) {
             return new Response(
               JSON.stringify({
+                authenticated: false,
+                user: null,
                 error: error.message,
               }),
               {
-                status: 400,
+                status: 401,
                 headers: { "Content-Type": "application/json" },
               },
             );
@@ -25,8 +29,16 @@ export const Route = createFileRoute("/api/auth/logout")({
 
           return new Response(
             JSON.stringify({
-              success: true,
-              message: "Logged out successfully.",
+              authenticated: !!user,
+              user: user
+                ? {
+                    id: user.id,
+                    email: user.email,
+                    phone: user.phone,
+                    role: user.role,
+                    createdAt: user.created_at,
+                  }
+                : null,
             }),
             {
               status: 200,
@@ -34,11 +46,13 @@ export const Route = createFileRoute("/api/auth/logout")({
             },
           );
         } catch (error) {
-          console.error("[LOGOUT_FAILURE]:", error);
+          console.error("[AUTH_SESSION_FETCH_FAILURE]:", error);
 
           return new Response(
             JSON.stringify({
-              error: "Internal engine fault handling logout request.",
+              authenticated: false,
+              user: null,
+              error: "Failed to resolve authenticated session.",
             }),
             {
               status: 500,

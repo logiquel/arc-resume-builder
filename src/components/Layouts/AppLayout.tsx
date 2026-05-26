@@ -10,15 +10,11 @@ import { Icon } from "@iconify/react";
 import AppBreadcrumb from "./AppBreadcrumb";
 import LogiquelWordMark from "../common/LogiquelWordMark";
 import { getActiveRoute } from "@/config/routeConfig";
-import { supabase } from "#/utils/supabase"; // Ensure path to your supabase client is correct
-import { useState } from "react";
 import { useLogoutMutation } from "#/api/auth/auth.mutations";
 
 const AppLayout = () => {
   const router = useRouter();
-  const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const activeRoute = getActiveRoute(pathname);
   const activeRouteLabel = activeRoute?.label ?? "Page";
@@ -56,10 +52,10 @@ const AppLayout = () => {
             {/* --- Logout Action Item Push --- */}
             <button
               onClick={() => logout.mutate()}
-              disabled={isLoggingOut}
+              disabled={logout.isPending}
               className="ml-auto h-[60%] px-3 gap-1.5 flex items-center justify-center border rounded-md text-xs font-medium text-destructive border-red-100 bg-red-50/30 hover:bg-red-50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isLoggingOut ? (
+              {logout.isPending ? (
                 <Icon
                   icon="eos-icons:loading"
                   className="text-sm animate-spin"
@@ -67,7 +63,7 @@ const AppLayout = () => {
               ) : (
                 <Icon icon="solar:logout-3-linear" className="text-sm" />
               )}
-              <span>{isLoggingOut ? "Leaving..." : "Logout"}</span>
+              <span>{logout.isPending ? "Leaving..." : "Logout"}</span>
             </button>
           </header>
 

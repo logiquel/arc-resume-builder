@@ -41,4 +41,19 @@ export const authService = {
     if (!res.ok) throw new Error(data.error || "OTP verification failed.");
     return verifyOtpResponseSchema.parse(data);
   },
+
+  logout: async (): Promise<{ success: boolean; message: string }> => {
+    const res = await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Logout request failed.");
+    }
+
+    return data;
+  },
 };
