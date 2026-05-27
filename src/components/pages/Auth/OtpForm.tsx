@@ -115,7 +115,7 @@ const OtpForm = ({
               onPaste={handlePaste}
               disabled={isSubmitting}
               aria-label={`OTP digit ${index + 1}`}
-              className="h-12 w-12 text-center bg-gray-100 outline-none text-text-primary text-lg font-mono border-2 border-transparent focus:border-brand rounded-md disabled:opacity-50"
+              className="w-[16%] aspect-square text-center bg-gray-100 outline-none text-text-primary text-base font-mono border-2 border-transparent focus:border-brand rounded-md disabled:opacity-50"
             />
           ))}
         </fieldset>

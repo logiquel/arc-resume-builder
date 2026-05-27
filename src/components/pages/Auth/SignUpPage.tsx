@@ -102,14 +102,14 @@ const SignUpPage = () => {
       <div className="w-full h-full flex items-center z-20 overflow-clip border-black/10">
         {/* Left: Form */}
         <section className="flex-1 h-[70%] flex items-center justify-center z-20">
-          <div className="w-[65%] h-full flex flex-col z-20">
-            <header className="w-full flex items-center px-6">
+          <div className="w-[70%] h-full flex flex-col gap-5 z-20">
+            <header className="w-full flex items-center">
               <div className="h-[85%]">
                 <AppLogo />
               </div>
             </header>
 
-            <div className="flex-1 w-full h-full flex flex-col gap-y-4 p-6">
+            <div className="flex-1 w-full h-full flex flex-col gap-y-4">
               {!showOtpForm ? (
                 <>
                   <h2 className="flex flex-col text-text-primary text-lg font-medium">
