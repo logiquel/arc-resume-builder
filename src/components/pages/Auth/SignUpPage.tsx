@@ -66,7 +66,7 @@ const SignUpPage = () => {
   return (
     <div className="w-full h-full flex items-center justify-center bg-[#F9FBFC] overflow-hidden">
       <div
-        className="w-[80%] h-[80%] flex z-20 rounded-4xl overflow-clip bg-white border border-black/10 p-[3.5px]"
+        className="w-[75%] h-[80%] flex z-20 rounded-4xl overflow-clip bg-white border border-black/10 p-[3.5px]"
         style={{
           boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
         }}
@@ -121,7 +121,7 @@ const SignUpPage = () => {
                           onBlur={field.handleBlur}
                           disabled={isPendingRequest}
                           placeholder="E.g. John"
-                          className="w-full px-2 py-3 bg-gray-50 outline-none text-text-primary text-xxs placeholder:font-normal placeholder:text-tiny mt-2 disabled:opacity-60"
+                          className="w-full px-2 py-3 bg-gray-50 rounded-md outline-none text-text-primary text-xxs placeholder:font-normal placeholder:text-tiny mt-2 disabled:opacity-60"
                         />
                         <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                           {field.state.meta.isTouched &&
@@ -150,7 +150,7 @@ const SignUpPage = () => {
                           onBlur={field.handleBlur}
                           disabled={isPendingRequest}
                           placeholder="E.g. Doe"
-                          className="w-full px-2 py-3 bg-gray-50 outline-none text-text-primary text-xxs placeholder:font-normal placeholder:text-tiny mt-2 disabled:opacity-60"
+                          className="w-full px-2 py-3 bg-gray-50 rounded-md outline-none text-text-primary text-xxs placeholder:font-normal placeholder:text-tiny mt-2 disabled:opacity-60"
                         />
                         <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                           {field.state.meta.isTouched &&
@@ -185,7 +185,7 @@ const SignUpPage = () => {
                           onChange={(e) => field.handleChange(e.target.value)}
                           onBlur={field.handleBlur}
                           disabled={isPendingRequest}
-                          className="w-full px-2 py-3 bg-gray-50 outline-none text-text-primary placeholder:font-normal placeholder:text-tiny text-xxs mt-2 disabled:opacity-60"
+                          className="w-full px-2 py-3 bg-gray-50 rounded-md outline-none text-text-primary placeholder:font-normal placeholder:text-tiny text-xxs mt-2 disabled:opacity-60"
                         />
                         <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                           {field.state.meta.isTouched &&
@@ -220,7 +220,7 @@ const SignUpPage = () => {
                           onBlur={field.handleBlur}
                           disabled={isPendingRequest}
                           placeholder="+91 1234567890"
-                          className="w-full px-2 py-3 bg-gray-50 outline-none text-text-primary placeholder:font-normal placeholder:text-tiny text-xxs mt-2 disabled:opacity-60"
+                          className="w-full px-2 py-3 bg-gray-50 rounded-md outline-none text-text-primary placeholder:font-normal placeholder:text-tiny text-xxs mt-2 disabled:opacity-60"
                         />
                         <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                           {field.state.meta.isTouched &&
