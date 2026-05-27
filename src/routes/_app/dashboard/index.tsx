@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import resumeMock1 from "/sample_resume_image.jpg";
+import resumeMock1 from "/sample_resume_image_1.jpg";
 import resumeMock2 from "/sample_resume_image_2.jpg";
 import resumeMock3 from "/sample_resume_image_3.jpg";
 import resumeMock4 from "/sample_resume_image_4.jpg";
+import resumeMock5 from "/sample_resume_image_5.jpg";
+import resumeMock6 from "/sample_resume_image_6.jpg";
 import { Icon } from "@iconify/react";
 import React, { useRef, useState, useEffect } from "react";
 import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";
@@ -13,7 +15,6 @@ import {
   TooltipTrigger,
 } from "#/components/addons/tooltip";
 
-const mockImages = [resumeMock1, resumeMock2, resumeMock3, resumeMock4];
 export const Route = createFileRoute("/_app/dashboard/")({
   pendingComponent: () => <div>Loading...</div>,
   component: RouteComponent,
@@ -36,7 +37,7 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
 };
 
 // ── Route ────────────────────────────────────────────────────────────────────
-const dummyResumes = [
+const sampleBaseResumes = [
   { id: 1, name: "SDE_Core_Master.pdf", size: "126.17 KB", image: resumeMock1 },
   {
     id: 2,
@@ -56,6 +57,57 @@ const dummyResumes = [
     size: "126.12 KB",
     image: resumeMock4,
   },
+];
+
+const sampleTailoredResumes = [
+  {
+    id: 1,
+    name: "Roman's_SDE_Core.pdf",
+    size: "126.17 KB",
+    image: resumeMock1,
+  },
+  {
+    id: 2,
+    name: "Roman's_FullStack_v2.pdf",
+    size: "142.30 KB",
+    image: resumeMock2,
+  },
+  {
+    id: 3,
+    name: "Roman's_Frontend_React.pdf",
+    size: "118.45 KB",
+    image: resumeMock3,
+  },
+  {
+    id: 4,
+    name: "Roman's_Mobile_KMP.pdf",
+    size: "126.12 KB",
+    image: resumeMock4,
+  },
+  {
+    id: 5,
+    name: "Roman's_Backend_Node.pdf",
+    size: "131.40 KB",
+    image: resumeMock5,
+  },
+  {
+    id: 6,
+    name: "Roman's_DevOps_AWS.pdf",
+    size: "124.85 KB",
+    image: resumeMock6,
+  },
+  {
+    id: 7,
+    name: "Roman's_Systems_Engineer.pdf",
+    size: "129.10 KB",
+    image: resumeMock5,
+  }, // Repeated image
+  {
+    id: 8,
+    name: "Roman's_AI_Engineer_v1.pdf",
+    size: "135.22 KB",
+    image: resumeMock6,
+  }, // Repeated image
 ];
 
 function RouteComponent() {
@@ -81,10 +133,11 @@ function RouteComponent() {
       if (Math.abs(scrollAccumulator.current) >= 80) {
         const currentIdx = activeIndexRef.current;
         if (scrollAccumulator.current > 0) {
-          setActiveIndex((currentIdx + 1) % dummyResumes.length);
+          setActiveIndex((currentIdx + 1) % sampleBaseResumes.length);
         } else {
           setActiveIndex(
-            (currentIdx - 1 + dummyResumes.length) % dummyResumes.length,
+            (currentIdx - 1 + sampleBaseResumes.length) %
+              sampleBaseResumes.length,
           );
         }
         scrollAccumulator.current = 0;
@@ -146,7 +199,7 @@ function RouteComponent() {
           <section className="w-full flex flex-col p-4">
             <SectionHeading label="RECENTS" />
             <div className="w-full flex-1 grid grid-cols-5 gap-2">
-              {Array.from({ length: 8 }).map((_, i) => (
+              {sampleTailoredResumes.map((resume, i) => (
                 <div
                   key={i}
                   className="relative flex-1 border-black/15 flex flex-col items-center bg-[#FAFAFA]/0 rounded-0 overflow-clip cursor-pointer hover:border-brand transition-all duration-300 group"
@@ -159,10 +212,7 @@ function RouteComponent() {
                     }}
                   >
                     <div className="bg-white h-full flex-1 rounded-[inherit] border border-black/20 overflow-clip">
-                      <img
-                        src={mockImages[i % mockImages.length]}
-                        className="h-full object-cover"
-                      />
+                      <img src={resume.image} className="h-full object-cover" />
                     </div>
                   </div>
                   <div
@@ -175,7 +225,7 @@ function RouteComponent() {
                     }}
                   >
                     <h2 className="text-tiny text-text-primary font-medium">
-                      Praveen's SDE Resume
+                      {resume.name}
                     </h2>
                     <h3 className="text-tiny text-text-muted font-mono">
                       Last edited 2m ago
@@ -191,7 +241,7 @@ function RouteComponent() {
           <div className="w-full flex flex-col">
             {/* Dynamic Index Label tracking the current top card */}
             <span className="text-xxs font-medium mb-2 px-1 text-text-secondary transition-all duration-200">
-              # {dummyResumes[activeIndex].id}.
+              # {sampleBaseResumes[activeIndex].id}.
             </span>
 
             {/* Layout Wrapper to hold the shuffling stack and the locked dots side-by-side */}
@@ -202,13 +252,15 @@ function RouteComponent() {
                 className="relative h-40 aspect-12/15 select-none cursor-pointer"
                 style={{ perspective: "1000px" }}
                 onClick={() => {
-                  setActiveIndex((prev) => (prev + 1) % dummyResumes.length);
+                  setActiveIndex(
+                    (prev) => (prev + 1) % sampleBaseResumes.length,
+                  );
                 }}
               >
-                {dummyResumes.map((resume, idx) => {
+                {sampleBaseResumes.map((resume, idx) => {
                   const offset =
-                    (idx - activeIndex + dummyResumes.length) %
-                    dummyResumes.length;
+                    (idx - activeIndex + sampleBaseResumes.length) %
+                    sampleBaseResumes.length;
 
                   // ── VIRTUAL STACK CAP ──────────────────────────────────────────────────
                   // Limit visual stacking effects to 3 cards max (offset 0, 1, and 2).
@@ -218,7 +270,7 @@ function RouteComponent() {
 
                   const translateY = visualOffset * 10;
                   const scale = 1 - visualOffset * 0.04;
-                  const zIndex = dummyResumes.length - offset; // Maintains natural stacking order
+                  const zIndex = sampleBaseResumes.length - offset; // Maintains natural stacking order
                   const opacity =
                     offset === 0 ? 1 : isVisibleStackCard ? 0.65 : 0;
 
@@ -263,7 +315,7 @@ function RouteComponent() {
 
               {/* Locked Right Paginator Dots Indicator — Completely separated from the cards so it stays dead-still */}
               <div className="absolute left-full pl-1.5 flex flex-col items-center justify-center gap-y-1 h-40 w-5">
-                {dummyResumes.map((_, dotIdx) => (
+                {sampleBaseResumes.map((_, dotIdx) => (
                   <React.Fragment key={dotIdx}>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -286,9 +338,10 @@ function RouteComponent() {
 
             {/* Dynamic File Context Footer info */}
             <span className="text-xxs font-medium mb-4 mt-3 px-1 text-text-secondary transition-all duration-200">
-              {dummyResumes[activeIndex].name} <span className="mx-1">∙</span>{" "}
+              {sampleBaseResumes[activeIndex].name}{" "}
+              <span className="mx-1">∙</span>{" "}
               <span className="font-normal text-brand text-tiny">
-                {dummyResumes[activeIndex].size}
+                {sampleBaseResumes[activeIndex].size}
               </span>
             </span>
           </div>

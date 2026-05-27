@@ -29,7 +29,7 @@ export function useSignUpMutation() {
         title: "OTP sent",
         description: response.message,
         type: "success",
-        timeout: 4000,
+        timeout: 3000,
       });
     },
 
@@ -66,7 +66,7 @@ export function useSignInMutation() {
         title: "OTP sent",
         description: response.message,
         type: "success",
-        timeout: 4000,
+        timeout: 3000,
       });
     },
 
@@ -107,7 +107,7 @@ export function useVerifyOtpMutation() {
         title: "Verified",
         description: response.message,
         type: "success",
-        timeout: 4000,
+        timeout: 2000,
       });
     },
 
@@ -147,7 +147,7 @@ export const useLogoutMutation = () => {
         title: "Logged out",
         description: response.message,
         type: "success",
-        timeout: 2500,
+        timeout: 2000,
       });
 
       await navigate({ to: "/", replace: true });

@@ -22,13 +22,13 @@ export const routesConfig: Route[] = [
     description: "Overview of your resumes and activity",
     icon: "tabler:layout-dashboard",
   },
-  // {
-  //   key: "resume-analysis",
-  //   href: "/analysis", // Or your dynamic path like '/dashboard/analysis/report_id'
-  //   label: "Resume Analysis",
-  //   description: "Deep ATS scoring, visual teardowns, and optimization metrics",
-  //   icon: "tabler:chart-bar-popular", // Alternatively: 'tabler:report-analytics' or 'tabler:gauge'
-  // },
+  {
+    key: "tailored-resumes",
+    href: "/tailored-resumes", // Or your dynamic path like '/dashboard/analysis/report_id'
+    label: "Resume Analysis",
+    description: "Deep ATS scoring, visual teardowns, and optimization metrics",
+    icon: "icon-park-solid:analysis", // Alternatively: 'tabler:report-analytics' or 'tabler:gauge'
+  },
   // {
   //   key: "preview",
   //   href: "/preview",
