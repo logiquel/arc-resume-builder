@@ -11,10 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as GatewayIndexRouteImport } from './routes/_gateway/index'
+import { Route as ApiBaseResumeIndexRouteImport } from './routes/api/base-resume/index'
 import { Route as GatewaySignUpIndexRouteImport } from './routes/_gateway/sign-up/index'
 import { Route as AppDashboardIndexRouteImport } from './routes/_app/dashboard/index'
 import { Route as ApiTailoredResumesSessionIdRouteImport } from './routes/api/tailored-resumes/$sessionId'
 import { Route as ApiResumesReportIdRouteImport } from './routes/api/resumes/$reportId'
+import { Route as ApiBaseResumeResumeIdRouteImport } from './routes/api/base-resume/$resumeId'
 import { Route as ApiAuthVerifyOtpRouteImport } from './routes/api/auth/verify-otp'
 import { Route as ApiAuthSignUpRouteImport } from './routes/api/auth/sign-up'
 import { Route as ApiAuthSignInRouteImport } from './routes/api/auth/sign-in'
@@ -30,6 +32,11 @@ const AppRouteRoute = AppRouteRouteImport.update({
 const GatewayIndexRoute = GatewayIndexRouteImport.update({
   id: '/_gateway/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBaseResumeIndexRoute = ApiBaseResumeIndexRouteImport.update({
+  id: '/api/base-resume/',
+  path: '/api/base-resume/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GatewaySignUpIndexRoute = GatewaySignUpIndexRouteImport.update({
@@ -51,6 +58,11 @@ const ApiTailoredResumesSessionIdRoute =
 const ApiResumesReportIdRoute = ApiResumesReportIdRouteImport.update({
   id: '/api/resumes/$reportId',
   path: '/api/resumes/$reportId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBaseResumeResumeIdRoute = ApiBaseResumeResumeIdRouteImport.update({
+  id: '/api/base-resume/$resumeId',
+  path: '/api/base-resume/$resumeId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthVerifyOtpRoute = ApiAuthVerifyOtpRouteImport.update({
@@ -98,10 +110,12 @@ export interface FileRoutesByFullPath {
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute
   '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
+  '/api/base-resume/$resumeId': typeof ApiBaseResumeResumeIdRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/dashboard/': typeof AppDashboardIndexRoute
   '/sign-up/': typeof GatewaySignUpIndexRoute
+  '/api/base-resume/': typeof ApiBaseResumeIndexRoute
   '/tailored-resumes/$sessionId/': typeof AppTailoredResumesSessionIdIndexRoute
   '/tailored-resumes/$sessionId/preview/': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -112,10 +126,12 @@ export interface FileRoutesByTo {
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute
   '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
+  '/api/base-resume/$resumeId': typeof ApiBaseResumeResumeIdRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/dashboard': typeof AppDashboardIndexRoute
   '/sign-up': typeof GatewaySignUpIndexRoute
+  '/api/base-resume': typeof ApiBaseResumeIndexRoute
   '/tailored-resumes/$sessionId': typeof AppTailoredResumesSessionIdIndexRoute
   '/tailored-resumes/$sessionId/preview': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -128,10 +144,12 @@ export interface FileRoutesById {
   '/api/auth/sign-in': typeof ApiAuthSignInRoute
   '/api/auth/sign-up': typeof ApiAuthSignUpRoute
   '/api/auth/verify-otp': typeof ApiAuthVerifyOtpRoute
+  '/api/base-resume/$resumeId': typeof ApiBaseResumeResumeIdRoute
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/_app/dashboard/': typeof AppDashboardIndexRoute
   '/_gateway/sign-up/': typeof GatewaySignUpIndexRoute
+  '/api/base-resume/': typeof ApiBaseResumeIndexRoute
   '/_app/tailored-resumes/$sessionId/': typeof AppTailoredResumesSessionIdIndexRoute
   '/_app/tailored-resumes/$sessionId/preview/': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -144,10 +162,12 @@ export interface FileRouteTypes {
     | '/api/auth/sign-in'
     | '/api/auth/sign-up'
     | '/api/auth/verify-otp'
+    | '/api/base-resume/$resumeId'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/dashboard/'
     | '/sign-up/'
+    | '/api/base-resume/'
     | '/tailored-resumes/$sessionId/'
     | '/tailored-resumes/$sessionId/preview/'
   fileRoutesByTo: FileRoutesByTo
@@ -158,10 +178,12 @@ export interface FileRouteTypes {
     | '/api/auth/sign-in'
     | '/api/auth/sign-up'
     | '/api/auth/verify-otp'
+    | '/api/base-resume/$resumeId'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/dashboard'
     | '/sign-up'
+    | '/api/base-resume'
     | '/tailored-resumes/$sessionId'
     | '/tailored-resumes/$sessionId/preview'
   id:
@@ -173,10 +195,12 @@ export interface FileRouteTypes {
     | '/api/auth/sign-in'
     | '/api/auth/sign-up'
     | '/api/auth/verify-otp'
+    | '/api/base-resume/$resumeId'
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/_app/dashboard/'
     | '/_gateway/sign-up/'
+    | '/api/base-resume/'
     | '/_app/tailored-resumes/$sessionId/'
     | '/_app/tailored-resumes/$sessionId/preview/'
   fileRoutesById: FileRoutesById
@@ -189,9 +213,11 @@ export interface RootRouteChildren {
   ApiAuthSignInRoute: typeof ApiAuthSignInRoute
   ApiAuthSignUpRoute: typeof ApiAuthSignUpRoute
   ApiAuthVerifyOtpRoute: typeof ApiAuthVerifyOtpRoute
+  ApiBaseResumeResumeIdRoute: typeof ApiBaseResumeResumeIdRoute
   ApiResumesReportIdRoute: typeof ApiResumesReportIdRoute
   ApiTailoredResumesSessionIdRoute: typeof ApiTailoredResumesSessionIdRoute
   GatewaySignUpIndexRoute: typeof GatewaySignUpIndexRoute
+  ApiBaseResumeIndexRoute: typeof ApiBaseResumeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -208,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof GatewayIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/base-resume/': {
+      id: '/api/base-resume/'
+      path: '/api/base-resume'
+      fullPath: '/api/base-resume/'
+      preLoaderRoute: typeof ApiBaseResumeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_gateway/sign-up/': {
@@ -236,6 +269,13 @@ declare module '@tanstack/react-router' {
       path: '/api/resumes/$reportId'
       fullPath: '/api/resumes/$reportId'
       preLoaderRoute: typeof ApiResumesReportIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/base-resume/$resumeId': {
+      id: '/api/base-resume/$resumeId'
+      path: '/api/base-resume/$resumeId'
+      fullPath: '/api/base-resume/$resumeId'
+      preLoaderRoute: typeof ApiBaseResumeResumeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/verify-otp': {
@@ -315,9 +355,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAuthSignInRoute: ApiAuthSignInRoute,
   ApiAuthSignUpRoute: ApiAuthSignUpRoute,
   ApiAuthVerifyOtpRoute: ApiAuthVerifyOtpRoute,
+  ApiBaseResumeResumeIdRoute: ApiBaseResumeResumeIdRoute,
   ApiResumesReportIdRoute: ApiResumesReportIdRoute,
   ApiTailoredResumesSessionIdRoute: ApiTailoredResumesSessionIdRoute,
   GatewaySignUpIndexRoute: GatewaySignUpIndexRoute,
+  ApiBaseResumeIndexRoute: ApiBaseResumeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

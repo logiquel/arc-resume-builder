@@ -3,8 +3,8 @@
 export interface ProfileLink {
   id?: string;
   name: string;
-  value: string;
-  icon: string;
+  value?: string;
+  icon?: string;
 }
 
 export interface ProfileData {
@@ -95,6 +95,30 @@ export interface ReferenceData {
 }
 
 export interface Format3Data {
+  profile: {
+    profile_picture: string;
+    first_name: string;
+    last_name: string;
+    professional_title: string;
+    email: string;
+    phone: string;
+    location: string;
+    links: ProfileLink[];
+    summary: string;
+  };
+  education: EducationData[];
+  experience: ExperienceData[];
+  projects: ProjectData[];
+  certificates: CertificateData[];
+  skills: SkillData[];
+  languages: LanguageData[];
+  interests: InterestData[];
+  awards: AwardData[];
+  publications: PublicationData[];
+  references: ReferenceData[];
+}
+
+export interface ResumeData {
   profile: {
     profile_picture: string;
     first_name: string;
