@@ -146,7 +146,7 @@ const SignUpPage = () => {
                     >
                       {(field) => (
                         <fieldset className="w-full flex-col">
-                          <label className="text-tiny text-brand">
+                          <label className="text-tiny text-brand font-medium">
                             FIRST NAME
                           </label>
                           <input
@@ -175,7 +175,7 @@ const SignUpPage = () => {
                     >
                       {(field) => (
                         <fieldset className="w-full flex-col">
-                          <label className="text-tiny text-brand">
+                          <label className="text-tiny text-brand font-medium">
                             LAST NAME
                           </label>
                           <input
@@ -208,7 +208,7 @@ const SignUpPage = () => {
                     >
                       {(field) => (
                         <fieldset className="w-full flex-col">
-                          <label className="text-tiny text-brand">
+                          <label className="text-tiny text-brand font-medium">
                             EMAIL ADDRESS
                           </label>
                           <input
@@ -244,7 +244,9 @@ const SignUpPage = () => {
                     >
                       {(field) => (
                         <fieldset className="w-full flex-col">
-                          <label className="text-tiny text-brand">PHONE</label>
+                          <label className="text-tiny text-brand font-medium">
+                            PHONE
+                          </label>
                           <input
                             type="tel"
                             value={field.state.value}
@@ -275,7 +277,7 @@ const SignUpPage = () => {
                           >
                             <span className="w-fit h-fit text-xxs text-white">
                               {signUpMutation.isPending
-                                ? "Sending OTP..."
+                                ? "Creating Account..."
                                 : "Create Account"}
                             </span>
                             {signUpMutation.isPending && (

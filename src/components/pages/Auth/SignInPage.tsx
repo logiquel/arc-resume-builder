@@ -139,7 +139,7 @@ const SignInPage = () => {
                     >
                       {(field) => (
                         <fieldset className="w-full flex-col">
-                          <label className="text-tiny text-brand">
+                          <label className="text-tiny text-brand font-medium">
                             EMAIL ADDRESS
                           </label>
                           <input
