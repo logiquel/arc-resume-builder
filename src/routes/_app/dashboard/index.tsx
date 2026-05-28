@@ -507,7 +507,7 @@ function RouteComponent() {
             </section>
           </main>
 
-          <aside className="w-[23vw] p-4 flex flex-col border-l">
+          <aside className="w-[23vw] p-4 flex flex-col border-l no-select">
             <SectionHeading label="BASE RESUME" />
             <div ref={stackRef} className="w-full flex flex-col border-red-400">
               <div className="relative flex-1 flex gap-x-3">
