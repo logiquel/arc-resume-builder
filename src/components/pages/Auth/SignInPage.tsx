@@ -174,7 +174,7 @@ const SignInPage = () => {
                           >
                             <span className="w-fit h-fit text-xxs text-white">
                               {requestOtpMutation.isPending
-                                ? "Sending OTP..."
+                                ? "Signing In..."
                                 : "Sign In"}
                             </span>
                             {requestOtpMutation.isPending && (
