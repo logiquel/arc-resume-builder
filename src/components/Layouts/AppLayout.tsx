@@ -1,10 +1,5 @@
 // AppLayout.tsx
-import {
-  Outlet,
-  useRouter,
-  useLocation,
-  useNavigate,
-} from "@tanstack/react-router";
+import { Outlet, useRouter, useLocation } from "@tanstack/react-router";
 import Sidebar from "./Sidebar";
 import { Icon } from "@iconify/react";
 import AppBreadcrumb from "./AppBreadcrumb";

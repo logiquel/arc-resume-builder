@@ -1,5 +1,6 @@
 import AppLayout from "#/components/Layouts/AppLayout";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+// import "../../bones/registry";
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: ({ context, location }) => {

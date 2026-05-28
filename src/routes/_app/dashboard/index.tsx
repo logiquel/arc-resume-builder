@@ -6,6 +6,7 @@ import resumeMock4 from "/sample_resume_image_4.jpg";
 import resumeMock5 from "/sample_resume_image_5.jpg";
 import resumeMock6 from "/sample_resume_image_6.jpg";
 import { Icon } from "@iconify/react";
+import { format, parseISO } from "date-fns";
 import React, { useRef, useState, useEffect } from "react";
 import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";
 import FileFolderIcon from "#/components/common/Icons/FileFolderIcon";
@@ -15,6 +16,8 @@ import {
   TooltipTrigger,
 } from "#/components/addons/tooltip";
 import { useCreateBaseResumeMutation } from "#/api/resume/base/base-resume.mutations";
+import { useFetchBaseResumeList } from "#/api/resume/base/base-resume.queries";
+import BaseResumeSkeleton from "#/components/common/Skeletons/BaseResumeSkeleton";
 
 export const Route = createFileRoute("/_app/dashboard/")({
   pendingComponent: () => <div>Loading...</div>,
@@ -377,47 +380,64 @@ function RouteComponent() {
   const scrollAccumulator = useRef(0);
   const stackRef = useRef<HTMLDivElement>(null);
 
+  const {
+    data: baseResumes = [],
+    isLoading: isBaseResumesLoading,
+    isError: isBaseResumesError,
+    error: baseResumesError,
+  } = useFetchBaseResumeList();
+
+  const hasBaseResumes = baseResumes.length > 0;
+  const safeActiveIndex = hasBaseResumes ? activeIndex % baseResumes.length : 0;
+  const activeBaseResume = hasBaseResumes ? baseResumes[safeActiveIndex] : null;
+
   const activeIndexRef = useRef(activeIndex);
+
   useEffect(() => {
-    activeIndexRef.current = activeIndex;
-  }, [activeIndex]);
+    if (!hasBaseResumes) {
+      setActiveIndex(0);
+      return;
+    }
+
+    if (activeIndex >= baseResumes.length) {
+      setActiveIndex(0);
+    }
+  }, [activeIndex, baseResumes.length, hasBaseResumes]);
+
+  useEffect(() => {
+    activeIndexRef.current = safeActiveIndex;
+  }, [safeActiveIndex]);
 
   useEffect(() => {
     const stackEl = stackRef.current;
-    if (!stackEl) return;
+    if (!stackEl || baseResumes.length <= 1) return;
 
     const handleNativeWheel = (e: WheelEvent) => {
-      // Prevent the main page from scrolling
       e.preventDefault();
-      e.stopPropagation();
 
       scrollAccumulator.current += e.deltaY;
 
       if (Math.abs(scrollAccumulator.current) >= 80) {
         const currentIdx = activeIndexRef.current;
+
         if (scrollAccumulator.current > 0) {
-          setActiveIndex((currentIdx + 1) % sampleBaseResumes.length);
+          setActiveIndex((currentIdx + 1) % baseResumes.length);
         } else {
           setActiveIndex(
-            (currentIdx - 1 + sampleBaseResumes.length) %
-              sampleBaseResumes.length,
+            (currentIdx - 1 + baseResumes.length) % baseResumes.length,
           );
         }
+
         scrollAccumulator.current = 0;
       }
     };
 
-    // Use capture phase to catch event before it bubbles
-    stackEl.addEventListener("wheel", handleNativeWheel, {
-      passive: false,
-      capture: true,
-    });
+    stackEl.addEventListener("wheel", handleNativeWheel, { passive: false });
+
     return () => {
-      stackEl.removeEventListener("wheel", handleNativeWheel, {
-        capture: true,
-      });
+      stackEl.removeEventListener("wheel", handleNativeWheel);
     };
-  }, []);
+  }, [baseResumes.length]);
 
   return (
     <>
@@ -509,96 +529,144 @@ function RouteComponent() {
 
           <aside className="w-[23vw] p-4 flex flex-col border-l no-select">
             <SectionHeading label="BASE RESUME" />
-            <div ref={stackRef} className="w-full flex flex-col border-red-400">
-              <div className="relative flex-1 flex gap-x-3">
-                <div
-                  ref={stackRef}
-                  style={{ perspective: "1000px" }}
-                  className="relative w-[95%] h-20 cursor-pointer"
-                  onClick={() => {
-                    setActiveIndex(
-                      (prev) => (prev + 1) % sampleBaseResumes.length,
-                    );
-                  }}
-                >
-                  {sampleBaseResumes.map((resume, idx) => {
-                    const offset =
-                      (idx - activeIndex + sampleBaseResumes.length) %
-                      sampleBaseResumes.length;
-
-                    const isVisibleStackCard = offset < 3;
-                    const visualOffset = isVisibleStackCard ? offset : 2;
-                    const translateY = visualOffset * 10;
-                    const scale = 1 - visualOffset * 0.04;
-                    const zIndex = sampleBaseResumes.length - offset;
-                    const opacity =
-                      offset === 0 ? 1 : isVisibleStackCard ? 0.65 : 0;
-                    return (
-                      <div
-                        key={resume.id}
-                        className="absolute inset-0 flex flex-col justify-evenly p-5 gap-y-1 rounded-2xl shadow-lg border bg-white border-black/12 backdrop-blur-md transition-all duration-300 ease-out"
-                        style={{
-                          transform: `translateY(${translateY}px) scale(${scale})`,
-                          zIndex: zIndex,
-                          opacity,
-                          pointerEvents: offset === 0 ? "auto" : "none",
-                        }}
-                      >
-                        <p className="text-xs text-text-primary">
-                          <span className="text-xxs font-medium mb-2 mr-1 text-text-muted transition-all duration-200">
-                            #{resume.id}.
-                          </span>
-                          {resume.name.replace(/\.[^/.]+$/, "")}
-                        </p>
-
-                        <span className="w-full flex items-center gap-x-1 ml-5">
-                          <Icon
-                            icon="pepicons-print:calendar"
-                            className="text-xs text-brand"
-                          />
-                          <p className="text-tiny text-text-muted">
-                            April 20th, 2025
-                          </p>
-                        </span>
-
-                        {offset === 0 && (
-                          <button
-                            className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white z-20 p-1 rounded-full border cursor-pointer group"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                            }}
-                          >
-                            <Icon
-                              icon="carbon:trash-can"
-                              className="text-xs text-text-muted transition-colors duration-200 group-hover:text-red-600"
-                            />
-                          </button>
-                        )}
+            {isBaseResumesLoading ? (
+              <BaseResumeSkeleton />
+            ) : !hasBaseResumes ? (
+              <div className="w-full flex flex-col border-red-400">
+                <div className="relative flex-1 flex gap-x-3">
+                  {/* Single Card Skeleton */}
+                  <div className="relative w-[95%] h-20">
+                    <div className="absolute inset-0 flex flex-col justify-evenly p-5 gap-y-1 rounded-2xl shadow-lg border border-black/12 bg-white">
+                      <div className="flex items-center gap-x-2">
+                        <div className="h-3 w-6 bg-gray-200 rounded"></div>
+                        <div className="h-3 w-32 bg-gray-200 rounded"></div>
                       </div>
-                    );
-                  })}
+                      <div className="w-full flex items-center gap-x-1 ml-5">
+                        <div className="h-3 w-3 bg-gray-200 rounded"></div>
+                        <div className="h-3 w-24 bg-gray-200 rounded"></div>
+                      </div>
+                    </div>
+                    <div className="w-6 h-6 shadow absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white z-20 p-1 rounded-full border cursor-pointer group">
+                      <span className="text-tiny">0</span>
+                    </div>
+                  </div>
+
+                  {/* Dots Indicator Skeleton */}
+                  <div className="h-full w-5 flex flex-col gap-y-1 justify-center items-center">
+                    {[1].map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`rounded-full transition-all duration-200 w-[4.2px] aspect-square bg-gray-300 ${
+                          idx === 0 ? "scale-110" : ""
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
 
-                <div className="h-full w-5 flex flex-col gap-y-1 justify-center items-center">
-                  {sampleBaseResumes.map((resume, dotIdx) => (
-                    <Tooltip key={resume.id}>
-                      <TooltipTrigger asChild>
+                <span className="w-full text-tiny flex text-text-muted mt-2 px-2">
+                  <Icon icon="akar-icons:info" className="text-lg text-brand" />
+                  <span className="mt-1 ml-1 font-mono font-medium">
+                    No base resume yet. Click the button below to add your first
+                    base resume.
+                  </span>
+                </span>
+              </div>
+            ) : (
+              <div
+                ref={stackRef}
+                className="w-full flex flex-col border-red-400"
+              >
+                <div className="relative flex-1 flex gap-x-3">
+                  <div
+                    style={{ perspective: "1000px" }}
+                    className="relative w-[95%] h-20 cursor-pointer"
+                    onClick={() => {
+                      setActiveIndex((prev) => (prev + 1) % baseResumes.length);
+                    }}
+                  >
+                    {baseResumes.map((resume, idx) => {
+                      const offset =
+                        (idx - activeIndex + baseResumes.length) %
+                        baseResumes.length;
+
+                      const isVisibleStackCard = offset < 3;
+                      const visualOffset = isVisibleStackCard ? offset : 2;
+                      const translateY = visualOffset * 10;
+                      const scale = 1 - visualOffset * 0.04;
+                      const zIndex = baseResumes.length - offset;
+                      const opacity =
+                        offset === 0 ? 1 : isVisibleStackCard ? 0.65 : 0;
+                      return (
                         <div
-                          className={`rounded-full transition-all duration-200 ${
-                            dotIdx === activeIndex
-                              ? "w-[4.2px] aspect-square bg-brand scale-110"
-                              : "w-[4.2px] aspect-square bg-gray-300"
-                          }`}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="text-xxs!">
-                        Scroll cards to shuffle
-                      </TooltipContent>
-                    </Tooltip>
-                  ))}
+                          key={resume.id}
+                          className="absolute inset-0 flex flex-col justify-evenly p-5 gap-y-1 rounded-2xl shadow-lg border bg-white border-black/12 backdrop-blur-md transition-all duration-300 ease-out"
+                          style={{
+                            transform: `translateY(${translateY}px) scale(${scale})`,
+                            zIndex: zIndex,
+                            opacity,
+                            pointerEvents: offset === 0 ? "auto" : "none",
+                          }}
+                        >
+                          <p className="text-xs text-text-primary">
+                            <span className="text-xxs font-medium mb-2 mr-1 text-text-muted transition-all duration-200">
+                              #{idx + 1}.
+                            </span>
+                            {resume.name.replace(/\.[^/.]+$/, "")}
+                          </p>
+
+                          <span className="w-full flex items-center gap-x-1 ml-5">
+                            <Icon
+                              icon="pepicons-print:calendar"
+                              className="text-xs text-brand"
+                            />
+                            <p className="text-tiny text-text-muted">
+                              {format(
+                                parseISO(resume.updatedAt),
+                                "MMMM do, yyyy",
+                              )}
+                            </p>
+                          </span>
+
+                          {offset === 0 && (
+                            <button
+                              className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white z-20 p-1 rounded-full border cursor-pointer group"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
+                            >
+                              <Icon
+                                icon="carbon:trash-can"
+                                className="text-xs text-text-muted transition-colors duration-200 group-hover:text-red-600"
+                              />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="h-full w-5 flex flex-col gap-y-1 justify-center items-center">
+                    {baseResumes.map((resume, dotIdx) => (
+                      <Tooltip key={resume.id}>
+                        <TooltipTrigger asChild>
+                          <div
+                            className={`rounded-full transition-all duration-200 ${
+                              dotIdx === activeIndex
+                                ? "w-[4.2px] aspect-square bg-brand scale-110"
+                                : "w-[4.2px] aspect-square bg-gray-300"
+                            }`}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="text-xxs!">
+                          Scroll cards to shuffle
+                        </TooltipContent>
+                      </Tooltip>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             <button
               type="button"
               onClick={() => setIsAddBaseModalOpen(true)}

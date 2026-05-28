@@ -17,7 +17,6 @@ import {
   ToastProvider,
 } from "#/components/addons/toast";
 import { OfflineBanner } from "#/components/common/OfflineBanner";
-import { useNetworkStatus } from "#/hooks/useNetworkStatus";
 
 interface MyRouterContext {
   queryClient: QueryClient;

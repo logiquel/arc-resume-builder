@@ -1,0 +1,27 @@
+{
+  "breakpoints": {
+    "375": {
+      "name": "dashboard-base-resumes",
+      "viewportWidth": 53,
+      "width": 53,
+      "height": 188,
+      "bones": [
+        [
+          0,
+          0,
+          94.9824,
+          188,
+          18,
+          true
+        ],
+        [
+          39.4366,
+          21,
+          16.1092,
+          146,
+          8
+        ]
+      ]
+    }
+  }
+}
