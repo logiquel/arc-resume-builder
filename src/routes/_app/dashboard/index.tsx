@@ -18,6 +18,8 @@ import {
 import { useCreateBaseResumeMutation } from "#/api/resume/base/base-resume.mutations";
 import { useFetchBaseResumeList } from "#/api/resume/base/base-resume.queries";
 import BaseResumeSkeleton from "#/components/common/Skeletons/BaseResumeSkeleton";
+import DeleteModal from "#/components/common/DeleteModal";
+import PlaceholderResume from "#/components/common/PlaceholderResume";
 
 export const Route = createFileRoute("/_app/dashboard/")({
   pendingComponent: () => <div>Loading...</div>,
@@ -377,6 +379,12 @@ const sampleTailoredResumes = [
 function RouteComponent() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAddBaseModalOpen, setIsAddBaseModalOpen] = useState(false);
+  const [isTailorModalOpen, setIsTailorModalOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedBaseResumeId, setSelectedBaseResumeId] = useState<
+    string | null
+  >(null);
+  const [jobDescription, setJobDescription] = useState("");
   const scrollAccumulator = useRef(0);
   const stackRef = useRef<HTMLDivElement>(null);
 
@@ -392,6 +400,35 @@ function RouteComponent() {
   const activeBaseResume = hasBaseResumes ? baseResumes[safeActiveIndex] : null;
 
   const activeIndexRef = useRef(activeIndex);
+
+  const handleGetStarted = () => {
+    setIsTailorModalOpen(true);
+    setCurrentStep(1);
+    setSelectedBaseResumeId(null);
+    setJobDescription("");
+  };
+
+  const handleCloseModal = () => {
+    setIsTailorModalOpen(false);
+    setCurrentStep(1);
+    setSelectedBaseResumeId(null);
+    setJobDescription("");
+  };
+
+  const handleNextStep = () => {
+    if (currentStep === 1 && selectedBaseResumeId) {
+      setCurrentStep(2);
+    }
+  };
+
+  const handleTailor = () => {
+    console.log("Selected Base Resume ID:", selectedBaseResumeId);
+    console.log("Job Description:", jobDescription);
+    setIsTailorModalOpen(false);
+    setCurrentStep(1);
+    setSelectedBaseResumeId(null);
+    setJobDescription("");
+  };
 
   useEffect(() => {
     if (!hasBaseResumes) {
@@ -469,6 +506,7 @@ function RouteComponent() {
 
                     <button
                       type="button"
+                      onClick={handleGetStarted}
                       className="hover:border-brand/30 self-start mt-2 px-3.5 py-1.5 text-tiny font-medium text-white bg-brand rounded-xl shadow-xs transition-all duration-300 group-hover:bg-brand/90 group-hover:scale-[1.02] cursor-pointer"
                     >
                       Get Started
@@ -534,7 +572,6 @@ function RouteComponent() {
             ) : !hasBaseResumes ? (
               <div className="w-full flex flex-col border-red-400">
                 <div className="relative flex-1 flex gap-x-3">
-                  {/* Single Card Skeleton */}
                   <div className="relative w-[95%] h-20">
                     <div className="absolute inset-0 flex flex-col justify-evenly p-5 gap-y-1 rounded-2xl shadow-lg border border-black/12 bg-white">
                       <div className="flex items-center gap-x-2">
@@ -551,7 +588,6 @@ function RouteComponent() {
                     </div>
                   </div>
 
-                  {/* Dots Indicator Skeleton */}
                   <div className="h-full w-5 flex flex-col gap-y-1 justify-center items-center">
                     {[1].map((_, idx) => (
                       <div
@@ -630,7 +666,7 @@ function RouteComponent() {
 
                           {offset === 0 && (
                             <button
-                              className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white z-20 p-1 rounded-full border cursor-pointer group"
+                              className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white shadow z-20 p-1 rounded-full border cursor-pointer group"
                               onClick={(e) => {
                                 e.stopPropagation();
                               }}
@@ -705,6 +741,128 @@ function RouteComponent() {
         isOpen={isAddBaseModalOpen}
         onClose={() => setIsAddBaseModalOpen(false)}
       />
+
+      {/* Tailor Resume Modal */}
+      {isTailorModalOpen && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center">
+          <div className="relative w-180 max-w-[90vw] rounded-4xl bg-white border border-black/10 shadow-2xl overflow-hidden">
+            <div className="w-full p-5 flex gap-2 justify-between">
+              <div className="flex flex-col">
+                <h2 className="text-base">
+                  {currentStep === 1
+                    ? "Select a Base Resume to get Started"
+                    : "Paste Job Description"}
+                </h2>
+                <p className="text-text-muted text-xxs">
+                  {currentStep === 1
+                    ? "Choose a base resume to begin tailoring it for specific job applications."
+                    : "Paste the job description to tailor your resume accordingly"}
+                </p>
+              </div>
+              <button
+                onClick={handleCloseModal}
+                className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow"
+              >
+                <Icon icon="iconamoon:close" />
+              </button>
+            </div>
+
+            {currentStep === 1 ? (
+              <div className="w-full h-90 grid grid-cols-5 p-5 gap-6 overflow-scroll custom-scrollbar">
+                {baseResumes.map((base, idx) => (
+                  <div
+                    key={base.id}
+                    onClick={() => setSelectedBaseResumeId(base.id)}
+                    className="relative w-full flex flex-col cursor-pointer group"
+                  >
+                    <div
+                      className={`w-full aspect-12/14 overflow-hidden rounded-lg bg-white border-2 transition-all duration-200 ${
+                        selectedBaseResumeId === base.id
+                          ? "border-brand"
+                          : "border-black/10 group-hover:border-brand"
+                      }`}
+                    >
+                      <PlaceholderResume />
+                    </div>
+                    <span className="text-xxs text-text-primary leading-snug text-wrap w-[95%] truncate mt-2 px-1">
+                      <span className="font-medium mb-2 mr-1 text-text-muted transition-all duration-200">
+                        #{idx + 1}.
+                      </span>
+                      {base.name}
+                    </span>
+                    <span className="text-tiny text-text-muted leading-snug text-wrap w-[95%] truncate mt-0.5 px-1">
+                      {format(parseISO(base.updatedAt), "MMMM do, yyyy")}
+                    </span>
+                    {selectedBaseResumeId === base.id && (
+                      <div className="w-4.5 h-4.5 rounded-full shadow-sm bg-brand flex items-center justify-center absolute top-0 right-0 translate-x-1/3 -translate-y-1/3">
+                        <Icon
+                          icon="mingcute:check-fill"
+                          className="text-white w-[50%] h-[50%]"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="w-full h-90 px-4">
+                <textarea
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                  className="w-full h-full resize-none focus:outline-none p-5 border rounded-2xl text-xxs placeholder:text-text-muted transition-all duration-200"
+                  placeholder="Paste job description here..."
+                  style={{
+                    boxShadow:
+                      "0 0 20px rgba(14, 165, 233, 0.15), rgba(149, 157, 165, 0.2) 0px 8px 24px",
+                  }}
+                />
+              </div>
+            )}
+
+            <div className="w-full flex items-center gap-1 px-5 py-3">
+              <div className="flex items-center gap-1">
+                <div
+                  className={`h-[0.35rem] rounded-full transition-all duration-200 ${
+                    currentStep === 1
+                      ? "bg-brand w-6"
+                      : "bg-text-muted w-[0.35rem]"
+                  }`}
+                />
+                <div
+                  className={`h-[0.35rem] rounded-full transition-all duration-200 ${
+                    currentStep === 2
+                      ? "bg-brand w-6"
+                      : "bg-gray-300 w-[0.35rem]"
+                  }`}
+                />
+              </div>
+              <div className="flex-1 flex justify-end gap-2">
+                {currentStep === 2 && (
+                  <button
+                    onClick={() => setCurrentStep(1)}
+                    className="px-5 py-2 text-xxs bg-gray-100 rounded-full cursor-pointer"
+                  >
+                    Back
+                  </button>
+                )}
+                <button
+                  onClick={currentStep === 1 ? handleNextStep : handleTailor}
+                  disabled={
+                    currentStep === 1
+                      ? !selectedBaseResumeId
+                      : !jobDescription.trim()
+                  }
+                  className="px-5 py-2 text-xxs text-white bg-brand rounded-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {currentStep === 1 ? "Next" : "Tailor"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
+
+//OG
