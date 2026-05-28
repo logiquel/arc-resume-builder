@@ -1,3 +1,5 @@
+import axios from "axios";
+import { apiClient } from "#/api/apiClient";
 import type { ApiResponse, ApiSuccessResponse } from "#/lib/api-response";
 import type {
   BaseResume,
@@ -9,59 +11,107 @@ export const baseResumeService = {
   create: async (
     payload: CreateBaseResumeRequest,
   ): Promise<ApiSuccessResponse<BaseResume>> => {
-    const formData = new FormData();
-    formData.append("name", payload.name);
+    try {
+      const formData = new FormData();
+      formData.append("name", payload.name);
 
-    if (payload.file) {
-      formData.append("file", payload.file);
+      if (payload.file) {
+        formData.append("file", payload.file);
+      }
+
+      if (payload.baseData) {
+        formData.append("baseData", JSON.stringify(payload.baseData));
+      }
+
+      const { data: result } = await apiClient.post<ApiResponse<BaseResume>>(
+        "/api/base-resume",
+        formData,
+      );
+
+      if (!result.success) {
+        throw new Error(result.error.details[0] || result.message);
+      }
+
+      return result;
+    } catch (error: unknown) {
+      if (axios.isAxiosError<ApiResponse<BaseResume>>(error)) {
+        const result = error.response?.data;
+
+        if (result && !result.success) {
+          throw new Error(result.error.details[0] || result.message);
+        }
+
+        throw new Error(error.message || "Failed to create base resume");
+      }
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      throw new Error("Failed to create base resume");
     }
-
-    if (payload.baseData) {
-      formData.append("baseData", JSON.stringify(payload.baseData));
-    }
-
-    const res = await fetch("/api/base-resume", {
-      method: "POST",
-      body: formData,
-    });
-
-    const result: ApiResponse<BaseResume> = await res.json();
-
-    if (!result.success) {
-      throw new Error(result.error.details[0] || result.message);
-    }
-
-    return result;
   },
+
   getAll: async (): Promise<ApiSuccessResponse<BaseResumeListItem[]>> => {
-    const res = await fetch("/api/base-resume", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const { data: result } =
+        await apiClient.get<ApiResponse<BaseResumeListItem[]>>(
+          "/api/base-resume",
+        );
 
-    const result: ApiResponse<BaseResumeListItem[]> = await res.json();
+      if (!result.success) {
+        throw new Error(result.error.details[0] || result.message);
+      }
 
-    if (!result.success) {
-      throw new Error(result.error.details[0] || result.message);
+      return result;
+    } catch (error: unknown) {
+      if (axios.isAxiosError<ApiResponse<BaseResumeListItem[]>>(error)) {
+        const result = error.response?.data;
+
+        if (result && !result.success) {
+          throw new Error(result.error.details[0] || result.message);
+        }
+
+        throw new Error(error.message || "Failed to fetch base resumes");
+      }
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      throw new Error("Failed to fetch base resumes");
     }
-
-    return result;
   },
 
   getById: async (
     resumeId: string,
   ): Promise<ApiSuccessResponse<BaseResume>> => {
-    const res = await fetch(`/api/base-resume/${resumeId}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
+    try {
+      const { data: result } = await apiClient.get<ApiResponse<BaseResume>>(
+        `/api/base-resume/${resumeId}`,
+      );
 
-    const result: ApiResponse<BaseResume> = await res.json();
+      if (!result.success) {
+        throw new Error(result.error.details[0] || result.message);
+      }
 
-    if (!result.success) {
-      throw new Error(result.error.details[0] || result.message);
+      return result;
+    } catch (error: unknown) {
+      if (axios.isAxiosError<ApiResponse<BaseResume>>(error)) {
+        const result = error.response?.data;
+
+        if (result && !result.success) {
+          throw new Error(result.error.details[0] || result.message);
+        }
+
+        throw new Error(error.message || "Failed to fetch base resume");
+      }
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      throw new Error("Failed to fetch base resume");
     }
-
-    return result;
   },
 };

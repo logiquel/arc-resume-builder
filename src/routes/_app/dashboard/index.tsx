@@ -387,7 +387,9 @@ function RouteComponent() {
     if (!stackEl) return;
 
     const handleNativeWheel = (e: WheelEvent) => {
+      // Prevent the main page from scrolling
       e.preventDefault();
+      e.stopPropagation();
 
       scrollAccumulator.current += e.deltaY;
 
@@ -405,9 +407,15 @@ function RouteComponent() {
       }
     };
 
-    stackEl.addEventListener("wheel", handleNativeWheel, { passive: false });
+    // Use capture phase to catch event before it bubbles
+    stackEl.addEventListener("wheel", handleNativeWheel, {
+      passive: false,
+      capture: true,
+    });
     return () => {
-      stackEl.removeEventListener("wheel", handleNativeWheel);
+      stackEl.removeEventListener("wheel", handleNativeWheel, {
+        capture: true,
+      });
     };
   }, []);
 
@@ -498,18 +506,15 @@ function RouteComponent() {
               </div>
             </section>
           </main>
+
           <aside className="w-[23vw] p-4 flex flex-col border-l">
             <SectionHeading label="BASE RESUME" />
-            <div className="w-full flex flex-col">
-              <span className="text-xxs font-medium mb-2 px-1 text-text-secondary transition-all duration-200">
-                # {sampleBaseResumes[activeIndex].id}.
-              </span>
-
-              <div className="self-start relative flex items-center mb-4">
+            <div ref={stackRef} className="w-full flex flex-col border-red-400">
+              <div className="relative flex-1 flex gap-x-3">
                 <div
                   ref={stackRef}
-                  className="relative h-40 aspect-12/15 select-none cursor-pointer"
                   style={{ perspective: "1000px" }}
+                  className="relative w-[95%] h-20 cursor-pointer"
                   onClick={() => {
                     setActiveIndex(
                       (prev) => (prev + 1) % sampleBaseResumes.length,
@@ -523,24 +528,39 @@ function RouteComponent() {
 
                     const isVisibleStackCard = offset < 3;
                     const visualOffset = isVisibleStackCard ? offset : 2;
-
                     const translateY = visualOffset * 10;
                     const scale = 1 - visualOffset * 0.04;
                     const zIndex = sampleBaseResumes.length - offset;
                     const opacity =
                       offset === 0 ? 1 : isVisibleStackCard ? 0.65 : 0;
-
                     return (
                       <div
                         key={resume.id}
-                        className="absolute top-0 left-0 w-full h-full border bg-[#E7E8F1] rounded-xl border-black/10 p-px shadow-lg transition-all duration-300 ease-out origin-bottom"
+                        className="absolute inset-0 flex flex-col justify-evenly p-5 gap-y-1 rounded-2xl shadow-lg border bg-white border-black/12 backdrop-blur-md transition-all duration-300 ease-out"
                         style={{
                           transform: `translateY(${translateY}px) scale(${scale})`,
                           zIndex: zIndex,
-                          opacity: opacity,
+                          opacity,
                           pointerEvents: offset === 0 ? "auto" : "none",
                         }}
                       >
+                        <p className="text-xs text-text-primary">
+                          <span className="text-xxs font-medium mb-2 mr-1 text-text-muted transition-all duration-200">
+                            #{resume.id}.
+                          </span>
+                          {resume.name.replace(/\.[^/.]+$/, "")}
+                        </p>
+
+                        <span className="w-full flex items-center gap-x-1 ml-5">
+                          <Icon
+                            icon="pepicons-print:calendar"
+                            className="text-xs text-brand"
+                          />
+                          <p className="text-tiny text-text-muted">
+                            April 20th, 2025
+                          </p>
+                        </span>
+
                         {offset === 0 && (
                           <button
                             className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white z-20 p-1 rounded-full border cursor-pointer group"
@@ -554,53 +574,35 @@ function RouteComponent() {
                             />
                           </button>
                         )}
-
-                        <div className="bg-white h-full flex-1 rounded-[inherit] border border-black/20 overflow-clip">
-                          <img
-                            src={resume.image}
-                            className="w-full h-auto min-h-full object-cover object-top pointer-events-none"
-                          />
-                        </div>
                       </div>
                     );
                   })}
                 </div>
 
-                <div className="absolute left-full pl-1.5 flex flex-col items-center justify-center gap-y-1 h-40 w-5">
-                  {sampleBaseResumes.map((_, dotIdx) => (
-                    <React.Fragment key={dotIdx}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            className={`rounded-full w-1.5 aspect-square transition-all duration-200 ${
-                              dotIdx === activeIndex
-                                ? "bg-brand scale-110"
-                                : "bg-gray-300"
-                            }`}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="text-xxs!">
-                          Swipe cards to shuffle
-                        </TooltipContent>
-                      </Tooltip>
-                    </React.Fragment>
+                <div className="h-full w-5 flex flex-col gap-y-1 justify-center items-center">
+                  {sampleBaseResumes.map((resume, dotIdx) => (
+                    <Tooltip key={resume.id}>
+                      <TooltipTrigger asChild>
+                        <div
+                          className={`rounded-full transition-all duration-200 ${
+                            dotIdx === activeIndex
+                              ? "w-[4.2px] aspect-square bg-brand scale-110"
+                              : "w-[4.2px] aspect-square bg-gray-300"
+                          }`}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xxs!">
+                        Scroll cards to shuffle
+                      </TooltipContent>
+                    </Tooltip>
                   ))}
                 </div>
               </div>
-
-              <span className="text-xxs font-medium mb-4 mt-3 px-1 text-text-secondary transition-all duration-200">
-                {sampleBaseResumes[activeIndex].name}{" "}
-                <span className="mx-1">∙</span>{" "}
-                <span className="font-normal text-brand text-tiny">
-                  {sampleBaseResumes[activeIndex].size}
-                </span>
-              </span>
             </div>
-
             <button
               type="button"
               onClick={() => setIsAddBaseModalOpen(true)}
-              className="mt-5 w-[95%] group relative p-2 flex items-center rounded-2xl border bg-white border-black/12 backdrop-blur-md cursor-pointer hover:border-brand"
+              className="mt-10 w-[95%] group relative p-2 flex items-center rounded-2xl border bg-white border-black/12 backdrop-blur-md cursor-pointer hover:border-brand"
               style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
             >
               <Icon

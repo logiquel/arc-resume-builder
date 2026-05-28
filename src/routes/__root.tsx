@@ -16,6 +16,8 @@ import {
   AnchoredToastProvider,
   ToastProvider,
 } from "#/components/addons/toast";
+import { OfflineBanner } from "#/components/common/OfflineBanner";
+import { useNetworkStatus } from "#/hooks/useNetworkStatus";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -62,7 +64,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ToastProvider position="top-right">
           <AnchoredToastProvider>
             <TooltipProvider>
-              <div className="w-full h-full">{children}</div>
+              <div className="w-full h-full">
+                <OfflineBanner />
+                {children}
+              </div>
             </TooltipProvider>
           </AnchoredToastProvider>
         </ToastProvider>
