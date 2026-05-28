@@ -40,7 +40,7 @@ export function useCreateBaseResumeMutation() {
         description:
           error?.message || "Something went wrong. Please try again.",
         type: "error",
-        timeout: 0,
+        timeout: 3000,
         data: { showClose: true },
       });
     },
