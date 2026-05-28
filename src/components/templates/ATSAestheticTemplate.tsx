@@ -1,5 +1,5 @@
 import React from "react";
-import type { Format3Data } from "#/types/resume/resume.types";
+import type { ResumeData } from "#/types/resume/resume.types";
 import {
   Document,
   Page,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
 });
 
 interface ATSTemplateProps {
-  data: Format3Data;
+  data: ResumeData;
 }
 
 const safeArray = <T,>(value: T[] | null | undefined): T[] =>
@@ -334,13 +334,13 @@ export const ATSAesthetic: React.FC<ATSTemplateProps> = ({ data }) => {
               )}
 
               {profileLinks.map((link, idx) => {
-                if (!hasText(link?.value)) return null;
-                const href = normalizeHref(link.value);
+                if (!hasText(link?.url)) return null;
+                const href = normalizeHref(link.url);
                 if (!href) return null;
 
                 return (
                   <Link key={idx} src={href} style={styles.contactLink}>
-                    {link.value}
+                    {link.url}
                   </Link>
                 );
               })}

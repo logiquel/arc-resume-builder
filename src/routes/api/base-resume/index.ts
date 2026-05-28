@@ -127,7 +127,7 @@ export const Route = createFileRoute("/api/base-resume/")({
               }
 
               const parsedData = await extractResumeContent(fileValue);
-              finalBaseData = await buildBaseResumeData(parsedData); // TODO
+              finalBaseData = await buildBaseResumeData(parsedData);
             } else {
               try {
                 finalBaseData = JSON.parse(

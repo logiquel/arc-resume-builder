@@ -12,11 +12,11 @@ export const base_data = {
       },
       {
         name: "linkedin",
-        value: "https://linkedin.com/in/johndoe",
+        url: "https://linkedin.com/in/johndoe",
       },
       {
         name: "portfolio",
-        value: "https://johndoe.dev",
+        url: "https://johndoe.dev",
       },
     ],
     professional_title: "Developer",

@@ -80,7 +80,7 @@ function RouteComponent() {
   const [selectedTemplate, setSelectedTemplate] =
     useState<ResumePreviewTemplateKey>("ats");
 
-  const format3Data = useMemo(
+  const previewData = useMemo(
     () => resolveResumeToFormat3(tailoringSession),
     [tailoringSession],
   );
@@ -136,7 +136,7 @@ function RouteComponent() {
       </aside>
       <main className="flex-1 min-w-0 min-h-0 h-full flex flex-col overflow-hidden">
         <ResumePreviewClient
-          data={format3Data}
+          data={previewData}
           selectedTemplate={selectedTemplate}
           sessionId={tailoringSession.id}
         />

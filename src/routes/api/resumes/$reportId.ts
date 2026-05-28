@@ -1,6 +1,6 @@
 // src/routes/api/resumes/$reportId.ts
 import { createFileRoute } from "@tanstack/react-router";
-import type { Format3Data } from "#/types/resume/resume.types";
+import type { ResumeData } from "#/types/resume/resume.types";
 
 export const Route = createFileRoute("/api/resumes/$reportId")({
   server: {
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/resumes/$reportId")({
           return new Response("Resume not found", { status: 404 });
         }
 
-        return Response.json(resume satisfies Format3Data);
+        return Response.json(resume satisfies ResumeData);
       },
     },
   },

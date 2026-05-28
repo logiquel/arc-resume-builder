@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
-import type { Format3Data } from "#/types/resume/resume.types";
+import type { ResumeData } from "#/types/resume/resume.types";
 
 import { ATSTemplate } from "#/components/templates/ATSTemplate";
 import { ModernTemplate } from "#/components/templates/ModernTemplate";
@@ -25,7 +25,7 @@ const TEMPLATE_MAP = {
 export type ResumePreviewTemplateKey = keyof typeof TEMPLATE_MAP;
 
 interface ResumePreviewClientProps {
-  data: Format3Data;
+  data: ResumeData;
   selectedTemplate: ResumePreviewTemplateKey;
   sessionId: string;
 }

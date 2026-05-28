@@ -1,5 +1,5 @@
 import React from "react";
-import type { Format3Data } from "#/types/resume/resume.types";
+import type { ResumeData } from "#/types/resume/resume.types";
 import {
   Document,
   Page,
@@ -10,7 +10,7 @@ import {
 } from "@react-pdf/renderer";
 
 interface TwoColumnTemplateProps {
-  data: Format3Data;
+  data: ResumeData;
 }
 
 Font.register({
@@ -232,7 +232,7 @@ const TwoColumnTemplate: React.FC<TwoColumnTemplateProps> = ({ data }) => {
           )}
           {profile.links?.map((link, idx) => (
             <Text key={idx} style={styles.contactText}>
-              {link.value}
+              {link.url}
             </Text>
           ))}
         </View>

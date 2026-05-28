@@ -1,4 +1,4 @@
-import type { Format3Data, ProfileLink } from "#/types/resume/resume.types";
+import type { ProfileLink, ResumeData } from "#/types/resume/resume.types";
 import type {
   DiffField,
   MaybeDiffField,
@@ -59,20 +59,20 @@ const resolveDescription = (
 };
 
 const mapProfileLinks = (
-  links: Array<{ type: string; url: string }> | undefined,
+  links: Array<{ name: string; url: string }> | undefined,
 ): ProfileLink[] => {
   return (links ?? []).map((link) => ({
-    name: link.type,
+    name: link.name,
     value: link.url,
-    icon: link.type,
-    type: link.type,
+    icon: link.name,
+    type: link.name,
     url: link.url,
   })) as ProfileLink[];
 };
 
 export const resolveResumeToFormat3 = (
   tailoringSession: TailoringSession,
-): Format3Data => {
+): ResumeData => {
   const { changes } = tailoringSession;
 
   return {
@@ -90,7 +90,7 @@ export const resolveResumeToFormat3 = (
       summary: toString(resolveDiffValue(changes.profile.summary, "")),
     },
 
-    education: (changes.education.entries ?? []).map((item) => ({
+    education: (changes.education ?? []).map((item) => ({
       institution: item.institution ?? "",
       location: item.location ?? "",
       start_date: item.start_date ?? "",
@@ -101,7 +101,7 @@ export const resolveResumeToFormat3 = (
       description: resolveDescription(item.description, ""),
     })),
 
-    experience: (changes.experience.entries ?? []).map((item) => ({
+    experience: (changes.experience ?? []).map((item) => ({
       company: item.company ?? "",
       location: item.location ?? "",
       start_date: item.start_date ?? "",
@@ -110,7 +110,7 @@ export const resolveResumeToFormat3 = (
       description: resolveDescription(item.description, ""),
     })),
 
-    projects: (changes.projects.entries ?? []).map((item) => ({
+    projects: (changes.projects ?? []).map((item) => ({
       title: item.title ?? "",
       link: item.link ?? "",
       start_date: item.start_date ?? "",
@@ -119,7 +119,7 @@ export const resolveResumeToFormat3 = (
       description: resolveDescription(item.description, ""),
     })),
 
-    certificates: (changes.certificates.entries ?? []).map((item) => ({
+    certificates: (changes.certificates ?? []).map((item) => ({
       name: toString(resolveDiffValue(item.name, "")),
       issuer: item.issuer ?? "",
       issue_date: item.issue_date ?? "",
@@ -128,28 +128,28 @@ export const resolveResumeToFormat3 = (
       description: toString(resolveDiffValue(item.description, "")),
     })),
 
-    skills: (changes.skills.entries ?? []).map((item) => ({
+    skills: (changes.skills ?? []).map((item) => ({
       name: toString(resolveDiffValue(item.name, "")),
-      level: item.level ?? "",
+      level: item.level ?? null,
     })),
 
-    languages: (changes.languages.entries ?? []).map((item) => ({
+    languages: (changes.languages ?? []).map((item) => ({
       name: item.name ?? "",
-      level: item.level ?? "",
+      level: item.level ?? null,
     })),
 
-    interests: (changes.interests.entries ?? []).map((item) => ({
+    interests: (changes.interests ?? []).map((item) => ({
       name: item.name ?? "",
     })),
 
-    awards: (changes.awards.entries ?? []).map((item) => ({
+    awards: (changes.awards ?? []).map((item) => ({
       title: toString(resolveDiffValue(item.title, "")),
       awarder: item.awarder ?? "",
       date: item.date ?? "",
       description: toString(resolveDiffValue(item.description, "")),
     })),
 
-    publications: (changes.publications.entries ?? []).map((item) => ({
+    publications: (changes.publications ?? []).map((item) => ({
       title: toString(resolveDiffValue(item.title, "")),
       publisher: item.publisher ?? "",
       date: item.date ?? "",
@@ -157,7 +157,7 @@ export const resolveResumeToFormat3 = (
       description: toString(resolveDiffValue(item.description, "")),
     })),
 
-    references: (changes.references.entries ?? []).map((item) => ({
+    references: (changes.references ?? []).map((item) => ({
       name: item.name ?? "",
       position: item.position ?? "",
       organization: item.organization ?? "",

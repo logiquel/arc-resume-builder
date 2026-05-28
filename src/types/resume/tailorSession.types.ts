@@ -3,19 +3,22 @@ import type {
   CertificateData,
   EducationData,
   ExperienceData,
-  Format3Data,
   InterestData,
   LanguageData,
+  LanguageLevel,
   ProfileData,
   ProjectData,
   PublicationData,
   ReferenceData,
+  ResumeData, // This is sample format of base_data
   SkillData,
+  SkillLevel,
 } from "#/types/resume/resume.types";
 
 export type DiffFormat = "text" | "para" | "bullet_points";
 export type DiffMode = "inline" | "structural";
 export type DiffStatus = "pending" | "accepted" | "rejected";
+
 export interface DiffField<T> {
   old_value: T;
   new_value: T;
@@ -49,20 +52,20 @@ export interface TailoringSession {
 
 export interface ResumeChanges {
   profile: ProfileChanges;
-  education: EducationChanges;
-  experience: ExperienceChanges;
-  projects: ProjectsChanges;
-  certificates: CertificatesChanges;
-  skills: SkillsChanges;
-  languages: LanguagesChanges;
-  interests: InterestsChanges;
-  awards: AwardsChanges;
-  publications: PublicationsChanges;
-  references: ReferencesChanges;
+  education: EducationEntryChange[];
+  experience: ExperienceEntryChange[];
+  projects: ProjectEntryChange[];
+  certificates: CertificateEntryChange[];
+  skills: SkillEntryChange[];
+  languages: LanguageEntryChange[];
+  interests: InterestEntryChange[];
+  awards: AwardEntryChange[];
+  publications: PublicationEntryChange[];
+  references: ReferenceEntryChange[];
 }
 
 export interface ProfileLinkChange {
-  type: string;
+  name: string;
   url: string;
 }
 
@@ -77,10 +80,6 @@ export interface ProfileChanges {
   summary?: DiffField<string>;
 }
 
-export interface EducationChanges {
-  entries: EducationEntryChange[];
-}
-
 export interface EducationEntryChange {
   entry_id: string;
   institution: string;
@@ -93,10 +92,6 @@ export interface EducationEntryChange {
   description?: DiffField<string | string[]>;
 }
 
-export interface ExperienceChanges {
-  entries: ExperienceEntryChange[];
-}
-
 export interface ExperienceEntryChange {
   entry_id: string;
   company: string;
@@ -105,10 +100,6 @@ export interface ExperienceEntryChange {
   end_date: string | null;
   position?: DiffField<string>;
   description?: DiffField<string | string[]>;
-}
-
-export interface ProjectsChanges {
-  entries: ProjectEntryChange[];
 }
 
 export interface ProjectEntryChange {
@@ -121,10 +112,6 @@ export interface ProjectEntryChange {
   description?: DiffField<string | string[]>;
 }
 
-export interface CertificatesChanges {
-  entries: CertificateEntryChange[];
-}
-
 export interface CertificateEntryChange {
   entry_id: string;
   issuer: string;
@@ -135,34 +122,18 @@ export interface CertificateEntryChange {
   description?: DiffField<string>;
 }
 
-export interface SkillsChanges {
-  entries: SkillEntryChange[];
-}
-
 export interface SkillEntryChange {
   entry_id: string;
   name: MaybeDiffField<string>;
-  level: string;
-}
-
-export interface LanguagesChanges {
-  entries: LanguageEntryChange[];
+  level: SkillLevel;
 }
 
 export interface LanguageEntryChange extends LanguageData {
   entry_id: string;
 }
 
-export interface InterestsChanges {
-  entries: InterestEntryChange[];
-}
-
 export interface InterestEntryChange extends InterestData {
   entry_id: string;
-}
-
-export interface AwardsChanges {
-  entries: AwardEntryChange[];
 }
 
 export interface AwardEntryChange {
@@ -173,10 +144,6 @@ export interface AwardEntryChange {
   description?: DiffField<string>;
 }
 
-export interface PublicationsChanges {
-  entries: PublicationEntryChange[];
-}
-
 export interface PublicationEntryChange {
   entry_id: string;
   publisher: string;
@@ -184,10 +151,6 @@ export interface PublicationEntryChange {
   link: string;
   title?: DiffField<string>;
   description?: DiffField<string>;
-}
-
-export interface ReferencesChanges {
-  entries: ReferenceEntryChange[];
 }
 
 export interface ReferenceEntryChange extends ReferenceData {
@@ -205,4 +168,4 @@ export type ResolvedInterestData = InterestData;
 export type ResolvedAwardData = AwardData;
 export type ResolvedPublicationData = PublicationData;
 export type ResolvedReferenceData = ReferenceData;
-export type ResolvedResumeData = Format3Data;
+export type ResolvedResumeData = ResumeData; // This is the type of data that will be used in previewing and downloading resume. Changes from tailoringSession will be converted to this format on fly using convertor function.

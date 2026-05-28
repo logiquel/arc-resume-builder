@@ -1,10 +1,25 @@
 // ==================== DATA INTERFACES ====================
 
+export type SkillLevel =
+  | "beginner"
+  | "amateur"
+  | "competent"
+  | "proficient"
+  | "expert"
+  | null;
+
+export type LanguageLevel =
+  | "beginner"
+  | "intermediate"
+  | "advanced"
+  | "fluent"
+  | "native"
+  | null;
+
 export interface ProfileLink {
   id?: string;
   name: string;
-  value?: string;
-  icon?: string;
+  url: string;
 }
 
 export interface ProfileData {
@@ -27,7 +42,7 @@ export interface EducationData {
   start_date: string | null;
   end_date: string | null;
   link: string;
-  description: string | string[]; // Can be paragraph string or bullet points array
+  description: string | string[];
 }
 
 export interface ExperienceData {
@@ -36,7 +51,7 @@ export interface ExperienceData {
   location: string;
   start_date: string | null;
   end_date: string | null;
-  description: string | string[]; // Can be paragraph string or bullet points array
+  description: string | string[];
 }
 
 export interface ProjectData {
@@ -45,7 +60,7 @@ export interface ProjectData {
   link: string;
   start_date: string | null;
   end_date: string | null;
-  description: string | string[]; // Can be paragraph string or bullet points array
+  description: string | string[];
 }
 
 export interface CertificateData {
@@ -54,17 +69,17 @@ export interface CertificateData {
   issue_date: string | null;
   expiry_date: string | null;
   link: string;
-  description: string; // Usually a single string for certificates
+  description: string;
 }
 
 export interface SkillData {
   name: string;
-  level: string; // beginner | amateur | competent | proficient | expert
+  level: SkillLevel;
 }
 
 export interface LanguageData {
   name: string;
-  level: string; // beginner | intermediate | advanced | fluent | native
+  level: LanguageLevel;
 }
 
 export interface InterestData {
@@ -75,7 +90,7 @@ export interface AwardData {
   title: string;
   awarder: string;
   date: string | null;
-  description: string; // Usually a single string for awards
+  description: string;
 }
 
 export interface PublicationData {
@@ -83,7 +98,7 @@ export interface PublicationData {
   publisher: string;
   date: string | null;
   link: string;
-  description: string; // Usually a single string for publications
+  description: string;
 }
 
 export interface ReferenceData {
@@ -92,30 +107,6 @@ export interface ReferenceData {
   organization: string;
   email: string;
   phone: string;
-}
-
-export interface Format3Data {
-  profile: {
-    profile_picture: string;
-    first_name: string;
-    last_name: string;
-    professional_title: string;
-    email: string;
-    phone: string;
-    location: string;
-    links: ProfileLink[];
-    summary: string;
-  };
-  education: EducationData[];
-  experience: ExperienceData[];
-  projects: ProjectData[];
-  certificates: CertificateData[];
-  skills: SkillData[];
-  languages: LanguageData[];
-  interests: InterestData[];
-  awards: AwardData[];
-  publications: PublicationData[];
-  references: ReferenceData[];
 }
 
 export interface ResumeData {
@@ -141,3 +132,21 @@ export interface ResumeData {
   publications: PublicationData[];
   references: ReferenceData[];
 }
+
+/*+
+
+
+types
+- ResumeData
+- TailoringSession
+- ResumeChanges
+
+parse -> base_data(ResumeData)
+
+base_data -> AI engine -> tailor_session(analysis, changes)(TailoringSession)
+                           changes(ResumeChanges)
+
+
+                           
+                            
+*/

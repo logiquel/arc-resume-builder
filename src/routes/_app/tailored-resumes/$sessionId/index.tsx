@@ -169,11 +169,10 @@ function RouteComponent() {
         (next.changes[section] as unknown as Record<string, unknown>)[field] =
           value;
       } else {
-        const entries = (
-          next.changes[section] as unknown as {
-            entries: Record<string, unknown>[];
-          }
-        ).entries;
+        const entries = next.changes[section] as unknown as Record<
+          string,
+          unknown
+        >[];
         entries[index] = {
           ...entries[index],
           [field]: value,
@@ -224,10 +223,7 @@ function RouteComponent() {
           ),
         };
       } else {
-        const entries = (
-          next.changes[section] as { entries: Record<string, any>[] }
-        ).entries;
-
+        const entries = next.changes[section] as Record<string, any>[];
         const currentField = entries[index][field];
 
         entries[index] = {
@@ -410,11 +406,11 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="Education"
-                entriesCount={education.entries?.length}
+                entriesCount={education?.length}
                 sectionIcon="qlementine-icons:education-16"
               />
 
-              {education.entries?.map((edu: any, idx: number) => (
+              {education?.map((edu: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"
@@ -532,11 +528,11 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="Work Experience"
-                entriesCount={experience.entries?.length}
+                entriesCount={experience?.length}
                 sectionIcon="famicons:briefcase-outline"
               />
 
-              {experience.entries?.map((exp: any, idx: number) => (
+              {experience?.map((exp: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"
@@ -658,11 +654,11 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="Projects"
-                entriesCount={projects.entries?.length}
+                entriesCount={projects?.length}
                 sectionIcon="famicons:cube-outline"
               />
 
-              {projects.entries?.map((project: any, idx: number) => (
+              {projects?.map((project: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"
@@ -760,11 +756,11 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="Skills"
-                entriesCount={skills.entries?.length}
+                entriesCount={skills?.length}
                 sectionIcon="hugeicons:compass-01"
               />
 
-              {skills.entries?.map((skill: any, idx: number) => (
+              {skills?.map((skill: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"
@@ -826,11 +822,11 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="Certificates"
-                entriesCount={certificates.entries?.length}
+                entriesCount={certificates?.length}
                 sectionIcon="ph:certificate"
               />
 
-              {certificates.entries?.map((cert: any, idx: number) => (
+              {certificates?.map((cert: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"
@@ -926,11 +922,11 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="Languages"
-                entriesCount={languages.entries?.length}
+                entriesCount={languages?.length}
                 sectionIcon="heroicons:language-solid"
               />
 
-              {languages.entries?.map((lang: any, idx: number) => (
+              {languages?.map((lang: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"
@@ -980,12 +976,12 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="Interests"
-                entriesCount={interests.entries?.length}
+                entriesCount={interests?.length}
                 sectionIcon="solar:gamepad-linear"
               />
 
               <div className="w-full flex flex-wrap p-5 gap-2">
-                {interests.entries?.map((interest: any, idx: number) => (
+                {interests?.map((interest: any, idx: number) => (
                   <input
                     key={idx}
                     value={interest.name ?? ""}
@@ -1013,7 +1009,7 @@ function RouteComponent() {
                 sectionIcon="hugeicons:award-01"
               />
 
-              {awards.entries?.map((award: any, idx: number) => (
+              {awards?.map((award: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"
@@ -1086,11 +1082,11 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="Publications"
-                entriesCount={publications.entries?.length}
+                entriesCount={publications?.length}
                 sectionIcon="ph:books-light"
               />
 
-              {publications.entries?.map((pub: any, idx: number) => (
+              {publications?.map((pub: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"
@@ -1186,11 +1182,11 @@ function RouteComponent() {
             >
               <SectionHeading
                 sectionLabel="References"
-                entriesCount={references.entries?.length}
+                entriesCount={references?.length}
                 sectionIcon="bi:people"
               />
 
-              {references.entries?.map((ref: any, idx: number) => (
+              {references?.map((ref: any, idx: number) => (
                 <div
                   key={idx}
                   className="w-full grid grid-cols-2 p-5 gap-3 border-b last:border-b-0 border-black/5"

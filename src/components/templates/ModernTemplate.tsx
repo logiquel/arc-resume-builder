@@ -6,10 +6,10 @@ import {
   View,
   Link,
 } from "@react-pdf/renderer";
-import type { Format3Data } from "#/types/resume/resume.types";
+import type { ResumeData } from "#/types/resume/resume.types";
 
 type Props = {
-  data: Format3Data;
+  data: ResumeData;
 };
 
 const styles = StyleSheet.create({
