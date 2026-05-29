@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as GatewayIndexRouteImport } from './routes/_gateway/index'
+import { Route as ApiTailoredResumesIndexRouteImport } from './routes/api/tailored-resumes/index'
 import { Route as ApiBaseResumeIndexRouteImport } from './routes/api/base-resume/index'
 import { Route as GatewaySignUpIndexRouteImport } from './routes/_gateway/sign-up/index'
 import { Route as AppDashboardIndexRouteImport } from './routes/_app/dashboard/index'
@@ -32,6 +33,11 @@ const AppRouteRoute = AppRouteRouteImport.update({
 const GatewayIndexRoute = GatewayIndexRouteImport.update({
   id: '/_gateway/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTailoredResumesIndexRoute = ApiTailoredResumesIndexRouteImport.update({
+  id: '/api/tailored-resumes/',
+  path: '/api/tailored-resumes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBaseResumeIndexRoute = ApiBaseResumeIndexRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof AppDashboardIndexRoute
   '/sign-up/': typeof GatewaySignUpIndexRoute
   '/api/base-resume/': typeof ApiBaseResumeIndexRoute
+  '/api/tailored-resumes/': typeof ApiTailoredResumesIndexRoute
   '/tailored-resumes/$sessionId/': typeof AppTailoredResumesSessionIdIndexRoute
   '/tailored-resumes/$sessionId/preview/': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AppDashboardIndexRoute
   '/sign-up': typeof GatewaySignUpIndexRoute
   '/api/base-resume': typeof ApiBaseResumeIndexRoute
+  '/api/tailored-resumes': typeof ApiTailoredResumesIndexRoute
   '/tailored-resumes/$sessionId': typeof AppTailoredResumesSessionIdIndexRoute
   '/tailored-resumes/$sessionId/preview': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/_app/dashboard/': typeof AppDashboardIndexRoute
   '/_gateway/sign-up/': typeof GatewaySignUpIndexRoute
   '/api/base-resume/': typeof ApiBaseResumeIndexRoute
+  '/api/tailored-resumes/': typeof ApiTailoredResumesIndexRoute
   '/_app/tailored-resumes/$sessionId/': typeof AppTailoredResumesSessionIdIndexRoute
   '/_app/tailored-resumes/$sessionId/preview/': typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/sign-up/'
     | '/api/base-resume/'
+    | '/api/tailored-resumes/'
     | '/tailored-resumes/$sessionId/'
     | '/tailored-resumes/$sessionId/preview/'
   fileRoutesByTo: FileRoutesByTo
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/sign-up'
     | '/api/base-resume'
+    | '/api/tailored-resumes'
     | '/tailored-resumes/$sessionId'
     | '/tailored-resumes/$sessionId/preview'
   id:
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/_app/dashboard/'
     | '/_gateway/sign-up/'
     | '/api/base-resume/'
+    | '/api/tailored-resumes/'
     | '/_app/tailored-resumes/$sessionId/'
     | '/_app/tailored-resumes/$sessionId/preview/'
   fileRoutesById: FileRoutesById
@@ -218,6 +230,7 @@ export interface RootRouteChildren {
   ApiTailoredResumesSessionIdRoute: typeof ApiTailoredResumesSessionIdRoute
   GatewaySignUpIndexRoute: typeof GatewaySignUpIndexRoute
   ApiBaseResumeIndexRoute: typeof ApiBaseResumeIndexRoute
+  ApiTailoredResumesIndexRoute: typeof ApiTailoredResumesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof GatewayIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/tailored-resumes/': {
+      id: '/api/tailored-resumes/'
+      path: '/api/tailored-resumes'
+      fullPath: '/api/tailored-resumes/'
+      preLoaderRoute: typeof ApiTailoredResumesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/base-resume/': {
@@ -360,6 +380,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTailoredResumesSessionIdRoute: ApiTailoredResumesSessionIdRoute,
   GatewaySignUpIndexRoute: GatewaySignUpIndexRoute,
   ApiBaseResumeIndexRoute: ApiBaseResumeIndexRoute,
+  ApiTailoredResumesIndexRoute: ApiTailoredResumesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

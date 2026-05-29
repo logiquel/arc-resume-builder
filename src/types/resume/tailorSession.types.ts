@@ -5,7 +5,6 @@ import type {
   ExperienceData,
   InterestData,
   LanguageData,
-  LanguageLevel,
   ProfileData,
   ProjectData,
   PublicationData,
@@ -16,7 +15,7 @@ import type {
 } from "#/types/resume/resume.types";
 
 export type DiffFormat = "text" | "para" | "bullet_points";
-export type DiffMode = "inline" | "structural";
+export type DiffMode = "inline" | "structural" | "inline_bullets";
 export type DiffStatus = "pending" | "accepted" | "rejected";
 
 export interface DiffField<T> {
@@ -26,13 +25,15 @@ export interface DiffField<T> {
   new_format: DiffFormat;
   diff_mode: DiffMode;
   status: DiffStatus;
+  is_changed: boolean;
   resolved_value?: T;
 }
 
 export type MaybeDiffField<T> = T | DiffField<T>;
 
 export interface TailoringSessionAnalysis {
-  score: number;
+  base_score: number;
+  current_score: number;
   matched_keywords: string[];
   missing_keywords: string[];
   keyword_coverage: number;
@@ -124,8 +125,8 @@ export interface CertificateEntryChange {
 
 export interface SkillEntryChange {
   entry_id: string;
-  name: MaybeDiffField<string>;
-  level: SkillLevel;
+  name: DiffField<string>;
+  level: SkillLevel | null;
 }
 
 export interface LanguageEntryChange extends LanguageData {

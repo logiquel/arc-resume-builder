@@ -8,7 +8,8 @@ export const tailor_session_sample_data: TailoringSession = {
   created_at: "2026-05-23T09:00:00.000Z",
   updated_at: "2026-05-24T07:37:48.520Z",
   analysis: {
-    score: 87,
+    current_score: 87,
+    base_score: 62,
     matched_keywords: [
       "React",
       "Node.js",

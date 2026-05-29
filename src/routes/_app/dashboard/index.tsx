@@ -18,8 +18,8 @@ import {
 import { useCreateBaseResumeMutation } from "#/api/resume/base/base-resume.mutations";
 import { useFetchBaseResumeList } from "#/api/resume/base/base-resume.queries";
 import BaseResumeSkeleton from "#/components/common/Skeletons/BaseResumeSkeleton";
-import DeleteModal from "#/components/common/DeleteModal";
 import PlaceholderResume from "#/components/common/PlaceholderResume";
+import { useCreateTailoredResumeMutation } from "#/api/resume/tailor/tailor-resume.mutations";
 
 export const Route = createFileRoute("/_app/dashboard/")({
   pendingComponent: () => <div>Loading...</div>,
@@ -303,27 +303,6 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
 };
 
 // ── Route ────────────────────────────────────────────────────────────────────
-const sampleBaseResumes = [
-  { id: 1, name: "SDE_Core_Master.pdf", size: "126.17 KB", image: resumeMock1 },
-  {
-    id: 2,
-    name: "FullStack_General_v2.pdf",
-    size: "142.30 KB",
-    image: resumeMock2,
-  },
-  {
-    id: 3,
-    name: "Frontend_React_2026.pdf",
-    size: "118.45 KB",
-    image: resumeMock3,
-  },
-  {
-    id: 4,
-    name: "Mobile_KMP_2026.pdf",
-    size: "126.12 KB",
-    image: resumeMock4,
-  },
-];
 
 const sampleTailoredResumes = [
   {
@@ -375,7 +354,6 @@ const sampleTailoredResumes = [
     image: resumeMock6,
   },
 ];
-
 function RouteComponent() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAddBaseModalOpen, setIsAddBaseModalOpen] = useState(false);
@@ -395,11 +373,21 @@ function RouteComponent() {
     error: baseResumesError,
   } = useFetchBaseResumeList();
 
+  const { mutate: createTailoredResume, isPending: isTailoringPending } =
+    useCreateTailoredResumeMutation();
+
   const hasBaseResumes = baseResumes.length > 0;
   const safeActiveIndex = hasBaseResumes ? activeIndex % baseResumes.length : 0;
   const activeBaseResume = hasBaseResumes ? baseResumes[safeActiveIndex] : null;
 
   const activeIndexRef = useRef(activeIndex);
+
+  const resetTailorState = () => {
+    setIsTailorModalOpen(false);
+    setCurrentStep(1);
+    setSelectedBaseResumeId(null);
+    setJobDescription("");
+  };
 
   const handleGetStarted = () => {
     setIsTailorModalOpen(true);
@@ -409,10 +397,8 @@ function RouteComponent() {
   };
 
   const handleCloseModal = () => {
-    setIsTailorModalOpen(false);
-    setCurrentStep(1);
-    setSelectedBaseResumeId(null);
-    setJobDescription("");
+    if (isTailoringPending) return;
+    resetTailorState();
   };
 
   const handleNextStep = () => {
@@ -422,12 +408,21 @@ function RouteComponent() {
   };
 
   const handleTailor = () => {
-    console.log("Selected Base Resume ID:", selectedBaseResumeId);
-    console.log("Job Description:", jobDescription);
-    setIsTailorModalOpen(false);
-    setCurrentStep(1);
-    setSelectedBaseResumeId(null);
-    setJobDescription("");
+    if (!selectedBaseResumeId || !jobDescription.trim() || isTailoringPending) {
+      return;
+    }
+
+    createTailoredResume(
+      {
+        baseResumeId: selectedBaseResumeId,
+        jd: jobDescription.trim(),
+      },
+      {
+        onSuccess: () => {
+          resetTailorState();
+        },
+      },
+    );
   };
 
   useEffect(() => {
@@ -522,7 +517,7 @@ function RouteComponent() {
               </div>
             </section>
             <section className="w-full flex flex-col p-4">
-              <SectionHeading label="RECENTS" />
+              <SectionHeading label="MY TAILORED RESUMES" />
               <div className="w-full flex-1 grid grid-cols-5 gap-2">
                 {sampleTailoredResumes.map((resume, i) => (
                   <div
