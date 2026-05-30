@@ -51,7 +51,7 @@ const TailoringLoadingScreen = ({
   const activeStepIndex = TAILORING_STEP_ORDER.indexOf(currentStep);
 
   return (
-    <div className="w-full h-full flex items-center justify-center px-4 py-8 sm:px-6">
+    <div className="w-full h-full flex items-center justify-center px-4 py-8 sm:px-6 bg-white">
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[minmax(260px,360px)_1fr] gap-8 lg:gap-14 items-center">
         <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
           <div className="relative flex items-center justify-center w-full max-w-70 sm:max-w-[320px] lg:max-w-90">
