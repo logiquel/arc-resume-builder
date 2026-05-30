@@ -54,7 +54,7 @@ const TailoringLoadingScreen = ({
     <div className="w-full h-full flex items-center justify-center px-4 py-8 sm:px-6">
       <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[minmax(260px,360px)_1fr] gap-8 lg:gap-14 items-center">
         <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-          <div className="relative flex items-center justify-center w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[360px]">
+          <div className="relative flex items-center justify-center w-full max-w-70 sm:max-w-[320px] lg:max-w-90">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(67,139,255,0.18)_0%,rgba(44,118,255,0.10)_28%,rgba(82,189,255,0.08)_45%,transparent_72%)] blur-2xl scale-125" />
             <div className="relative w-full">
               <DotLottieReact
@@ -70,7 +70,7 @@ const TailoringLoadingScreen = ({
             <h2 className="text-sm text-text-primary font-semibold">
               Creating your tailored resume
             </h2>
-            <p className="text-[11px] text-text-muted mt-1 max-w-[26rem]">
+            <p className="text-[11px] text-text-muted mt-1 max-w-104">
               We are analyzing the role, matching relevant keywords, and
               refining your experience for a stronger fit.
             </p>
@@ -98,15 +98,15 @@ const TailoringLoadingScreen = ({
                       {isCompleted ? (
                         <Icon
                           icon="pepicons-print:checkmark-circle-filled"
-                          className="text-sm text-green-600 flex-shrink-0"
+                          className="text-sm text-green-600 shrink-0"
                         />
                       ) : isActive ? (
                         <Icon
                           icon="si:spinner-fill"
-                          className="text-sm text-sky-500 animate-spin flex-shrink-0"
+                          className="text-sm text-sky-500 animate-spin shrink-0"
                         />
                       ) : (
-                        <div className="w-3.5 h-3.5 rounded-full border border-black/15 flex-shrink-0" />
+                        <div className="w-3.5 h-3.5 rounded-full border border-black/15 shrink-0" />
                       )}
 
                       {meta.title}
@@ -117,7 +117,7 @@ const TailoringLoadingScreen = ({
                         isCompleted
                           ? "text-text-muted"
                           : isActive
-                            ? "animate-shine bg-[linear-gradient(120deg,#293056_25%,#3B82F6_50%,#34B6B3_75%)] bg-[length:200%_100%] bg-clip-text text-transparent"
+                            ? "animate-shine bg-[linear-gradient(120deg,#293056_25%,#3B82F6_50%,#34B6B3_75%)] bg-size-[200%_100%] bg-clip-text text-transparent"
                             : "text-text-muted/45"
                       }`}
                     >
