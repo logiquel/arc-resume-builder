@@ -1,44 +1,8 @@
 import type { TailoringGenerationStep } from "#/types/resume/tailorSession.types";
 import { Icon } from "@iconify/react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
-const STEPS: {
-  step: TailoringGenerationStep;
-  label: string;
-  description: string;
-}[] = [
-  {
-    step: "PLACEHOLDER_CREATED",
-    label: "Initializing Workspace",
-    description: "Setting up your tailoring session...",
-  },
-  {
-    step: "READING_BASE_DATA",
-    label: "Reading Resume",
-    description: "Parsing your base resume data...",
-  },
-  {
-    step: "JD_ANALYSIS",
-    label: "Analyzing Job Description",
-    description: "Extracting key requirements and keywords...",
-  },
-  {
-    step: "TAILORING",
-    label: "Tailoring Resume",
-    description: "Aligning your experience with the role...",
-  },
-  {
-    step: "FINALIZING",
-    label: "Finalizing",
-    description: "Preparing your enhanced resume changes...",
-  },
-  {
-    step: "COMPLETED",
-    label: "Done",
-    description: "Your tailored resume is ready.",
-  },
-];
-
-const STEP_ORDER: TailoringGenerationStep[] = [
+const TAILORING_STEP_ORDER: TailoringGenerationStep[] = [
   "PLACEHOLDER_CREATED",
   "READING_BASE_DATA",
   "JD_ANALYSIS",
@@ -47,71 +11,136 @@ const STEP_ORDER: TailoringGenerationStep[] = [
   "COMPLETED",
 ];
 
+const TAILORING_STEP_META: Record<
+  Exclude<TailoringGenerationStep, "FAILED">,
+  { title: string; description: string }
+> = {
+  PLACEHOLDER_CREATED: {
+    title: "Workspace initialized",
+    description: "Preparing your tailoring session.",
+  },
+  READING_BASE_DATA: {
+    title: "Reading base resume",
+    description: "Loading and parsing the selected resume.",
+  },
+  JD_ANALYSIS: {
+    title: "Analyzing job description",
+    description: "Extracting role requirements and important keywords.",
+  },
+  TAILORING: {
+    title: "Tailoring resume",
+    description: "Generating targeted improvements for the selected role.",
+  },
+  FINALIZING: {
+    title: "Finalizing output",
+    description: "Preparing the session for review.",
+  },
+  COMPLETED: {
+    title: "Completed",
+    description: "Tailored resume is ready.",
+  },
+};
+
 interface TailoringLoadingScreenProps {
-  currentStep: string;
+  currentStep?: TailoringGenerationStep;
 }
-const TailoringLoadingScreen: React.FC<TailoringLoadingScreenProps> = ({
-  currentStep,
-}) => {
-  const currentIndex = STEP_ORDER.indexOf(currentStep);
+
+const TailoringLoadingScreen = ({
+  currentStep = "TAILORING",
+}: TailoringLoadingScreenProps) => {
+  const activeStepIndex = TAILORING_STEP_ORDER.indexOf(currentStep);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-8 px-4">
-      <div className="flex flex-col gap-1 text-center">
-        <h2 className="text-lg font-semibold text-text-primary">
-          Tailoring your resume
-        </h2>
-        <p className="text-sm text-text-secondary">
-          This usually takes 20–40 seconds. Please stay on this page.
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-3 w-full max-w-sm">
-        {STEPS.filter((s) => s.step !== "COMPLETED").map((s, idx) => {
-          const isDone = idx < currentIndex;
-          const isActive = idx === currentIndex;
-
-          return (
-            <div key={s.step} className="flex items-start gap-3">
-              <div className="mt-0.5 shrink-0">
-                {isDone ? (
-                  <Icon
-                    icon="lucide:check-circle"
-                    className="w-5 h-5 text-green-500"
-                  />
-                ) : isActive ? (
-                  <Icon
-                    icon="lucide:loader-circle"
-                    className="w-5 h-5 text-primary animate-spin"
-                  />
-                ) : (
-                  <Icon
-                    icon="lucide:circle"
-                    className="w-5 h-5 text-text-faint"
-                  />
-                )}
-              </div>
-              <div className="flex flex-col">
-                <span
-                  className={`text-sm font-medium ${
-                    isDone
-                      ? "text-text-secondary line-through"
-                      : isActive
-                        ? "text-text-primary"
-                        : "text-text-faint"
-                  }`}
-                >
-                  {s.label}
-                </span>
-                {isActive && (
-                  <span className="text-xs text-text-secondary mt-0.5">
-                    {s.description}
-                  </span>
-                )}
-              </div>
+    <div className="w-full h-full flex items-center justify-center px-4 py-8 sm:px-6">
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[minmax(260px,360px)_1fr] gap-8 lg:gap-14 items-center">
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+          <div className="relative flex items-center justify-center w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[360px]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(67,139,255,0.18)_0%,rgba(44,118,255,0.10)_28%,rgba(82,189,255,0.08)_45%,transparent_72%)] blur-2xl scale-125" />
+            <div className="relative w-full">
+              <DotLottieReact
+                src="https://lottie.host/d5a00465-8f8b-46a2-a8a9-6dc89960e813/l4Y5Q4hgiY.lottie"
+                loop
+                autoplay
+                speed={0.5}
+              />
             </div>
-          );
-        })}
+          </div>
+
+          <div className="mt-2 sm:mt-4">
+            <h2 className="text-sm text-text-primary font-semibold">
+              Creating your tailored resume
+            </h2>
+            <p className="text-[11px] text-text-muted mt-1 max-w-[26rem]">
+              We are analyzing the role, matching relevant keywords, and
+              refining your experience for a stronger fit.
+            </p>
+          </div>
+        </div>
+
+        <div className="w-full max-w-xl mx-auto lg:mx-0">
+          <div className="flex flex-col">
+            {TAILORING_STEP_ORDER.map((step, index) => {
+              const meta =
+                TAILORING_STEP_META[step as keyof typeof TAILORING_STEP_META];
+              const isCompleted = index < activeStepIndex;
+              const isActive = index === activeStepIndex;
+              const isUpcoming = index > activeStepIndex;
+              const showConnector = index < TAILORING_STEP_ORDER.length - 1;
+
+              return (
+                <div key={step} className="flex flex-col">
+                  <div className="flex flex-col">
+                    <p
+                      className={`flex items-center gap-2 text-sm ${
+                        isUpcoming ? "text-text-muted/70" : "text-text-primary"
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <Icon
+                          icon="pepicons-print:checkmark-circle-filled"
+                          className="text-sm text-green-600 flex-shrink-0"
+                        />
+                      ) : isActive ? (
+                        <Icon
+                          icon="si:spinner-fill"
+                          className="text-sm text-sky-500 animate-spin flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-3.5 h-3.5 rounded-full border border-black/15 flex-shrink-0" />
+                      )}
+
+                      {meta.title}
+                    </p>
+
+                    <p
+                      className={`text-[9px] uppercase pl-6 tracking-widest ${
+                        isCompleted
+                          ? "text-text-muted"
+                          : isActive
+                            ? "animate-shine bg-[linear-gradient(120deg,#293056_25%,#3B82F6_50%,#34B6B3_75%)] bg-[length:200%_100%] bg-clip-text text-transparent"
+                            : "text-text-muted/45"
+                      }`}
+                    >
+                      {meta.description}
+                    </p>
+                  </div>
+
+                  {showConnector && (
+                    <div className="w-full h-4 pl-[0.42rem] my-1.5">
+                      <div
+                        className={`h-full w-px ${
+                          index < activeStepIndex
+                            ? "bg-sky-500/30"
+                            : "bg-black/10"
+                        }`}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );
