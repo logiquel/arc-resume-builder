@@ -21,7 +21,7 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
           const { data, error } = await supabase
             .from("tailoring_sessions")
             .select(
-              "id, user_id, base_resume_id, name, analysis, changes, created_at, updated_at",
+              "id, user_id, base_resume_id, name, generation_step, analysis, changes, created_at, updated_at",
             )
             .eq("id", sessionId)
             .eq("user_id", user.id)
@@ -43,6 +43,7 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
             userId: data.user_id,
             baseResumeId: data.base_resume_id,
             name: data.name,
+            generationStep: data.generation_step,
             analysis: data.analysis,
             changes: data.changes,
             createdAt: data.created_at,

@@ -10,6 +10,7 @@ export type TailoredResume = {
   userId: string;
   baseResumeId: string;
   name: string;
+  generationStep: TailoringSession["generation_step"];
   analysis: TailoringSession["analysis"];
   changes: TailoringSession["changes"];
   createdAt: string;
