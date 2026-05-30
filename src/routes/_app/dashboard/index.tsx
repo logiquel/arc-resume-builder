@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import resumeMock1 from "/sample_resume_image_1.jpg";
 import resumeMock2 from "/sample_resume_image_2.jpg";
 import resumeMock3 from "/sample_resume_image_3.jpg";
@@ -355,6 +355,7 @@ const sampleTailoredResumes = [
   },
 ];
 function RouteComponent() {
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAddBaseModalOpen, setIsAddBaseModalOpen] = useState(false);
   const [isTailorModalOpen, setIsTailorModalOpen] = useState(false);
@@ -418,8 +419,15 @@ function RouteComponent() {
         jd: jobDescription.trim(),
       },
       {
-        onSuccess: () => {
+        onSuccess: async (response) => {
+          const sessionId = response.data.id;
+
           resetTailorState();
+
+          await navigate({
+            to: "/tailored-resumes/$sessionId",
+            params: { sessionId },
+          });
         },
       },
     );

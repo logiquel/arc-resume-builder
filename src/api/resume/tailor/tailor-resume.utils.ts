@@ -7,6 +7,8 @@ import type {
   ResumeChanges,
 } from "#/types/resume/tailorSession.types";
 import {
+  ANALYZE_JD_SYSTEM_PROMPT,
+  buildJdAnalysisUserPrompt,
   BUILD_TAILORED_RESUME_SYSTEM_PROMPT,
   buildTailoredResumeUserPrompt,
 } from "#/lib/prompts/tailor-resume.prompts";
@@ -15,11 +17,35 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+/**
+ * ==========================================
+ * ZOD SCHEMA SCHEMATICS FOR STEP 2 (JD ANALYSIS)
+ * ==========================================
+ */
+const jdAnalysisOutputSchema = z.object({
+  role_title: z.string(),
+  domain_track: z.enum([
+    "Frontend",
+    "Backend",
+    "Full-Stack",
+    "DevOps",
+    "Mobile",
+  ]),
+  core_hard_skills: z.array(z.string()),
+  methodologies_and_architecture: z.array(z.string()),
+  soft_skills_and_context: z.array(z.string()),
+  high_priority_keywords: z.array(z.string()),
+});
+
+/**
+ * ==========================================
+ * ZOD SCHEMA SCHEMATICS FOR STEP 3 (TAILORING MATCH)
+ * ==========================================
+ */
 const diffFormatSchema = z.enum(["text", "para", "bullet_points"]);
 const diffModeSchema = z.enum(["inline", "structural", "inline_bullets"]);
 const diffStatusSchema = z.literal("pending");
 
-// Uniform Schema structure containing the boolean evaluation flag
 const stringDiffFieldSchema = z.object({
   old_value: z.string(),
   new_value: z.string(),
@@ -27,7 +53,7 @@ const stringDiffFieldSchema = z.object({
   new_format: diffFormatSchema,
   diff_mode: diffModeSchema,
   status: diffStatusSchema,
-  is_changed: z.boolean(), // <-- Mandatory true/false tracking flag
+  is_changed: z.boolean(),
 });
 
 const stringOrStringArrayDiffFieldSchema = z.object({
@@ -37,7 +63,7 @@ const stringOrStringArrayDiffFieldSchema = z.object({
   new_format: diffFormatSchema,
   diff_mode: diffModeSchema,
   status: diffStatusSchema,
-  is_changed: z.boolean(), // <-- Mandatory true/false tracking flag
+  is_changed: z.boolean(),
 });
 
 const profileLinkChangeSchema = z.object({
@@ -105,7 +131,7 @@ const skillLevelSchema = z.union([
 
 const skillEntryChangeSchema = z.object({
   entry_id: z.string(),
-  name: stringDiffFieldSchema, // Uniform field wrapper for all skill names
+  name: stringDiffFieldSchema,
   level: skillLevelSchema,
 });
 
@@ -180,11 +206,32 @@ const tailoredResumeOutputSchema = z.object({
   changes: resumeChangesSchema,
 });
 
+/**
+ * EXECUTABLE ORCHESTRATION PIPELINE
+ * Call individual steps to update progress checkpoints smoothly on the frontend
+ */
+export async function analyzeJobDescription(jd: string) {
+  const response = await openai.responses.parse({
+    model: "gpt-4o-mini",
+    input: [
+      { role: "system", content: ANALYZE_JD_SYSTEM_PROMPT },
+      { role: "user", content: buildJdAnalysisUserPrompt(jd) },
+    ],
+    text: {
+      format: zodTextFormat(jdAnalysisOutputSchema, "jd_analysis_output"),
+    },
+  });
+
+  const parsed = response.output_parsed;
+  if (!parsed) throw new Error("Failed to parse Job Description parameters.");
+  return parsed;
+}
+
 export async function buildTailoringSessionData({
-  jd,
+  jdAnalysis,
   baseData,
 }: {
-  jd: string;
+  jdAnalysis: any; // Resulting payload structured from analyzeJobDescription
   baseData: ResumeData;
 }): Promise<{
   name: string;
@@ -192,7 +239,7 @@ export async function buildTailoringSessionData({
   changes: ResumeChanges;
 }> {
   const response = await openai.responses.parse({
-    model: "gpt-4o-mini",
+    model: "gpt-4o-mini", // Ready to switch seamlessly to any structural model or tier
     input: [
       {
         role: "system",
@@ -201,7 +248,7 @@ export async function buildTailoringSessionData({
       {
         role: "user",
         content: buildTailoredResumeUserPrompt({
-          jd,
+          jdAnalysis,
           baseData,
         }),
       },
@@ -229,8 +276,6 @@ export async function buildTailoringSessionData({
         input_tokens: response.usage?.input_tokens ?? 0,
         output_tokens: response.usage?.output_tokens ?? 0,
         total_tokens: response.usage?.total_tokens ?? 0,
-        input_tokens_details: response.usage?.input_tokens_details ?? null,
-        output_tokens_details: response.usage?.output_tokens_details ?? null,
       },
       null,
       2,

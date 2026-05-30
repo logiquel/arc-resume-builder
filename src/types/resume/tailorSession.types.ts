@@ -31,6 +31,15 @@ export interface DiffField<T> {
 
 export type MaybeDiffField<T> = T | DiffField<T>;
 
+export type TailoringGenerationStep =
+  | "PLACEHOLDER_CREATED"
+  | "READING_BASE_DATA"
+  | "JD_ANALYSIS"
+  | "TAILORING"
+  | "FINALIZING"
+  | "COMPLETED"
+  | "FAILED";
+
 export interface TailoringSessionAnalysis {
   base_score: number;
   current_score: number;
@@ -45,10 +54,15 @@ export interface TailoringSession {
   user_id: string;
   base_resume_id: string;
   name: string;
-  created_at: string;
-  updated_at: string;
+  generation_step: TailoringGenerationStep;
   analysis: TailoringSessionAnalysis;
-  changes: ResumeChanges;
+  /**
+   * Optional/Nullable because during steps 1 through 5,
+   * the AI compiler hasn't calculated the structural diff tree tree layout yet.
+   */
+  changes: ResumeChanges | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface ResumeChanges {

@@ -10,6 +10,9 @@ import {
   TooltipTrigger,
 } from "#/components/addons/tooltip";
 import { tailor_session_sample_data } from "#/data/tailor_resume_data";
+import type { TailoringGenerationStep } from "#/types/resume/tailorSession.types";
+import TailoringLoadingScreen from "#/components/pages/TailoredResume/TailoringLoadingScreen";
+import { supabase } from "#/utils/supabase";
 
 export const Route = createFileRoute("/_app/tailored-resumes/$sessionId/")({
   component: RouteComponent,
@@ -94,7 +97,6 @@ const FieldLabel: React.FC<{
     <FieldStatusBadge status={status} />
   </div>
 );
-
 function RouteComponent() {
   const { sessionId } = Route.useParams();
   const { tailoringSession: loaderTailoringSession } = Route.useLoaderData();
@@ -107,6 +109,9 @@ function RouteComponent() {
   const [hydrated, setHydrated] = useState(false);
   const [tailoringSession, setTailoringSession] = useState(
     loaderTailoringSession,
+  );
+  const [generationStep, setGenerationStep] = useState<TailoringGenerationStep>(
+    "PLACEHOLDER_CREATED",
   );
 
   useEffect(() => {
@@ -134,6 +139,38 @@ function RouteComponent() {
       setSaveStatus("error");
     }
   }, [hydrated, tailoringSession, storageKey]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`tailoring-session-${sessionId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "tailoring_sessions",
+          filter: `id=eq.${sessionId}`,
+        },
+        (payload) => {
+          const nextStep = payload.new?.generation_step as
+            | TailoringGenerationStep
+            | undefined;
+
+          if (nextStep) {
+            setGenerationStep(nextStep);
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [sessionId]);
+
+  if (generationStep !== "COMPLETED") {
+    return <TailoringLoadingScreen currentStep={generationStep} />;
+  }
 
   const sections = tailoringSession.changes;
   const {
