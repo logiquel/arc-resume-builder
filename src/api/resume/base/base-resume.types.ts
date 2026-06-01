@@ -1,23 +1,23 @@
 import type { ResumeData } from "#/types/resume/resume.types";
 
-export type CreateBaseResumeRequest = {
+export type CreateBaseResumePayload = {
   name: string;
   file?: File | null;
-  baseData?: ResumeData;
+  base_data?: ResumeData;
 };
 
 export type BaseResume = {
   id: string;
-  userId: string;
+  user_id: string;
   name: string;
-  baseData: ResumeData;
-  createdAt: string;
-  updatedAt: string;
+  base_data: ResumeData;
+  created_at: string;
+  updated_at: string;
 };
 
 export type BaseResumeListItem = {
   id: string;
   name: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 };

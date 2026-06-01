@@ -58,9 +58,11 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
   const [resumeName, setResumeName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const createBaseResumeMutation = useCreateBaseResumeMutation();
+  const { mutate: createBaseResume, isPending } = useCreateBaseResumeMutation();
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   const handleOptionSelect = (option: "form" | "upload") => {
     setSelectedOption(option);
@@ -80,9 +82,11 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
   };
 
   const handleUpload = async () => {
-    if (!uploadedFile) return;
+    if (!uploadedFile) {
+      return;
+    }
 
-    createBaseResumeMutation.mutate(
+    createBaseResume(
       {
         name: resumeName || uploadedFile.name,
         file: uploadedFile,
@@ -106,7 +110,7 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl w-[480px] max-w-[90vw] shadow-2xl">
+      <div className="bg-white rounded-2xl w-120 max-w-[90vw] shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <h2 className="text-lg font-semibold text-text-primary">
             Add New Base Resume
@@ -260,10 +264,10 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
                 </button>
                 <button
                   onClick={handleUpload}
-                  disabled={!uploadedFile || createBaseResumeMutation.isPending}
+                  disabled={!uploadedFile || isPending}
                   className="flex-1 px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  {createBaseResumeMutation.isPending ? (
+                  {isPending ? (
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       <span>Uploading...</span>
@@ -367,19 +371,14 @@ function RouteComponent() {
   const scrollAccumulator = useRef(0);
   const stackRef = useRef<HTMLDivElement>(null);
 
-  const {
-    data: baseResumes = [],
-    isLoading: isBaseResumesLoading,
-    isError: isBaseResumesError,
-    error: baseResumesError,
-  } = useFetchBaseResumeList();
+  const { data: baseResumes = [], isLoading: isBaseResumesLoading } =
+    useFetchBaseResumeList();
 
   const { mutate: createTailoredResume, isPending: isTailoringPending } =
     useCreateTailoredResumeMutation();
 
   const hasBaseResumes = baseResumes.length > 0;
   const safeActiveIndex = hasBaseResumes ? activeIndex % baseResumes.length : 0;
-  const activeBaseResume = hasBaseResumes ? baseResumes[safeActiveIndex] : null;
 
   const activeIndexRef = useRef(activeIndex);
 
@@ -398,7 +397,9 @@ function RouteComponent() {
   };
 
   const handleCloseModal = () => {
-    if (isTailoringPending) return;
+    if (isTailoringPending) {
+      return;
+    }
     resetTailorState();
   };
 
@@ -415,8 +416,8 @@ function RouteComponent() {
 
     createTailoredResume(
       {
-        baseResumeId: selectedBaseResumeId,
-        jd: jobDescription.trim(),
+        base_resume_id: selectedBaseResumeId,
+        job_description: jobDescription.trim(),
       },
       {
         onSuccess: async (response) => {
@@ -661,7 +662,7 @@ function RouteComponent() {
                             />
                             <p className="text-tiny text-text-muted">
                               {format(
-                                parseISO(resume.updatedAt),
+                                parseISO(resume.updated_at),
                                 "MMMM do, yyyy",
                               )}
                             </p>
@@ -794,7 +795,7 @@ function RouteComponent() {
                       {base.name}
                     </span>
                     <span className="text-tiny text-text-muted leading-snug text-wrap w-[95%] truncate mt-0.5 px-1">
-                      {format(parseISO(base.updatedAt), "MMMM do, yyyy")}
+                      {format(parseISO(base.updated_at), "MMMM do, yyyy")}
                     </span>
                     {selectedBaseResumeId === base.id && (
                       <div className="w-4.5 h-4.5 rounded-full shadow-sm bg-brand flex items-center justify-center absolute top-0 right-0 translate-x-1/3 -translate-y-1/3">

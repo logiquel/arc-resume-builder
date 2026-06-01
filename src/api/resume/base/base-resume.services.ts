@@ -4,13 +4,13 @@ import type { ApiResponse, ApiSuccessResponse } from "#/lib/api-response";
 import type {
   BaseResume,
   BaseResumeListItem,
-  CreateBaseResumeRequest,
-} from "./base-resume.schemas";
+  CreateBaseResumePayload,
+} from "./base-resume.types";
 
 export const baseResumeService = {
   create: async (
-    payload: CreateBaseResumeRequest,
-  ): Promise<ApiSuccessResponse<BaseResume>> => {
+    payload: CreateBaseResumePayload,
+  ): Promise<ApiSuccessResponse<null>> => {
     try {
       const formData = new FormData();
       formData.append("name", payload.name);
@@ -19,11 +19,11 @@ export const baseResumeService = {
         formData.append("file", payload.file);
       }
 
-      if (payload.baseData) {
-        formData.append("baseData", JSON.stringify(payload.baseData));
+      if (payload.base_data) {
+        formData.append("base_data", JSON.stringify(payload.base_data));
       }
 
-      const { data: result } = await apiClient.post<ApiResponse<BaseResume>>(
+      const { data: result } = await apiClient.post<ApiResponse<null>>(
         "/api/base-resume",
         formData,
       );
@@ -34,7 +34,7 @@ export const baseResumeService = {
 
       return result;
     } catch (error: unknown) {
-      if (axios.isAxiosError<ApiResponse<BaseResume>>(error)) {
+      if (axios.isAxiosError<ApiResponse<null>>(error)) {
         const result = error.response?.data;
 
         if (result && !result.success) {

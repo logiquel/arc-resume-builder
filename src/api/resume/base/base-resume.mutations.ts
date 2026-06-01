@@ -2,14 +2,14 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toastManager } from "#/components/addons/toast";
 import { baseResumeService } from "./base-resume.services";
-import type { CreateBaseResumeRequest } from "./base-resume.schemas";
+import type { CreateBaseResumePayload } from "./base-resume.types";
 
 export function useCreateBaseResumeMutation() {
   const queryClient = useQueryClient();
   const toastId = React.useRef("");
 
   return useMutation({
-    mutationFn: (payload: CreateBaseResumeRequest) =>
+    mutationFn: (payload: CreateBaseResumePayload) =>
       baseResumeService.create(payload),
 
     onMutate: () => {

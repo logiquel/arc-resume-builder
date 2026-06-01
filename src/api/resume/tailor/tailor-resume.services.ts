@@ -2,14 +2,14 @@ import axios from "axios";
 import { apiClient } from "#/api/apiClient";
 import type { ApiResponse, ApiSuccessResponse } from "#/lib/api-response";
 import type {
-  CreateTailoredResumeRequest,
+  CreateTailoredResumePayload,
   TailoredResume,
   TailoredResumeListItem,
-} from "./tailor-resume.schemas";
+} from "./tailor-resume.types";
 
 export const tailoredResumeService = {
   create: async (
-    payload: CreateTailoredResumeRequest,
+    payload: CreateTailoredResumePayload,
   ): Promise<ApiSuccessResponse<TailoredResume>> => {
     try {
       const { data: result } = await apiClient.post<
@@ -20,7 +20,7 @@ export const tailoredResumeService = {
         throw new Error(result.error.details[0] || result.message);
       }
 
-      return result;
+      return result; // Returns snake_case data directly from backend
     } catch (error: unknown) {
       if (axios.isAxiosError<ApiResponse<TailoredResume>>(error)) {
         const result = error.response?.data;

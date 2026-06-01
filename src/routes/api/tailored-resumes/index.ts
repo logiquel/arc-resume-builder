@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { errorResponse, successResponse } from "#/lib/api-response";
 import { requireAuthMiddleware } from "#/lib/require-auth.middleware";
-import { analyzeJobDescription, buildTailoringSessionData } from "#/api/resume/tailor/tailor-resume.utils";
+import {
+  analyzeJobDescription,
+  buildTailoringSessionData,
+} from "#/api/resume/tailor/tailor-resume.utils";
 import type { ResumeData } from "#/types/resume/resume.types";
 
 export const Route = createFileRoute("/api/tailored-resumes/")({
@@ -61,15 +64,18 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
           try {
             const { supabase, user } = context;
             const body = (await request.json()) as {
-              baseResumeId?: string;
-              jd?: string;
+              base_resume_id?: string;
+              job_description?: string;
             };
 
             const baseResumeId =
-              typeof body.baseResumeId === "string"
-                ? body.baseResumeId.trim()
+              typeof body.base_resume_id === "string"
+                ? body.base_resume_id.trim()
                 : "";
-            const jd = typeof body.jd === "string" ? body.jd.trim() : "";
+            const jd =
+              typeof body.job_description === "string"
+                ? body.job_description.trim()
+                : "";
 
             // Validation Checks
             if (!baseResumeId) {
@@ -236,22 +242,10 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
               }
             })();
 
-            // Map and return placeholder response layout context immediately (~100ms)
-            const mappedData = {
-              id: placeholderSession.id,
-              userId: placeholderSession.user_id,
-              baseResumeId: placeholderSession.base_resume_id,
-              name: placeholderSession.name,
-              generationStep: placeholderSession.generation_step,
-              analysis: placeholderSession.analysis,
-              createdAt: placeholderSession.created_at,
-              updatedAt: placeholderSession.updated_at,
-            };
-
             return successResponse(
               201,
               "Tailoring session initialized successfully.",
-              mappedData,
+              placeholderSession,
             );
           } catch (error) {
             console.error("[TAILORED_RESUME_CREATE_ERROR]:", error);

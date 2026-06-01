@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { TailoringGenerationStep } from "#/types/resume/tailorSession.types";
 import { supabase } from "#/utils/supabase/client";
 import { Icon } from "@iconify/react";
@@ -46,14 +46,17 @@ const TAILORING_STEP_META: Record<
 interface TailoringLoadingScreenProps {
   currentStep?: TailoringGenerationStep;
   sessionId: string;
+  onComplete?: () => void;
 }
 
 const TailoringLoadingScreen = ({
   currentStep = "PLACEHOLDER_CREATED",
   sessionId,
+  onComplete,
 }: TailoringLoadingScreenProps) => {
   // Set the initial step from the prop on mount
   const [step, setStep] = useState<TailoringGenerationStep>(currentStep);
+  const hasTriggeredComplete = useRef(false);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -66,7 +69,7 @@ const TailoringLoadingScreen = ({
           event: "UPDATE",
           schema: "public",
           table: "tailoring_sessions",
-          filter: `id=eq.${sessionId}`, // Row-level isolation filtering
+          filter: `id=eq.${sessionId}`,
         },
         (payload) => {
           const nextStep = payload.new
@@ -75,6 +78,13 @@ const TailoringLoadingScreen = ({
           if (nextStep && TAILORING_STEP_ORDER.includes(nextStep)) {
             console.log("[Supabase] Progressing UI state to:", nextStep);
             setStep(nextStep);
+
+            // Trigger onComplete when step becomes COMPLETED
+            if (nextStep === "COMPLETED" && !hasTriggeredComplete.current) {
+              hasTriggeredComplete.current = true;
+              console.log("[TailoringLoadingScreen] Generation completed!");
+              onComplete?.();
+            }
           }
         },
       )
@@ -86,7 +96,7 @@ const TailoringLoadingScreen = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [sessionId]);
+  }, [sessionId, onComplete]); // Add onComplete to dependencies
 
   const activeStepIndex = TAILORING_STEP_ORDER.indexOf(step);
   return (

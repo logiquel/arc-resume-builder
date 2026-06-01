@@ -37,18 +37,10 @@ export const Route = createFileRoute("/api/base-resume/")({
               );
             }
 
-            const mappedData =
-              data?.map((item) => ({
-                id: item.id,
-                name: item.name,
-                createdAt: item.created_at,
-                updatedAt: item.updated_at,
-              })) ?? [];
-
             return successResponse(
               200,
               "Base resumes fetched successfully.",
-              mappedData,
+              data ?? [],
             );
           } catch (error) {
             console.error("[BASE_RESUME_LIST_GET_ERROR]:", error);
@@ -143,15 +135,11 @@ export const Route = createFileRoute("/api/base-resume/")({
               }
             }
 
-            const { data, error } = await supabase
-              .from("base_resumes")
-              .insert({
-                user_id: user.id,
-                name,
-                base_data: finalBaseData,
-              })
-              .select("id, user_id, name, base_data, created_at, updated_at")
-              .single();
+            const { error } = await supabase.from("base_resumes").insert({
+              user_id: user.id,
+              name,
+              base_data: finalBaseData,
+            });
 
             if (error) {
               return errorResponse(
@@ -162,19 +150,11 @@ export const Route = createFileRoute("/api/base-resume/")({
               );
             }
 
-            const mappedData = {
-              id: data.id,
-              userId: data.user_id,
-              name: data.name,
-              baseData: data.base_data,
-              createdAt: data.created_at,
-              updatedAt: data.updated_at,
-            };
-
+            // Return success response without data
             return successResponse(
               201,
               "Base resume created successfully.",
-              mappedData,
+              null, // or undefined
             );
           } catch (error) {
             console.error("[BASE_RESUME_CREATE_ERROR]:", error);

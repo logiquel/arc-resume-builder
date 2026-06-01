@@ -5,6 +5,7 @@ export const tailor_session_sample_data: TailoringSession = {
   user_id: "user_001",
   base_resume_id: "res_123456",
   name: "Senior Full Stack Engineer - Stripe",
+  generation_step: "COMPLETED",
   created_at: "2026-05-23T09:00:00.000Z",
   updated_at: "2026-05-24T07:37:48.520Z",
   analysis: {
@@ -53,6 +54,7 @@ export const tailor_session_sample_data: TailoringSession = {
         new_format: "text",
         diff_mode: "inline",
         status: "pending",
+        is_changed: true, // Pending falls back to new_value, which differs from old_value
       },
       summary: {
         old_value:
@@ -63,6 +65,7 @@ export const tailor_session_sample_data: TailoringSession = {
         new_format: "para",
         diff_mode: "inline",
         status: "accepted",
+        is_changed: true,
         resolved_value:
           "Results-driven Full Stack Engineer with 5+ years of experience building scalable web applications. Expert in React and Node.js with proven track record of delivering high-impact features. Passionate about creating intuitive user experiences and optimizing backend performance. Seeking senior engineering role to drive technical excellence.",
       },
@@ -83,6 +86,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "text",
           diff_mode: "inline",
           status: "pending",
+          is_changed: true,
         },
         score: "3.8 GPA",
         description: {
@@ -97,6 +101,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "bullet_points",
           diff_mode: "structural",
           status: "pending",
+          is_changed: true,
         },
       },
     ],
@@ -116,6 +121,7 @@ export const tailor_session_sample_data: TailoringSession = {
           diff_mode: "inline",
           status: "accepted",
           resolved_value: "Senior Frontend Engineer",
+          is_changed: true,
         },
         description: {
           old_value:
@@ -130,6 +136,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "bullet_points",
           diff_mode: "structural",
           status: "pending",
+          is_changed: true,
         },
       },
       {
@@ -146,6 +153,7 @@ export const tailor_session_sample_data: TailoringSession = {
           diff_mode: "inline",
           status: "rejected",
           resolved_value: "Backend Developer",
+          is_changed: false, // Rejected status restores old_value, hence is_changed is false
         },
         description: {
           old_value: [
@@ -162,6 +170,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "bullet_points",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true, // Accepted updates the content to new value arrays, making it true
           resolved_value: [
             "Designed and deployed 30+ scalable REST APIs using Node.js and Express, handling 500,000+ daily requests with 99.95% uptime",
             "Managed AWS infrastructure serving 2M+ customers, reducing cloud costs by 25% through EC2 optimization",
@@ -186,6 +195,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "text",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value:
             "Full-stack e-commerce platform using React, Node.js, MongoDB, and Stripe API",
         },
@@ -202,6 +212,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "bullet_points",
           diff_mode: "structural",
           status: "accepted",
+          is_changed: true,
           resolved_value: [
             "Engineered full-stack e-commerce platform serving 5,000+ monthly users with 15% conversion rate",
             "Integrated Stripe payment API processing $50,000+ in transactions with PCI compliance",
@@ -224,6 +235,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "text",
           diff_mode: "inline",
           status: "pending",
+          is_changed: true,
         },
         description: {
           old_value: [
@@ -240,6 +252,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "bullet_points",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value: [
             "Built real-time task management app with drag-drop interface, serving 2,000+ registered users",
             "Implemented WebSocket connections enabling instant updates for 100+ concurrent users",
@@ -263,6 +276,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "text",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value: "AWS Certified Solutions Architect – Associate",
         },
         description: {
@@ -274,6 +288,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "para",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value:
             "Mastered designing cost-optimized, highly available distributed systems on AWS. Gained hands-on expertise in EC2, S3, VPC, Lambda, and CloudFormation for scalable cloud architecture.",
         },
@@ -291,6 +306,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "text",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value: "Meta Frontend Developer Professional Certificate",
         },
         description: {
@@ -302,6 +318,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "para",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value:
             "Completed comprehensive training in React, Redux, and Jest testing. Built 5 production-ready frontend applications as part of capstone projects.",
         },
@@ -310,66 +327,251 @@ export const tailor_session_sample_data: TailoringSession = {
 
     skills: [
       {
-        entry_id: "skill_001",
         name: {
-          old_value: "reactjs",
-          new_value: "React",
-          old_format: "text",
-          new_format: "text",
+          status: "pending",
           diff_mode: "inline",
-          status: "accepted",
-          resolved_value: "React",
-        },
-        level: "expert",
-      },
-      {
-        entry_id: "skill_002",
-        name: {
-          old_value: "node",
-          new_value: "Node.js",
-          old_format: "text",
+          new_value: "Next.js",
+          old_value: "nextjs",
+          is_changed: true,
           new_format: "text",
-          diff_mode: "inline",
-          status: "accepted",
-          resolved_value: "Node.js",
+          old_format: "text",
         },
         level: null,
+        entry_id: "skill1",
       },
       {
-        entry_id: "skill_003",
         name: {
-          old_value: "py",
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "MERN",
+          old_value: "mern",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill2",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "React",
+          old_value: "React JS",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill3",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "Node.js",
+          old_value: "Node JS",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill4",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "MongoDB",
+          old_value: "mango db",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill5",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "REST",
+          old_value: "rest",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill6",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "PostgreSQL",
+          old_value: "SQL",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill7",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "CSS",
+          old_value: "CSS",
+          is_changed: false,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill8",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "SCSS",
+          old_value: "SCSS",
+          is_changed: false,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill9",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "Tailwind CSS",
+          old_value: "tailwind",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill10",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "C++",
+          old_value: "C++",
+          is_changed: false,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill11",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "Java",
+          old_value: "Java",
+          is_changed: false,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill12",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
           new_value: "Python",
-          old_format: "text",
+          old_value: "Python",
+          is_changed: false,
           new_format: "text",
-          diff_mode: "inline",
-          status: "accepted",
-          resolved_value: "Python",
+          old_format: "text",
         },
-        level: "competent",
+        level: null,
+        entry_id: "skill13",
       },
       {
-        entry_id: "skill_004",
         name: {
-          old_value: "aws",
-          new_value: "AWS (EC2, S3, Lambda)",
-          old_format: "text",
-          new_format: "text",
+          status: "pending",
           diff_mode: "inline",
-          status: "accepted",
-          resolved_value: "AWS (EC2, S3, Lambda)",
+          new_value: "JavaScript",
+          old_value: "js",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
         },
-        level: "beginner",
+        level: null,
+        entry_id: "skill14",
       },
       {
-        entry_id: "skill_005",
-        name: "PostgreSQL",
-        level: "competent",
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "TypeScript",
+          old_value: "ts",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill15",
       },
       {
-        entry_id: "skill_006",
-        name: "Docker",
-        level: "competent",
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "NPM",
+          old_value: "NPM",
+          is_changed: false,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill16",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "Git",
+          old_value: "git",
+          is_changed: true,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill17",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "Figma",
+          old_value: "Figma",
+          is_changed: false,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill18",
+      },
+      {
+        name: {
+          status: "pending",
+          diff_mode: "inline",
+          new_value: "Postman",
+          old_value: "Postman",
+          is_changed: false,
+          new_format: "text",
+          old_format: "text",
+        },
+        level: null,
+        entry_id: "skill19",
       },
     ],
 
@@ -418,6 +620,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "text",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value: "Best Innovation Award – Google Hackathon 2023",
         },
         description: {
@@ -429,6 +632,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "para",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value:
             "Recognized among 500+ participants for developing a carbon footprint tracking app. Selected by executive panel for outstanding technical execution and business impact.",
         },
@@ -449,6 +653,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "text",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value:
             "Optimizing Web Application Performance: A Comprehensive Study of Modern Techniques",
         },
@@ -461,6 +666,7 @@ export const tailor_session_sample_data: TailoringSession = {
           new_format: "para",
           diff_mode: "inline",
           status: "accepted",
+          is_changed: true,
           resolved_value:
             "Published research on web performance optimization analyzing 10+ techniques including code splitting, lazy loading, and CDN strategies. Cited by 25+ researchers and presented at International Conference on Web Engineering.",
         },

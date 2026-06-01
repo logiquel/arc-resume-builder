@@ -1,20 +1,20 @@
 import type { TailoringSession } from "#/types/resume/tailorSession.types";
 
-export type CreateTailoredResumeRequest = {
-  baseResumeId: string;
-  jd: string;
+export type CreateTailoredResumePayload = {
+  base_resume_id: string;
+  job_description: string;
 };
 
 export type TailoredResume = {
   id: string;
-  userId: string;
-  baseResumeId: string;
+  user_id: string;
+  base_resume_id: string;
   name: string;
-  generationStep: TailoringSession["generation_step"];
+  generation_step: TailoringSession["generation_step"];
   analysis: TailoringSession["analysis"];
   changes: TailoringSession["changes"];
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type TailoredResumeListItem = {

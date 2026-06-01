@@ -2,14 +2,14 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toastManager } from "#/components/addons/toast";
 import { tailoredResumeService } from "./tailor-resume.services";
-import type { CreateTailoredResumeRequest } from "./tailor-resume.schemas";
+import type { CreateTailoredResumePayload } from "./tailor-resume.types";
 
 export function useCreateTailoredResumeMutation() {
   const queryClient = useQueryClient();
   const toastId = React.useRef("");
 
   return useMutation({
-    mutationFn: (payload: CreateTailoredResumeRequest) =>
+    mutationFn: (payload: CreateTailoredResumePayload) =>
       tailoredResumeService.create(payload),
 
     onMutate: () => {
