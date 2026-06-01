@@ -1,0 +1,197 @@
+import type * as TailorTypes from "#/types/resume/tailorSession.types";
+import { diffWords } from "diff";
+
+interface RenderInlineDiffProps {
+  oldValue: string;
+  newValue: string;
+}
+
+const RenderInlineDiff = ({ oldValue, newValue }: RenderInlineDiffProps) => {
+  const oldStr =
+    typeof oldValue === "string" ? oldValue : String(oldValue || "");
+  const newStr =
+    typeof newValue === "string" ? newValue : String(newValue || "");
+
+  const diffs = diffWords(oldStr, newStr);
+
+  return (
+    <div className="border-red-400 px-2 py-1.5">
+      {diffs.map((part, i) => {
+        if (part.added) {
+          return (
+            <span key={i} className="text-xs bg-green-100 text-green-800">
+              {part.value}
+            </span>
+          );
+        }
+
+        if (part.removed) {
+          return (
+            <span
+              key={i}
+              className="text-xs bg-red-100 text-red-800 line-through"
+            >
+              {part.value}
+            </span>
+          );
+        }
+
+        return <span key={i}>{part.value}</span>;
+      })}
+    </div>
+  );
+};
+
+interface RenderInlineBulletsDiffProps {
+  oldBullets: string[];
+  newBullets: string[];
+}
+
+interface RenderInlineBulletsDiffProps {
+  oldBullets: string[];
+  newBullets: string[];
+}
+
+interface RenderInlineBulletsDiffProps {
+  oldBullets: string[];
+  newBullets: string[];
+}
+
+const RenderInlineBulletsDiff = ({
+  oldBullets,
+  newBullets,
+}: RenderInlineBulletsDiffProps) => {
+  // Find the maximum length to iterate through all bullets
+  const maxLength = Math.max(oldBullets.length, newBullets.length);
+
+  return (
+    <div className="flex flex-col border-blue-400 py-1.5 px-2 gap-y-2">
+      {Array.from({ length: maxLength }).map((_, index) => {
+        const oldBullet = oldBullets[index] || "";
+        const newBullet = newBullets[index] || "";
+
+        // Skip if both are empty
+        if (!oldBullet && !newBullet) return null;
+
+        // Compare the two bullets using diffWords
+        const diffs = diffWords(oldBullet, newBullet);
+
+        return (
+          <div
+            key={index}
+            className="relative leading-snug whitespace-pre-wrap flex items-start before:content-['●'] before:absolute before:-translate-x-2.5 before:text-text-muted/50 before:text-xxs before:inline-block"
+          >
+            <span className="flex-1 text-xs">
+              {diffs.map((part, i) => {
+                if (part.added) {
+                  return (
+                    <span key={i} className="bg-green-100 text-green-800 px-1">
+                      {part.value}
+                    </span>
+                  );
+                }
+                if (part.removed) {
+                  return (
+                    <span
+                      key={i}
+                      className="bg-red-100 text-red-800 line-through px-1"
+                    >
+                      {part.value}
+                    </span>
+                  );
+                }
+                return (
+                  <span key={i} className="text-gray-700">
+                    {part.value}
+                  </span>
+                );
+              })}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+interface RenderStructuralDiffProps {
+  oldStr: string;
+  newBullets: string[];
+}
+
+const RenderStructuralDiff = ({
+  oldStr,
+  newBullets,
+}: RenderStructuralDiffProps) => {
+  return (
+    <div className="flex flex-col border-green-400 py-1.5 px-2 gap-y-2">
+      <div className="relative leading-snug whitespace-pre-wrap flex items-start before:content-['-'] before:absolute before:-translate-x-2.5 before:text-red-600 before:text-xs before:inline-block">
+        <span className="flex-1 bg-red-100 text-xs text-red-800 line-through px-1">
+          {oldStr}
+        </span>
+      </div>
+      <div className="flex flex-col gap-y-1.5">
+        {newBullets.map((bullet, i) => (
+          <div
+            key={i}
+            className="relative leading-snug whitespace-pre-wrap flex items-center before:content-['+'] before:absolute before:-translate-x-2.5 before:text-green-600 before:text-xs before:inline-block before:mr-1"
+          >
+            <span className="flex-1 bg-green-100 text-xs text-green-800 px-1">
+              {bullet}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+interface DiffFieldProps {
+  field: TailorTypes.DiffField<any>;
+}
+
+const DiffField = ({ field }: DiffFieldProps) => {
+  const renderByMode = () => {
+    switch (field.diff_mode) {
+      case "inline":
+        return (
+          <RenderInlineDiff
+            oldValue={field.old_value}
+            newValue={field.new_value}
+          />
+        );
+      case "inline_bullets":
+        // Ensure values are arrays for inline_bullets mode
+        const oldBullets = Array.isArray(field.old_value)
+          ? field.old_value
+          : [field.old_value];
+        const newBullets = Array.isArray(field.new_value)
+          ? field.new_value
+          : [field.new_value];
+        return (
+          <RenderInlineBulletsDiff
+            oldBullets={oldBullets}
+            newBullets={newBullets}
+          />
+        );
+      case "structural":
+        return (
+          <RenderStructuralDiff
+            oldStr={field.old_value}
+            newBullets={field.new_value}
+          />
+        );
+      default:
+        return (
+          <RenderInlineDiff
+            oldValue={field.old_value}
+            newValue={field.new_value}
+          />
+        );
+    }
+  };
+
+  return <>{renderByMode()}</>;
+};
+
+export default DiffField;

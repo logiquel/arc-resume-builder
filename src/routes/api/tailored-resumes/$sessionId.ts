@@ -38,22 +38,10 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
             );
           }
 
-          const mappedData = {
-            id: data.id,
-            userId: data.user_id,
-            baseResumeId: data.base_resume_id,
-            name: data.name,
-            generationStep: data.generation_step,
-            analysis: data.analysis,
-            changes: data.changes,
-            createdAt: data.created_at,
-            updatedAt: data.updated_at,
-          };
-
           return successResponse(
             200,
             "Tailored resume fetched successfully.",
-            mappedData,
+            data,
           );
         } catch (error) {
           console.error("[TAILORED_RESUME_GET_BY_ID_ERROR]:", error);

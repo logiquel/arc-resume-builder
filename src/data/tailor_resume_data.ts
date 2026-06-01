@@ -153,7 +153,7 @@ export const tailor_session_sample_data: TailoringSession = {
           diff_mode: "inline",
           status: "rejected",
           resolved_value: "Backend Developer",
-          is_changed: false, // Rejected status restores old_value, hence is_changed is false
+          is_changed: false,
         },
         description: {
           old_value: [
@@ -168,14 +168,48 @@ export const tailor_session_sample_data: TailoringSession = {
           ],
           old_format: "bullet_points",
           new_format: "bullet_points",
-          diff_mode: "inline",
+          diff_mode: "inline_bullets",
           status: "accepted",
-          is_changed: true, // Accepted updates the content to new value arrays, making it true
+          is_changed: true,
           resolved_value: [
             "Designed and deployed 30+ scalable REST APIs using Node.js and Express, handling 500,000+ daily requests with 99.95% uptime",
             "Managed AWS infrastructure serving 2M+ customers, reducing cloud costs by 25% through EC2 optimization",
             "Implemented comprehensive unit and integration tests achieving 92% code coverage across 50+ microservices",
           ],
+        },
+      },
+      {
+        entry_id: "exp_003",
+        company: "Microsoft",
+        location: "Redmond, WA",
+        start_date: "2018-01",
+        end_date: "2019-06",
+        position: {
+          old_value: "Software Engineer",
+          new_value: "Software Engineer",
+          old_format: "text",
+          new_format: "text",
+          diff_mode: "inline",
+          status: "accepted",
+          resolved_value: "Software Engineer",
+          is_changed: false,
+        },
+        description: {
+          old_value: [
+            "Built cloud services using Azure",
+            "Collaborated with cross-functional teams",
+            "Participated in code reviews and agile ceremonies",
+          ],
+          new_value: [
+            "Built cloud services using Azure",
+            "Collaborated with cross-functional teams",
+            "Participated in code reviews and agile ceremonies",
+          ],
+          old_format: "bullet_points",
+          new_format: "bullet_points",
+          diff_mode: "inline_bullets",
+          status: "accepted",
+          is_changed: false,
         },
       },
     ],
@@ -250,7 +284,7 @@ export const tailor_session_sample_data: TailoringSession = {
           ],
           old_format: "bullet_points",
           new_format: "bullet_points",
-          diff_mode: "inline",
+          diff_mode: "inline_bullets",
           status: "accepted",
           is_changed: true,
           resolved_value: [
