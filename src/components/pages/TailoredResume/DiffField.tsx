@@ -1,5 +1,45 @@
 import type * as TailorTypes from "#/types/resume/tailorSession.types";
+import { Icon } from "@iconify/react";
 import { diffWords } from "diff";
+
+const ActionButtons: React.FC<{
+  onAccept: () => void;
+  onReject: () => void;
+  acceptText?: string;
+  rejectText?: string;
+  acceptIcon?: string;
+  rejectIcon?: string;
+}> = ({
+  onAccept,
+  onReject,
+  acceptText = "Accept",
+  rejectText = "Reject",
+  acceptIcon = "tabler:check-filled",
+  rejectIcon = "iconamoon:close-duotone",
+}) => (
+  <div className="flex items-center gap-2">
+    <button
+      type="button"
+      onClick={onAccept}
+      className="flex items-center gap-0.5 px-1.5 py-0.5 text-tiny text-emerald-800 bg-emerald-100 hover:bg-emerald-100 hover:text-emerald-900 active:bg-emerald-200 border border-emerald-200/60 rounded-sm transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-slate-500/20 cursor-pointer"
+    >
+      <Icon
+        icon={acceptIcon}
+        className="text-xxs text-emerald-800 opacity-90"
+      />
+      {acceptText}
+    </button>
+
+    <button
+      type="button"
+      onClick={onReject}
+      className="flex items-center gap-0.5 px-1.5 py-0.5 text-tiny text-rose-800 bg-rose-100 hover:bg-rose-100 hover:text-rose-900 active:bg-rose-200 border border-rose-200/60 rounded-sm transition-all duration-200 shadow-none focus:outline-none focus:ring-2 focus:ring-slate-500/20 cursor-pointer"
+    >
+      <Icon icon={rejectIcon} className="text-xxs text-rose-800 opacity-90" />
+      {rejectText}
+    </button>
+  </div>
+);
 
 interface RenderInlineDiffProps {
   oldValue: string;
@@ -36,21 +76,15 @@ const RenderInlineDiff = ({ oldValue, newValue }: RenderInlineDiffProps) => {
           );
         }
 
-        return <span key={i}>{part.value}</span>;
+        return (
+          <span key={i} className="text-xs text-text-primary">
+            {part.value}
+          </span>
+        );
       })}
     </div>
   );
 };
-
-interface RenderInlineBulletsDiffProps {
-  oldBullets: string[];
-  newBullets: string[];
-}
-
-interface RenderInlineBulletsDiffProps {
-  oldBullets: string[];
-  newBullets: string[];
-}
 
 interface RenderInlineBulletsDiffProps {
   oldBullets: string[];
@@ -101,7 +135,7 @@ const RenderInlineBulletsDiff = ({
                   );
                 }
                 return (
-                  <span key={i} className="text-gray-700">
+                  <span key={i} className="text-xs text-text-primary">
                     {part.value}
                   </span>
                 );
@@ -191,7 +225,14 @@ const DiffField = ({ field }: DiffFieldProps) => {
     }
   };
 
-  return <>{renderByMode()}</>;
+  return (
+    <div className="flex flex-col">
+      {renderByMode()}
+      <div className="flex items-center gap-2 mt-2 px-2">
+        <ActionButtons onAccept={() => {}} onReject={() => {}} />
+      </div>
+    </div>
+  );
 };
 
 export default DiffField;

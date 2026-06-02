@@ -4,28 +4,6 @@ import ResumeScoreCard from "./ResumeScoreCard";
 import { Icon } from "@iconify/react";
 import type { TailoringSessionAnalysis } from "#/types/resume/tailorSession.types";
 
-const matchedKeywords = [
-  "JavaScript",
-  "TypeScript",
-  "React",
-  "Node.js",
-  "REST APIs",
-  "SQL",
-  "Git",
-  "Responsive Design",
-];
-
-const missingKeywords = [
-  "Next.js",
-  "Redux",
-  "GraphQL",
-  "Unit Testing",
-  "CI/CD",
-  "AWS",
-  "Docker",
-  "Agile",
-];
-
 interface ScorePanelProps {
   analysis: TailoringSessionAnalysis;
 }
