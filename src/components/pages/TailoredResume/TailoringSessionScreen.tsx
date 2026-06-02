@@ -15,6 +15,9 @@ import type {
   SkillEntryChange,
 } from "#/types/resume/tailorSession.types";
 import PrimitiveField from "./PrimitiveField";
+import { useState, useCallback } from "react";
+import { produce } from "immer";
+
 interface SectionHeadingProps {
   sectionLabel: string;
   entriesCount?: number;
@@ -57,14 +60,102 @@ interface TailoringSessionScreenProps {
   tailorSession: TailoredResume;
 }
 
+// ---------------------------------------------------------------------------
+// Type guard: checks if object is a DiffField
+// ---------------------------------------------------------------------------
+function isDiffField(field: unknown): field is {
+  old_value: unknown;
+  new_value: unknown;
+  status: string;
+  resolved_value?: unknown;
+} {
+  return (
+    field !== null &&
+    typeof field === "object" &&
+    "old_value" in (field as object) &&
+    "new_value" in (field as object) &&
+    "status" in (field as object)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Helpers for rendering
+// ---------------------------------------------------------------------------
+function isFieldResolved(field: unknown): boolean {
+  if (!isDiffField(field)) return true;
+  return field.resolved_value !== undefined || field.status !== "pending";
+}
+
+function resolvedDisplayValue(field: unknown): unknown {
+  if (!isDiffField(field)) return field ?? "";
+  return field.resolved_value ?? field.new_value ?? "";
+}
+
+// ---------------------------------------------------------------------------
+// Main component with Immer
+// ---------------------------------------------------------------------------
 const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
   tailorSession,
 }) => {
-  const sections =
-    tailorSession.changes ??
-    ({} as NonNullable<
-      TailoringSessionScreenProps["tailorSession"]["changes"]
-    >);
+  const [changes, setChanges] = useState<TailoredResume["changes"]>(
+    () =>
+      JSON.parse(
+        JSON.stringify(tailorSession.changes ?? {}),
+      ) as TailoredResume["changes"],
+  );
+
+  // ── Update any field (Primitive or resolved DiffField) ─────────────────
+  // With Immer, we can directly mutate the draft. No path traversal needed!
+  const updateField = useCallback(
+    (path: (string | number)[], value: unknown) => {
+      setChanges(
+        produce((draft) => {
+          let node: any = draft;
+
+          // Navigate to the target field
+          for (let i = 0; i < path.length - 1; i++) {
+            node = node[path[i]];
+          }
+
+          const lastKey = path[path.length - 1];
+          const target = node[lastKey];
+
+          // If it's a DiffField, write to resolved_value
+          if (isDiffField(target)) {
+            target.resolved_value = value;
+            target.status = "accepted"; // User edited, consider it accepted
+          } else {
+            // Plain primitive - write directly
+            node[lastKey] = value;
+          }
+        }),
+      );
+    },
+    [],
+  );
+
+  // ── Resolve a DiffField (Accept/Reject) ────────────────────────────────
+  const handleResolveField = useCallback(
+    (path: (string | number)[], isAccepted: boolean) => {
+      setChanges(
+        produce((draft) => {
+          let node: any = draft;
+
+          // Navigate to the DiffField
+          for (let i = 0; i < path.length; i++) {
+            node = node[path[i]];
+          }
+
+          if (!isDiffField(node)) return;
+
+          node.resolved_value = isAccepted ? node.new_value : node.old_value;
+          node.status = isAccepted ? "accepted" : "rejected";
+        }),
+      );
+    },
+    [],
+  );
+
   const {
     profile,
     education,
@@ -77,13 +168,13 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
     awards,
     publications,
     references,
-  } = sections;
+  } = changes ?? {};
 
   return (
     <div className="w-full h-full flex overflow-hidden">
       <main className="h-full min-h-0 flex-1 flex flex-col">
         <div className="w-full flex flex-col h-full">
-          <div className="flex justify-between items-start mb-3 p-3">
+          <div className="flex justify-between items-start p-3">
             <div>
               <h1 className="text-lg text-text-primary">
                 Enhance Resume Report
@@ -95,7 +186,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 px-3 pb-3">
+          <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 px-3 pt-2 pb-3">
             {/* Profile Section */}
             <section
               className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
@@ -109,63 +200,105 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 <fieldset className="flex flex-col">
                   <FieldLabel label="FIRST NAME" />
                   <PrimitiveField
-                    value={profile.first_name ?? ""}
-                    onChange={(value) => console.log(value)}
+                    value={profile?.first_name ?? ""}
+                    onChange={(value) =>
+                      updateField(["profile", "first_name"], value)
+                    }
                   />
                 </fieldset>
 
                 <fieldset className="flex flex-col">
                   <FieldLabel label="LAST NAME" />
                   <PrimitiveField
-                    value={profile.last_name ?? ""}
-                    onChange={(value) => console.log(value)}
+                    value={profile?.last_name ?? ""}
+                    onChange={(value) =>
+                      updateField(["profile", "last_name"], value)
+                    }
                   />
                 </fieldset>
 
                 <fieldset className="flex flex-col">
                   <FieldLabel label="EMAIL ADDRESS" />
                   <PrimitiveField
-                    value={profile.email ?? ""}
-                    onChange={(value) => console.log(value)}
+                    value={profile?.email ?? ""}
+                    onChange={(value) =>
+                      updateField(["profile", "email"], value)
+                    }
                   />
                 </fieldset>
 
                 <fieldset className="flex flex-col">
                   <FieldLabel label="PHONE" />
                   <PrimitiveField
-                    value={profile.phone ?? ""}
-                    onChange={(value) => console.log(value)}
+                    value={profile?.phone ?? ""}
+                    onChange={(value) =>
+                      updateField(["profile", "phone"], value)
+                    }
                   />
                 </fieldset>
 
                 <fieldset className="flex flex-col">
                   <FieldLabel label="LOCATION" />
                   <PrimitiveField
-                    value={profile.location ?? ""}
-                    onChange={(value) => console.log(value)}
+                    value={profile?.location ?? ""}
+                    onChange={(value) =>
+                      updateField(["profile", "location"], value)
+                    }
                   />
                 </fieldset>
 
                 <fieldset className="flex flex-col col-span-3">
                   <FieldLabel label="PROFESSIONAL TITLE" />
-                  {profile.professional_title?.is_changed ? (
-                    <DiffField field={profile.professional_title} />
+                  {profile?.professional_title?.is_changed &&
+                  !isFieldResolved(profile.professional_title) ? (
+                    <DiffField
+                      field={profile.professional_title}
+                      onAccept={() =>
+                        handleResolveField(
+                          ["profile", "professional_title"],
+                          true,
+                        )
+                      }
+                      onReject={() =>
+                        handleResolveField(
+                          ["profile", "professional_title"],
+                          false,
+                        )
+                      }
+                    />
                   ) : (
                     <PrimitiveField
-                      value={profile.professional_title?.new_value ?? ""}
-                      onChange={(value) => console.log(value)}
+                      value={
+                        resolvedDisplayValue(
+                          profile?.professional_title,
+                        ) as string
+                      }
+                      onChange={(value) =>
+                        updateField(["profile", "professional_title"], value)
+                      }
                     />
                   )}
                 </fieldset>
 
                 <fieldset className="flex flex-col col-span-3">
                   <FieldLabel label="SUMMARY" />
-                  {profile.summary?.is_changed ? (
-                    <DiffField field={profile.summary} />
+                  {profile?.summary?.is_changed &&
+                  !isFieldResolved(profile.summary) ? (
+                    <DiffField
+                      field={profile.summary}
+                      onAccept={() =>
+                        handleResolveField(["profile", "summary"], true)
+                      }
+                      onReject={() =>
+                        handleResolveField(["profile", "summary"], false)
+                      }
+                    />
                   ) : (
                     <PrimitiveField
-                      value={profile.summary?.new_value ?? ""}
-                      onChange={(value) => console.log(value)}
+                      value={resolvedDisplayValue(profile?.summary) as string}
+                      onChange={(value) =>
+                        updateField(["profile", "summary"], value)
+                      }
                     />
                   )}
                 </fieldset>
@@ -181,7 +314,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="Education"
                 sectionIcon="ri:graduation-cap-line"
               />
-              {education.map((edu: EducationEntryChange, edIndex: number) => (
+              {education?.map((edu: EducationEntryChange, edIndex: number) => (
                 <div
                   key={edu.entry_id}
                   className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
@@ -194,7 +327,12 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="INSTITUTION" />
                     <PrimitiveField
                       value={edu.institution ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(
+                          ["education", edIndex, "institution"],
+                          value,
+                        )
+                      }
                     />
                   </fieldset>
 
@@ -202,7 +340,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="LOCATION" />
                     <PrimitiveField
                       value={edu.location ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["education", edIndex, "location"], value)
+                      }
                     />
                   </fieldset>
 
@@ -210,7 +350,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="LINK" />
                     <PrimitiveField
                       value={edu.link ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["education", edIndex, "link"], value)
+                      }
                     />
                   </fieldset>
 
@@ -218,7 +360,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="START DATE" />
                     <PrimitiveField
                       value={edu.start_date ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["education", edIndex, "start_date"], value)
+                      }
                     />
                   </fieldset>
 
@@ -226,7 +370,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="END DATE" />
                     <PrimitiveField
                       value={edu.end_date ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["education", edIndex, "end_date"], value)
+                      }
                     />
                   </fieldset>
 
@@ -234,30 +380,72 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="SCORE / GPA" />
                     <PrimitiveField
                       value={edu.score ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["education", edIndex, "score"], value)
+                      }
                     />
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
                     <FieldLabel label="DEGREE" />
-                    {edu.degree?.is_changed ? (
-                      <DiffField field={edu.degree} />
+                    {edu.degree?.is_changed && !isFieldResolved(edu.degree) ? (
+                      <DiffField
+                        field={edu.degree}
+                        onAccept={() =>
+                          handleResolveField(
+                            ["education", edIndex, "degree"],
+                            true,
+                          )
+                        }
+                        onReject={() =>
+                          handleResolveField(
+                            ["education", edIndex, "degree"],
+                            false,
+                          )
+                        }
+                      />
                     ) : (
                       <PrimitiveField
-                        value={edu.degree?.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
+                        value={resolvedDisplayValue(edu.degree) as string}
+                        onChange={(value) =>
+                          updateField(["education", edIndex, "degree"], value)
+                        }
                       />
                     )}
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
                     <FieldLabel label="DESCRIPTION" />
-                    {edu.description?.is_changed ? (
-                      <DiffField field={edu.description} />
+                    {edu.description?.is_changed &&
+                    !isFieldResolved(edu.description) ? (
+                      <DiffField
+                        field={edu.description}
+                        onAccept={() =>
+                          handleResolveField(
+                            ["education", edIndex, "description"],
+                            true,
+                          )
+                        }
+                        onReject={() =>
+                          handleResolveField(
+                            ["education", edIndex, "description"],
+                            false,
+                          )
+                        }
+                      />
                     ) : (
                       <PrimitiveField
-                        value={edu.description?.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
+                        value={
+                          resolvedDisplayValue(edu.description) as
+                            | string
+                            | string[]
+                        }
+                        onChange={(value) =>
+                          updateField(
+                            ["education", edIndex, "description"],
+                            value,
+                          )
+                        }
                       />
                     )}
                   </fieldset>
@@ -274,72 +462,135 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="Experience"
                 sectionIcon="famicons:briefcase-outline"
               />
-              {experience.map((exp: ExperienceEntryChange, exIndex: number) => (
-                <div
-                  key={exp.entry_id}
-                  className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
-                >
-                  <div className="flex items-center col-span-3 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
-                    #{exIndex + 1}
-                    <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+              {experience?.map(
+                (exp: ExperienceEntryChange, exIndex: number) => (
+                  <div
+                    key={exp.entry_id}
+                    className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
+                  >
+                    <div className="flex items-center col-span-3 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
+                      #{exIndex + 1}
+                      <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+                    </div>
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="COMPANY" />
+                      <PrimitiveField
+                        value={exp.company ?? ""}
+                        onChange={(value) =>
+                          updateField(["experience", exIndex, "company"], value)
+                        }
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="LOCATION" />
+                      <PrimitiveField
+                        value={exp.location ?? ""}
+                        onChange={(value) =>
+                          updateField(
+                            ["experience", exIndex, "location"],
+                            value,
+                          )
+                        }
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="START DATE" />
+                      <PrimitiveField
+                        value={exp.start_date ?? ""}
+                        onChange={(value) =>
+                          updateField(
+                            ["experience", exIndex, "start_date"],
+                            value,
+                          )
+                        }
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="END DATE" />
+                      <PrimitiveField
+                        value={exp.end_date ?? ""}
+                        onChange={(value) =>
+                          updateField(
+                            ["experience", exIndex, "end_date"],
+                            value,
+                          )
+                        }
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col col-span-3">
+                      <FieldLabel label="POSITION" />
+                      {exp.position?.is_changed &&
+                      !isFieldResolved(exp.position) ? (
+                        <DiffField
+                          field={exp.position}
+                          onAccept={() =>
+                            handleResolveField(
+                              ["experience", exIndex, "position"],
+                              true,
+                            )
+                          }
+                          onReject={() =>
+                            handleResolveField(
+                              ["experience", exIndex, "position"],
+                              false,
+                            )
+                          }
+                        />
+                      ) : (
+                        <PrimitiveField
+                          value={resolvedDisplayValue(exp.position) as string}
+                          onChange={(value) =>
+                            updateField(
+                              ["experience", exIndex, "position"],
+                              value,
+                            )
+                          }
+                        />
+                      )}
+                    </fieldset>
+
+                    <fieldset className="flex flex-col col-span-3">
+                      <FieldLabel label="DESCRIPTION" />
+                      {exp.description?.is_changed &&
+                      !isFieldResolved(exp.description) ? (
+                        <DiffField
+                          field={exp.description}
+                          onAccept={() =>
+                            handleResolveField(
+                              ["experience", exIndex, "description"],
+                              true,
+                            )
+                          }
+                          onReject={() =>
+                            handleResolveField(
+                              ["experience", exIndex, "description"],
+                              false,
+                            )
+                          }
+                        />
+                      ) : (
+                        <PrimitiveField
+                          value={
+                            resolvedDisplayValue(exp.description) as
+                              | string
+                              | string[]
+                          }
+                          onChange={(value) =>
+                            updateField(
+                              ["experience", exIndex, "description"],
+                              value,
+                            )
+                          }
+                        />
+                      )}
+                    </fieldset>
                   </div>
-                  <fieldset className="flex flex-col">
-                    <FieldLabel label="COMPANY" />
-                    <PrimitiveField
-                      value={exp.company ?? ""}
-                      onChange={(value) => console.log(value)}
-                    />
-                  </fieldset>
-
-                  <fieldset className="flex flex-col">
-                    <FieldLabel label="LOCATION" />
-                    <PrimitiveField
-                      value={exp.location ?? ""}
-                      onChange={(value) => console.log(value)}
-                    />
-                  </fieldset>
-
-                  <fieldset className="flex flex-col">
-                    <FieldLabel label="START DATE" />
-                    <PrimitiveField
-                      value={exp.start_date ?? ""}
-                      onChange={(value) => console.log(value)}
-                    />
-                  </fieldset>
-
-                  <fieldset className="flex flex-col">
-                    <FieldLabel label="END DATE" />
-                    <PrimitiveField
-                      value={exp.end_date ?? ""}
-                      onChange={(value) => console.log(value)}
-                    />
-                  </fieldset>
-
-                  <fieldset className="flex flex-col col-span-3">
-                    <FieldLabel label="POSITION" />
-                    {exp.position?.is_changed ? (
-                      <DiffField field={exp.position} />
-                    ) : (
-                      <PrimitiveField
-                        value={exp.position?.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
-                      />
-                    )}
-                  </fieldset>
-
-                  <fieldset className="flex flex-col col-span-3">
-                    <FieldLabel label="DESCRIPTION" />
-                    {exp.description?.is_changed ? (
-                      <DiffField field={exp.description} />
-                    ) : (
-                      <PrimitiveField
-                        value={exp.description?.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
-                      />
-                    )}
-                  </fieldset>
-                </div>
-              ))}
+                ),
+              )}
             </section>
 
             {/* Projects Section */}
@@ -351,7 +602,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="Projects"
                 sectionIcon="famicons:cube-outline"
               />
-              {projects.map((project: ProjectEntryChange, pjIndex: number) => (
+              {projects?.map((project: ProjectEntryChange, pjIndex: number) => (
                 <div
                   key={project.entry_id}
                   className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
@@ -364,7 +615,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="TITLE" />
                     <PrimitiveField
                       value={project.title ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["projects", pjIndex, "title"], value)
+                      }
                     />
                   </fieldset>
 
@@ -372,7 +625,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="LINK" />
                     <PrimitiveField
                       value={project.link ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["projects", pjIndex, "link"], value)
+                      }
                     />
                   </fieldset>
 
@@ -380,7 +635,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="START DATE" />
                     <PrimitiveField
                       value={project.start_date ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["projects", pjIndex, "start_date"], value)
+                      }
                     />
                   </fieldset>
 
@@ -388,30 +645,73 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="END DATE" />
                     <PrimitiveField
                       value={project.end_date ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["projects", pjIndex, "end_date"], value)
+                      }
                     />
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
                     <FieldLabel label="SUBTITLE" />
-                    {project.subtitle?.is_changed ? (
-                      <DiffField field={project.subtitle} />
+                    {project.subtitle?.is_changed &&
+                    !isFieldResolved(project.subtitle) ? (
+                      <DiffField
+                        field={project.subtitle}
+                        onAccept={() =>
+                          handleResolveField(
+                            ["projects", pjIndex, "subtitle"],
+                            true,
+                          )
+                        }
+                        onReject={() =>
+                          handleResolveField(
+                            ["projects", pjIndex, "subtitle"],
+                            false,
+                          )
+                        }
+                      />
                     ) : (
                       <PrimitiveField
-                        value={project.subtitle?.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
+                        value={resolvedDisplayValue(project.subtitle) as string}
+                        onChange={(value) =>
+                          updateField(["projects", pjIndex, "subtitle"], value)
+                        }
                       />
                     )}
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
                     <FieldLabel label="DESCRIPTION" />
-                    {project.description?.is_changed ? (
-                      <DiffField field={project.description} />
+                    {project.description?.is_changed &&
+                    !isFieldResolved(project.description) ? (
+                      <DiffField
+                        field={project.description}
+                        onAccept={() =>
+                          handleResolveField(
+                            ["projects", pjIndex, "description"],
+                            true,
+                          )
+                        }
+                        onReject={() =>
+                          handleResolveField(
+                            ["projects", pjIndex, "description"],
+                            false,
+                          )
+                        }
+                      />
                     ) : (
                       <PrimitiveField
-                        value={project.description?.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
+                        value={
+                          resolvedDisplayValue(project.description) as
+                            | string
+                            | string[]
+                        }
+                        onChange={(value) =>
+                          updateField(
+                            ["projects", pjIndex, "description"],
+                            value,
+                          )
+                        }
                       />
                     )}
                   </fieldset>
@@ -429,17 +729,25 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionIcon="hugeicons:compass-01"
               />
               <div className="w-full grid grid-cols-2 gap-3 p-5">
-                {skills.map((skill: SkillEntryChange) => (
+                {skills?.map((skill: SkillEntryChange, skIndex: number) => (
                   <fieldset key={skill.entry_id} className="flex flex-col">
-                    <FieldLabel
-                      label={`SKILL ${skill.entry_id.replace("skill", "")}`}
-                    />
-                    {skill.name.is_changed ? (
-                      <DiffField field={skill.name} />
+                    <FieldLabel label={`SKILL ${skIndex + 1}`} />
+                    {skill.name.is_changed && !isFieldResolved(skill.name) ? (
+                      <DiffField
+                        field={skill.name}
+                        onAccept={() =>
+                          handleResolveField(["skills", skIndex, "name"], true)
+                        }
+                        onReject={() =>
+                          handleResolveField(["skills", skIndex, "name"], false)
+                        }
+                      />
                     ) : (
                       <PrimitiveField
-                        value={skill.name.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
+                        value={resolvedDisplayValue(skill.name) as string}
+                        onChange={(value) =>
+                          updateField(["skills", skIndex, "name"], value)
+                        }
                       />
                     )}
                   </fieldset>
@@ -456,7 +764,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="Certificates"
                 sectionIcon="ri:certificate-line"
               />
-              {certificates.map(
+              {certificates?.map(
                 (cert: CertificateEntryChange, cfIndex: number) => (
                   <div
                     key={cert.entry_id}
@@ -470,7 +778,12 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                       <FieldLabel label="ISSUER" />
                       <PrimitiveField
                         value={cert.issuer ?? ""}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value) =>
+                          updateField(
+                            ["certificates", cfIndex, "issuer"],
+                            value,
+                          )
+                        }
                       />
                     </fieldset>
 
@@ -478,7 +791,12 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                       <FieldLabel label="ISSUE DATE" />
                       <PrimitiveField
                         value={cert.issue_date ?? ""}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value) =>
+                          updateField(
+                            ["certificates", cfIndex, "issue_date"],
+                            value,
+                          )
+                        }
                       />
                     </fieldset>
 
@@ -486,7 +804,12 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                       <FieldLabel label="EXPIRY DATE" />
                       <PrimitiveField
                         value={cert.expiry_date ?? ""}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value) =>
+                          updateField(
+                            ["certificates", cfIndex, "expiry_date"],
+                            value,
+                          )
+                        }
                       />
                     </fieldset>
 
@@ -494,30 +817,75 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                       <FieldLabel label="LINK" />
                       <PrimitiveField
                         value={cert.link ?? ""}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value) =>
+                          updateField(["certificates", cfIndex, "link"], value)
+                        }
                       />
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
                       <FieldLabel label="NAME" />
-                      {cert.name?.is_changed ? (
-                        <DiffField field={cert.name} />
+                      {cert.name?.is_changed && !isFieldResolved(cert.name) ? (
+                        <DiffField
+                          field={cert.name}
+                          onAccept={() =>
+                            handleResolveField(
+                              ["certificates", cfIndex, "name"],
+                              true,
+                            )
+                          }
+                          onReject={() =>
+                            handleResolveField(
+                              ["certificates", cfIndex, "name"],
+                              false,
+                            )
+                          }
+                        />
                       ) : (
                         <PrimitiveField
-                          value={cert.name?.new_value ?? ""}
-                          onChange={(value) => console.log(value)}
+                          value={resolvedDisplayValue(cert.name) as string}
+                          onChange={(value) =>
+                            updateField(
+                              ["certificates", cfIndex, "name"],
+                              value,
+                            )
+                          }
                         />
                       )}
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
                       <FieldLabel label="DESCRIPTION" />
-                      {cert.description?.is_changed ? (
-                        <DiffField field={cert.description} />
+                      {cert.description?.is_changed &&
+                      !isFieldResolved(cert.description) ? (
+                        <DiffField
+                          field={cert.description}
+                          onAccept={() =>
+                            handleResolveField(
+                              ["certificates", cfIndex, "description"],
+                              true,
+                            )
+                          }
+                          onReject={() =>
+                            handleResolveField(
+                              ["certificates", cfIndex, "description"],
+                              false,
+                            )
+                          }
+                        />
                       ) : (
                         <PrimitiveField
-                          value={cert.description?.new_value ?? ""}
-                          onChange={(value) => console.log(value)}
+                          value={
+                            resolvedDisplayValue(cert.description) as
+                              | string
+                              | string[]
+                          }
+                          onChange={(value) =>
+                            updateField(
+                              ["certificates", cfIndex, "description"],
+                              value,
+                            )
+                          }
                         />
                       )}
                     </fieldset>
@@ -536,24 +904,30 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionIcon="heroicons:language-solid"
               />
               <div className="w-full grid grid-cols-2 gap-3 p-5">
-                {languages.map((lang: LanguageEntryChange) => (
-                  <div key={lang.entry_id} className="flex flex-col gap-2">
-                    <fieldset className="flex flex-col">
-                      <FieldLabel label="LANGUAGE" />
-                      <PrimitiveField
-                        value={lang.name ?? ""}
-                        onChange={(value) => console.log(value)}
-                      />
-                    </fieldset>
-                    <fieldset className="flex flex-col">
-                      <FieldLabel label="LEVEL" />
-                      <PrimitiveField
-                        value={lang.level ?? ""}
-                        onChange={(value) => console.log(value)}
-                      />
-                    </fieldset>
-                  </div>
-                ))}
+                {languages?.map(
+                  (lang: LanguageEntryChange, lgIndex: number) => (
+                    <div key={lang.entry_id} className="flex flex-col gap-2">
+                      <fieldset className="flex flex-col">
+                        <FieldLabel label="LANGUAGE" />
+                        <PrimitiveField
+                          value={lang.name ?? ""}
+                          onChange={(value) =>
+                            updateField(["languages", lgIndex, "name"], value)
+                          }
+                        />
+                      </fieldset>
+                      <fieldset className="flex flex-col">
+                        <FieldLabel label="LEVEL" />
+                        <PrimitiveField
+                          value={lang.level ?? ""}
+                          onChange={(value) =>
+                            updateField(["languages", lgIndex, "level"], value)
+                          }
+                        />
+                      </fieldset>
+                    </div>
+                  ),
+                )}
               </div>
             </section>
 
@@ -567,15 +941,19 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionIcon="solar:gamepad-linear"
               />
               <div className="w-full grid grid-cols-2 gap-3 p-5">
-                {interests.map((interest: InterestEntryChange) => (
-                  <fieldset key={interest.entry_id} className="flex flex-col">
-                    <FieldLabel label="INTEREST" />
-                    <PrimitiveField
-                      value={interest.name ?? ""}
-                      onChange={(value) => console.log(value)}
-                    />
-                  </fieldset>
-                ))}
+                {interests?.map(
+                  (interest: InterestEntryChange, intIndex: number) => (
+                    <fieldset key={interest.entry_id} className="flex flex-col">
+                      <FieldLabel label="INTEREST" />
+                      <PrimitiveField
+                        value={interest.name ?? ""}
+                        onChange={(value) =>
+                          updateField(["interests", intIndex, "name"], value)
+                        }
+                      />
+                    </fieldset>
+                  ),
+                )}
               </div>
             </section>
 
@@ -588,7 +966,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="Awards"
                 sectionIcon="ri:trophy-line"
               />
-              {awards.map((award: AwardEntryChange, awIndex: number) => (
+              {awards?.map((award: AwardEntryChange, awIndex: number) => (
                 <div
                   key={award.entry_id}
                   className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
@@ -601,7 +979,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="AWARDER" />
                     <PrimitiveField
                       value={award.awarder ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["awards", awIndex, "awarder"], value)
+                      }
                     />
                   </fieldset>
 
@@ -609,30 +989,67 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="DATE" />
                     <PrimitiveField
                       value={award.date ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["awards", awIndex, "date"], value)
+                      }
                     />
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
                     <FieldLabel label="TITLE" />
-                    {award.title?.is_changed ? (
-                      <DiffField field={award.title} />
+                    {award.title?.is_changed &&
+                    !isFieldResolved(award.title) ? (
+                      <DiffField
+                        field={award.title}
+                        onAccept={() =>
+                          handleResolveField(["awards", awIndex, "title"], true)
+                        }
+                        onReject={() =>
+                          handleResolveField(
+                            ["awards", awIndex, "title"],
+                            false,
+                          )
+                        }
+                      />
                     ) : (
                       <PrimitiveField
-                        value={award.title?.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
+                        value={resolvedDisplayValue(award.title) as string}
+                        onChange={(value) =>
+                          updateField(["awards", awIndex, "title"], value)
+                        }
                       />
                     )}
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
                     <FieldLabel label="DESCRIPTION" />
-                    {award.description?.is_changed ? (
-                      <DiffField field={award.description} />
+                    {award.description?.is_changed &&
+                    !isFieldResolved(award.description) ? (
+                      <DiffField
+                        field={award.description}
+                        onAccept={() =>
+                          handleResolveField(
+                            ["awards", awIndex, "description"],
+                            true,
+                          )
+                        }
+                        onReject={() =>
+                          handleResolveField(
+                            ["awards", awIndex, "description"],
+                            false,
+                          )
+                        }
+                      />
                     ) : (
                       <PrimitiveField
-                        value={award.description?.new_value ?? ""}
-                        onChange={(value) => console.log(value)}
+                        value={
+                          resolvedDisplayValue(award.description) as
+                            | string
+                            | string[]
+                        }
+                        onChange={(value) =>
+                          updateField(["awards", awIndex, "description"], value)
+                        }
                       />
                     )}
                   </fieldset>
@@ -649,7 +1066,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="Publications"
                 sectionIcon="ri:article-line"
               />
-              {publications.map(
+              {publications?.map(
                 (pub: PublicationEntryChange, pdIndex: number) => (
                   <div
                     key={pub.entry_id}
@@ -663,7 +1080,12 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                       <FieldLabel label="PUBLISHER" />
                       <PrimitiveField
                         value={pub.publisher ?? ""}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value) =>
+                          updateField(
+                            ["publications", pdIndex, "publisher"],
+                            value,
+                          )
+                        }
                       />
                     </fieldset>
 
@@ -671,7 +1093,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                       <FieldLabel label="DATE" />
                       <PrimitiveField
                         value={pub.date ?? ""}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value) =>
+                          updateField(["publications", pdIndex, "date"], value)
+                        }
                       />
                     </fieldset>
 
@@ -679,30 +1103,75 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                       <FieldLabel label="LINK" />
                       <PrimitiveField
                         value={pub.link ?? ""}
-                        onChange={(value) => console.log(value)}
+                        onChange={(value) =>
+                          updateField(["publications", pdIndex, "link"], value)
+                        }
                       />
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
                       <FieldLabel label="TITLE" />
-                      {pub.title?.is_changed ? (
-                        <DiffField field={pub.title} />
+                      {pub.title?.is_changed && !isFieldResolved(pub.title) ? (
+                        <DiffField
+                          field={pub.title}
+                          onAccept={() =>
+                            handleResolveField(
+                              ["publications", pdIndex, "title"],
+                              true,
+                            )
+                          }
+                          onReject={() =>
+                            handleResolveField(
+                              ["publications", pdIndex, "title"],
+                              false,
+                            )
+                          }
+                        />
                       ) : (
                         <PrimitiveField
-                          value={pub.title?.new_value ?? ""}
-                          onChange={(value) => console.log(value)}
+                          value={resolvedDisplayValue(pub.title) as string}
+                          onChange={(value) =>
+                            updateField(
+                              ["publications", pdIndex, "title"],
+                              value,
+                            )
+                          }
                         />
                       )}
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
                       <FieldLabel label="DESCRIPTION" />
-                      {pub.description?.is_changed ? (
-                        <DiffField field={pub.description} />
+                      {pub.description?.is_changed &&
+                      !isFieldResolved(pub.description) ? (
+                        <DiffField
+                          field={pub.description}
+                          onAccept={() =>
+                            handleResolveField(
+                              ["publications", pdIndex, "description"],
+                              true,
+                            )
+                          }
+                          onReject={() =>
+                            handleResolveField(
+                              ["publications", pdIndex, "description"],
+                              false,
+                            )
+                          }
+                        />
                       ) : (
                         <PrimitiveField
-                          value={pub.description?.new_value ?? ""}
-                          onChange={(value) => console.log(value)}
+                          value={
+                            resolvedDisplayValue(pub.description) as
+                              | string
+                              | string[]
+                          }
+                          onChange={(value) =>
+                            updateField(
+                              ["publications", pdIndex, "description"],
+                              value,
+                            )
+                          }
                         />
                       )}
                     </fieldset>
@@ -720,7 +1189,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="References"
                 sectionIcon="ri:user-star-line"
               />
-              {references.map((ref: ReferenceEntryChange, rfIndex: number) => (
+              {references?.map((ref: ReferenceEntryChange, rfIndex: number) => (
                 <div
                   key={ref.entry_id}
                   className="w-full grid grid-cols-2 gap-3 mb-4 last:mb-0 p-5"
@@ -733,7 +1202,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="NAME" />
                     <PrimitiveField
                       value={ref.name ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["references", rfIndex, "name"], value)
+                      }
                     />
                   </fieldset>
 
@@ -741,7 +1212,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="POSITION" />
                     <PrimitiveField
                       value={ref.position ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["references", rfIndex, "position"], value)
+                      }
                     />
                   </fieldset>
 
@@ -749,7 +1222,12 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="ORGANIZATION" />
                     <PrimitiveField
                       value={ref.organization ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(
+                          ["references", rfIndex, "organization"],
+                          value,
+                        )
+                      }
                     />
                   </fieldset>
 
@@ -757,7 +1235,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="EMAIL" />
                     <PrimitiveField
                       value={ref.email ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["references", rfIndex, "email"], value)
+                      }
                     />
                   </fieldset>
 
@@ -765,7 +1245,9 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     <FieldLabel label="PHONE" />
                     <PrimitiveField
                       value={ref.phone ?? ""}
-                      onChange={(value) => console.log(value)}
+                      onChange={(value) =>
+                        updateField(["references", rfIndex, "phone"], value)
+                      }
                     />
                   </fieldset>
                 </div>

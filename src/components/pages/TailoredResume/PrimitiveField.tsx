@@ -45,7 +45,7 @@ const PrimitiveField: React.FC<{
     <div className="flex flex-col">
       {value.map((bullet, index) => (
         <div
-          className="relative flex items-center before:content-['●'] before:absolute before:-translate-x-1 before:text-text-muted/50 before:text-xxs before:inline-block"
+          className="relative flex items-center before:content-['●'] before:absolute before:-translate-x-1 before:text-text-muted/50 before:text-xxs before:inline-block before:transition-opacity focus-within:before:opacity-0"
           key={index}
         >
           <textarea

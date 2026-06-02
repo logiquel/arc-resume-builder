@@ -182,9 +182,11 @@ const RenderStructuralDiff = ({
 
 interface DiffFieldProps {
   field: TailorTypes.DiffField<any>;
+  onAccept?: () => void;
+  onReject?: () => void;
 }
 
-const DiffField = ({ field }: DiffFieldProps) => {
+const DiffField = ({ field, onAccept, onReject }: DiffFieldProps) => {
   const renderByMode = () => {
     switch (field.diff_mode) {
       case "inline":
@@ -229,7 +231,10 @@ const DiffField = ({ field }: DiffFieldProps) => {
     <div className="flex flex-col">
       {renderByMode()}
       <div className="flex items-center gap-2 mt-2 px-2">
-        <ActionButtons onAccept={() => {}} onReject={() => {}} />
+        <ActionButtons
+          onAccept={onAccept || (() => {})}
+          onReject={onReject || (() => {})}
+        />
       </div>
     </div>
   );
