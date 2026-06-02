@@ -59,7 +59,10 @@ const RenderInlineDiff = ({ oldValue, newValue }: RenderInlineDiffProps) => {
       {diffs.map((part, i) => {
         if (part.added) {
           return (
-            <span key={i} className="text-xs bg-green-100 text-green-800">
+            <span
+              key={i}
+              className={`text-xs bg-green-100 text-green-800 ${i === 0 ? "px-1" : "px-0.5"}`}
+            >
               {part.value}
             </span>
           );
@@ -69,7 +72,7 @@ const RenderInlineDiff = ({ oldValue, newValue }: RenderInlineDiffProps) => {
           return (
             <span
               key={i}
-              className="text-xs bg-red-100 text-red-800 line-through"
+              className={`text-xs bg-red-100 text-red-800 line-through ${i === 0 ? "px-1" : "px-0.5"}`}
             >
               {part.value}
             </span>
@@ -77,7 +80,10 @@ const RenderInlineDiff = ({ oldValue, newValue }: RenderInlineDiffProps) => {
         }
 
         return (
-          <span key={i} className="text-xs text-text-primary">
+          <span
+            key={i}
+            className={`text-xs text-text-primary ${i === 0 ? "px-1" : "px-0.5"}`}
+          >
             {part.value}
           </span>
         );
