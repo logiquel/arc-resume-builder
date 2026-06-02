@@ -5,6 +5,7 @@ import type {
   CreateTailoredResumePayload,
   TailoredResume,
   TailoredResumeListItem,
+  UpdateTailoredResumePayload,
 } from "./tailor-resume.types";
 
 export const tailoredResumeService = {
@@ -99,6 +100,39 @@ export const tailoredResumeService = {
       }
 
       throw new Error("Failed to fetch tailored resume");
+    }
+  },
+
+  update: async (
+    tailoredResumeId: string,
+    payload: UpdateTailoredResumePayload,
+  ): Promise<ApiSuccessResponse<TailoredResume>> => {
+    try {
+      const { data: result } = await apiClient.patch<
+        ApiResponse<TailoredResume>
+      >(`/api/tailored-resumes/${tailoredResumeId}`, payload);
+
+      if (!result.success) {
+        throw new Error(result.error.details[0] || result.message);
+      }
+
+      return result;
+    } catch (error: unknown) {
+      if (axios.isAxiosError<ApiResponse<TailoredResume>>(error)) {
+        const result = error.response?.data;
+
+        if (result && !result.success) {
+          throw new Error(result.error.details[0] || result.message);
+        }
+
+        throw new Error(error.message || "Failed to update tailored resume");
+      }
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      throw new Error("Failed to update tailored resume");
     }
   },
 };

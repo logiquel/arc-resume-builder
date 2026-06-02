@@ -25,3 +25,11 @@ export type TailoredResumeListItem = {
   createdAt: string;
   updatedAt: string;
 };
+
+export interface UpdateTailoredResumePayload {
+  changes?: any; // ResumeChanges type
+  analysis?: any; // TailoringSessionAnalysis type
+  name?: string;
+  generation_step?: string;
+  showToast?: boolean; // Optional: whether to show success/error toasts
+}

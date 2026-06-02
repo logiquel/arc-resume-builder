@@ -15,8 +15,9 @@ import type {
   SkillEntryChange,
 } from "#/types/resume/tailorSession.types";
 import PrimitiveField from "./PrimitiveField";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { produce } from "immer";
+import { useAutoSaveTailoredResumeMutation } from "#/api/resume/tailor/tailor-resume.mutations";
 
 interface SectionHeadingProps {
   sectionLabel: string;
@@ -56,9 +57,40 @@ const FieldLabel: React.FC<FieldLabelProps> = ({ label }) => {
   );
 };
 
-interface TailoringSessionScreenProps {
-  tailorSession: TailoredResume;
-}
+// ---------------------------------------------------------------------------
+// Auto-save pill
+// ---------------------------------------------------------------------------
+type SaveStatus = "idle" | "saving" | "saved";
+const AutoSavePill: React.FC<{ status: SaveStatus }> = ({ status }) => {
+  const isVisible = status !== "idle";
+
+  return (
+    <div
+      className={[
+        "absolute w-fit py-2 px-3 gap-x-1.5 flex items-center border border-black/10 mx-auto left-0 right-0 mt-2 bg-white rounded-lg",
+        "transition-all duration-300 ease-in-out",
+        status === "saving"
+          ? "shadow-[0_0_20px_rgba(251,191,36,0.2)]"
+          : "shadow-[0_0_20px_rgba(59,130,246,0.15)]",
+        isVisible
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 -translate-y-1 pointer-events-none",
+      ].join(" ")}
+    >
+      {status === "saving" ? (
+        <Icon
+          icon="si:spinner-fill"
+          className="text-amber-400 text-xs animate-spin"
+        />
+      ) : (
+        <Icon icon="line-md:check-all" className="text-green-500 text-xs" />
+      )}
+      <span className="text-xxs text-text-secondary font-medium">
+        {status === "saving" ? "Saving…" : "Changes Saved"}
+      </span>
+    </div>
+  );
+};
 
 // ---------------------------------------------------------------------------
 // Type guard: checks if object is a DiffField
@@ -92,10 +124,16 @@ function resolvedDisplayValue(field: unknown): unknown {
 }
 
 // ---------------------------------------------------------------------------
-// Main component with Immer
+// Main component
 // ---------------------------------------------------------------------------
+interface TailoringSessionScreenProps {
+  tailorSession: TailoredResume;
+  sessionId: string;
+}
+
 const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
   tailorSession,
+  sessionId,
 }) => {
   const [changes, setChanges] = useState<TailoredResume["changes"]>(
     () =>
@@ -104,15 +142,73 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
       ) as TailoredResume["changes"],
   );
 
+  // Keep a ref in sync so the debounced save always reads the latest state
+  const changesRef = useRef(changes);
+  changesRef.current = changes;
+
+  // ── Auto-save ────────────────────────────────────────────────────────────
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Track whether this is the very first render (skip auto-save on mount)
+  const isFirstRender = useRef(true);
+
+  const autoSave = useAutoSaveTailoredResumeMutation(sessionId);
+
+  // Trigger debounced save whenever `changes` updates (except on mount)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    // Clear any pending timers
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+
+    // Show saving pill immediately when the user makes a change
+    setSaveStatus("saving");
+
+    // Debounce the actual network call by 1.5s
+    debounceTimer.current = setTimeout(() => {
+      autoSave.mutate(
+        { changes: changesRef.current },
+        {
+          onSuccess: () => {
+            setSaveStatus("saved");
+            // Slide the pill away after 2s
+            hideTimer.current = setTimeout(() => {
+              setSaveStatus("idle");
+            }, 2000);
+          },
+          onError: () => {
+            // On error just hide the pill — the mutation already logs silently
+            setSaveStatus("idle");
+          },
+        },
+      );
+    }, 1500);
+
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [changes]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    };
+  }, []);
+
   // ── Update any field (Primitive or resolved DiffField) ─────────────────
-  // With Immer, we can directly mutate the draft. No path traversal needed!
   const updateField = useCallback(
     (path: (string | number)[], value: unknown) => {
       setChanges(
         produce((draft) => {
           let node: any = draft;
 
-          // Navigate to the target field
           for (let i = 0; i < path.length - 1; i++) {
             node = node[path[i]];
           }
@@ -120,12 +216,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
           const lastKey = path[path.length - 1];
           const target = node[lastKey];
 
-          // If it's a DiffField, write to resolved_value
           if (isDiffField(target)) {
             target.resolved_value = value;
-            target.status = "accepted"; // User edited, consider it accepted
+            target.status = "accepted";
           } else {
-            // Plain primitive - write directly
             node[lastKey] = value;
           }
         }),
@@ -141,7 +235,6 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
         produce((draft) => {
           let node: any = draft;
 
-          // Navigate to the DiffField
           for (let i = 0; i < path.length; i++) {
             node = node[path[i]];
           }
@@ -172,9 +265,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
 
   return (
     <div className="w-full h-full flex overflow-hidden">
-      <main className="h-full min-h-0 flex-1 flex flex-col">
+      <main className="relative h-full min-h-0 flex-1 flex flex-col">
+        <AutoSavePill status={saveStatus} />
         <div className="w-full flex flex-col h-full">
-          <div className="flex justify-between items-start p-3">
+          <div className="flex justify-between items-start mb-3 p-3">
             <div>
               <h1 className="text-lg text-text-primary">
                 Enhance Resume Report
@@ -184,9 +278,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 your resume.
               </h3>
             </div>
+            {/* Auto-save pill */}
           </div>
 
-          <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 px-3 pt-2 pb-3">
+          <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 px-3 pb-3">
             {/* Profile Section */}
             <section
               className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"

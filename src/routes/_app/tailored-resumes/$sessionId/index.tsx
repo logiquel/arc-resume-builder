@@ -45,7 +45,9 @@ function RouteComponent() {
 
   // If we have data and it's completed, show the resume immediately
   if (data && data.generation_step === "COMPLETED") {
-    return <TailoringSessionScreen tailorSession={data} />;
+    return (
+      <TailoringSessionScreen tailorSession={data} sessionId={sessionId} />
+    );
   }
 
   // Show loading screen for incomplete sessions
