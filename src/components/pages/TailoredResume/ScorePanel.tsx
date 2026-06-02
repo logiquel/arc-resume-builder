@@ -2,6 +2,7 @@ import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";
 import { Link, useParams } from "@tanstack/react-router";
 import ResumeScoreCard from "./ResumeScoreCard";
 import { Icon } from "@iconify/react";
+import type { TailoringSessionAnalysis } from "#/types/resume/tailorSession.types";
 
 const matchedKeywords = [
   "JavaScript",
@@ -25,7 +26,10 @@ const missingKeywords = [
   "Agile",
 ];
 
-const ScorePanel = () => {
+interface ScorePanelProps {
+  analysis: TailoringSessionAnalysis;
+}
+const ScorePanel: React.FC<ScorePanelProps> = ({ analysis }) => {
   const { sessionId } = useParams({
     from: "/_app/tailored-resumes/$sessionId/",
   });
@@ -34,7 +38,10 @@ const ScorePanel = () => {
     <aside className="w-[23vw] h-full flex flex-col border-l border-black/10">
       <div className="w-full flex-1  min-h-0 flex flex-col space-y-4 bg-white border-black/10 relative overflow-y-scroll custom-scrollbar before:absolute before:inset-0 before:bg-linear-to-b before:from-white/20 before:to-transparent before:pointer-events-none">
         <div className="relative z-10 w-full flex items-center justify-center">
-          <ResumeScoreCard score={75} />
+          <ResumeScoreCard
+            baseScore={analysis.base_score || 0}
+            score={analysis.current_score || 0}
+          />
         </div>
         <div className="w-full flex flex-col space-y-4 mt-4 px-4">
           <div className="w-full flex flex-col space-y-4">
@@ -45,12 +52,12 @@ const ScorePanel = () => {
                 MATCHED KEYWORDS
               </h2>
               <div className="w-full flex-1 flex flex-wrap gap-2">
-                {matchedKeywords.map((keyword) => (
+                {analysis.matched_keywords.map((keyword) => (
                   <span
                     key={keyword}
                     className="w-fit h-fit text-tiny font-medium text-[#05603A] flex items-center justify-center rounded-md px-3 py-1 bg-[#ECFDF3] border border-[#A6F4C5]"
                   >
-                    {keyword}
+                    # {keyword}
                   </span>
                 ))}
               </div>
@@ -63,12 +70,12 @@ const ScorePanel = () => {
                 MISSING KEYWORDS
               </h2>
               <div className="w-full flex-1 flex flex-wrap gap-2">
-                {missingKeywords.map((keyword) => (
+                {analysis.missing_keywords.map((keyword) => (
                   <span
                     key={keyword}
                     className="w-fit h-fit text-tiny font-medium text-[#B54708] flex items-center justify-center rounded-md px-3 py-1 bg-[#FEF0C7] border border-[#FECDCA]"
                   >
-                    {keyword}
+                    # {keyword}
                   </span>
                 ))}
               </div>

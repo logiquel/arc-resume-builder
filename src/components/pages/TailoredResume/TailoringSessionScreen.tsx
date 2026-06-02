@@ -3,8 +3,16 @@ import { Icon } from "@iconify/react";
 import ScorePanel from "./ScorePanel";
 import DiffField from "./DiffField";
 import type {
+  AwardEntryChange,
+  CertificateEntryChange,
   EducationEntryChange,
   ExperienceEntryChange,
+  InterestEntryChange,
+  LanguageEntryChange,
+  ProjectEntryChange,
+  PublicationEntryChange,
+  ReferenceEntryChange,
+  SkillEntryChange,
 } from "#/types/resume/tailorSession.types";
 import PrimitiveField from "./PrimitiveField";
 interface SectionHeadingProps {
@@ -52,7 +60,11 @@ interface TailoringSessionScreenProps {
 const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
   tailorSession,
 }) => {
-  const sections = tailorSession.changes;
+  const sections =
+    tailorSession.changes ??
+    ({} as NonNullable<
+      TailoringSessionScreenProps["tailorSession"]["changes"]
+    >);
   const {
     profile,
     education,
@@ -136,11 +148,11 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
 
                 <fieldset className="flex flex-col col-span-3">
                   <FieldLabel label="PROFESSIONAL TITLE" />
-                  {profile.professional_title.is_changed ? (
+                  {profile.professional_title?.is_changed ? (
                     <DiffField field={profile.professional_title} />
                   ) : (
                     <PrimitiveField
-                      value={profile.professional_title.new_value ?? ""}
+                      value={profile.professional_title?.new_value ?? ""}
                       onChange={(value) => console.log(value)}
                     />
                   )}
@@ -148,11 +160,11 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
 
                 <fieldset className="flex flex-col col-span-3">
                   <FieldLabel label="SUMMARY" />
-                  {profile.summary.is_changed ? (
+                  {profile.summary?.is_changed ? (
                     <DiffField field={profile.summary} />
                   ) : (
                     <PrimitiveField
-                      value={profile.summary.new_value ?? ""}
+                      value={profile.summary?.new_value ?? ""}
                       onChange={(value) => console.log(value)}
                     />
                   )}
@@ -169,11 +181,15 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="Education"
                 sectionIcon="ri:graduation-cap-line"
               />
-              {education.map((edu: EducationEntryChange) => (
+              {education.map((edu: EducationEntryChange, edIndex: number) => (
                 <div
                   key={edu.entry_id}
                   className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
                 >
+                  <div className="flex items-center col-span-3 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
+                    #{edIndex + 1}
+                    <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+                  </div>
                   <fieldset className="flex flex-col">
                     <FieldLabel label="INSTITUTION" />
                     <PrimitiveField
@@ -256,13 +272,17 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
             >
               <SectionHeading
                 sectionLabel="Experience"
-                sectionIcon="ri:briefcase-4-line"
+                sectionIcon="famicons:briefcase-outline"
               />
-              {experience.map((exp: ExperienceEntryChange) => (
+              {experience.map((exp: ExperienceEntryChange, exIndex: number) => (
                 <div
                   key={exp.entry_id}
                   className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
                 >
+                  <div className="flex items-center col-span-3 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
+                    #{exIndex + 1}
+                    <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+                  </div>
                   <fieldset className="flex flex-col">
                     <FieldLabel label="COMPANY" />
                     <PrimitiveField
@@ -321,10 +341,440 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 </div>
               ))}
             </section>
+
+            {/* Projects Section */}
+            <section
+              className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+              style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+            >
+              <SectionHeading
+                sectionLabel="Projects"
+                sectionIcon="famicons:cube-outline"
+              />
+              {projects.map((project: ProjectEntryChange, pjIndex: number) => (
+                <div
+                  key={project.entry_id}
+                  className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
+                >
+                  <div className="flex items-center col-span-3 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
+                    #{pjIndex + 1}
+                    <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+                  </div>
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="TITLE" />
+                    <PrimitiveField
+                      value={project.title ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="LINK" />
+                    <PrimitiveField
+                      value={project.link ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="START DATE" />
+                    <PrimitiveField
+                      value={project.start_date ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="END DATE" />
+                    <PrimitiveField
+                      value={project.end_date ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col col-span-3">
+                    <FieldLabel label="SUBTITLE" />
+                    {project.subtitle?.is_changed ? (
+                      <DiffField field={project.subtitle} />
+                    ) : (
+                      <PrimitiveField
+                        value={project.subtitle?.new_value ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    )}
+                  </fieldset>
+
+                  <fieldset className="flex flex-col col-span-3">
+                    <FieldLabel label="DESCRIPTION" />
+                    {project.description?.is_changed ? (
+                      <DiffField field={project.description} />
+                    ) : (
+                      <PrimitiveField
+                        value={project.description?.new_value ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    )}
+                  </fieldset>
+                </div>
+              ))}
+            </section>
+
+            {/* Skills Section */}
+            <section
+              className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+              style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+            >
+              <SectionHeading
+                sectionLabel="Skills"
+                sectionIcon="hugeicons:compass-01"
+              />
+              <div className="w-full grid grid-cols-2 gap-3 p-5">
+                {skills.map((skill: SkillEntryChange) => (
+                  <fieldset key={skill.entry_id} className="flex flex-col">
+                    <FieldLabel
+                      label={`SKILL ${skill.entry_id.replace("skill", "")}`}
+                    />
+                    {skill.name.is_changed ? (
+                      <DiffField field={skill.name} />
+                    ) : (
+                      <PrimitiveField
+                        value={skill.name.new_value ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    )}
+                  </fieldset>
+                ))}
+              </div>
+            </section>
+
+            {/* Certificates Section */}
+            <section
+              className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+              style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+            >
+              <SectionHeading
+                sectionLabel="Certificates"
+                sectionIcon="ri:certificate-line"
+              />
+              {certificates.map(
+                (cert: CertificateEntryChange, cfIndex: number) => (
+                  <div
+                    key={cert.entry_id}
+                    className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
+                  >
+                    <div className="flex items-center col-span-3 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
+                      #{cfIndex + 1}
+                      <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+                    </div>
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="ISSUER" />
+                      <PrimitiveField
+                        value={cert.issuer ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="ISSUE DATE" />
+                      <PrimitiveField
+                        value={cert.issue_date ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="EXPIRY DATE" />
+                      <PrimitiveField
+                        value={cert.expiry_date ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col col-span-3">
+                      <FieldLabel label="LINK" />
+                      <PrimitiveField
+                        value={cert.link ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col col-span-3">
+                      <FieldLabel label="NAME" />
+                      {cert.name?.is_changed ? (
+                        <DiffField field={cert.name} />
+                      ) : (
+                        <PrimitiveField
+                          value={cert.name?.new_value ?? ""}
+                          onChange={(value) => console.log(value)}
+                        />
+                      )}
+                    </fieldset>
+
+                    <fieldset className="flex flex-col col-span-3">
+                      <FieldLabel label="DESCRIPTION" />
+                      {cert.description?.is_changed ? (
+                        <DiffField field={cert.description} />
+                      ) : (
+                        <PrimitiveField
+                          value={cert.description?.new_value ?? ""}
+                          onChange={(value) => console.log(value)}
+                        />
+                      )}
+                    </fieldset>
+                  </div>
+                ),
+              )}
+            </section>
+
+            {/* Languages Section */}
+            <section
+              className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+              style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+            >
+              <SectionHeading
+                sectionLabel="Languages"
+                sectionIcon="heroicons:language-solid"
+              />
+              <div className="w-full grid grid-cols-2 gap-3 p-5">
+                {languages.map((lang: LanguageEntryChange) => (
+                  <div key={lang.entry_id} className="flex flex-col gap-2">
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="LANGUAGE" />
+                      <PrimitiveField
+                        value={lang.name ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="LEVEL" />
+                      <PrimitiveField
+                        value={lang.level ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Interests Section */}
+            <section
+              className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+              style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+            >
+              <SectionHeading
+                sectionLabel="Interests"
+                sectionIcon="solar:gamepad-linear"
+              />
+              <div className="w-full grid grid-cols-2 gap-3 p-5">
+                {interests.map((interest: InterestEntryChange) => (
+                  <fieldset key={interest.entry_id} className="flex flex-col">
+                    <FieldLabel label="INTEREST" />
+                    <PrimitiveField
+                      value={interest.name ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+                ))}
+              </div>
+            </section>
+
+            {/* Awards Section */}
+            <section
+              className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+              style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+            >
+              <SectionHeading
+                sectionLabel="Awards"
+                sectionIcon="ri:trophy-line"
+              />
+              {awards.map((award: AwardEntryChange, awIndex: number) => (
+                <div
+                  key={award.entry_id}
+                  className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
+                >
+                  <div className="flex items-center col-span-3 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
+                    #{awIndex + 1}
+                    <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+                  </div>
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="AWARDER" />
+                    <PrimitiveField
+                      value={award.awarder ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="DATE" />
+                    <PrimitiveField
+                      value={award.date ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col col-span-3">
+                    <FieldLabel label="TITLE" />
+                    {award.title?.is_changed ? (
+                      <DiffField field={award.title} />
+                    ) : (
+                      <PrimitiveField
+                        value={award.title?.new_value ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    )}
+                  </fieldset>
+
+                  <fieldset className="flex flex-col col-span-3">
+                    <FieldLabel label="DESCRIPTION" />
+                    {award.description?.is_changed ? (
+                      <DiffField field={award.description} />
+                    ) : (
+                      <PrimitiveField
+                        value={award.description?.new_value ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    )}
+                  </fieldset>
+                </div>
+              ))}
+            </section>
+
+            {/* Publications Section */}
+            <section
+              className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+              style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+            >
+              <SectionHeading
+                sectionLabel="Publications"
+                sectionIcon="ri:article-line"
+              />
+              {publications.map(
+                (pub: PublicationEntryChange, pdIndex: number) => (
+                  <div
+                    key={pub.entry_id}
+                    className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5"
+                  >
+                    <div className="flex items-center col-span-3 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
+                      #{pdIndex + 1}
+                      <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+                    </div>
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="PUBLISHER" />
+                      <PrimitiveField
+                        value={pub.publisher ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col">
+                      <FieldLabel label="DATE" />
+                      <PrimitiveField
+                        value={pub.date ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col col-span-3">
+                      <FieldLabel label="LINK" />
+                      <PrimitiveField
+                        value={pub.link ?? ""}
+                        onChange={(value) => console.log(value)}
+                      />
+                    </fieldset>
+
+                    <fieldset className="flex flex-col col-span-3">
+                      <FieldLabel label="TITLE" />
+                      {pub.title?.is_changed ? (
+                        <DiffField field={pub.title} />
+                      ) : (
+                        <PrimitiveField
+                          value={pub.title?.new_value ?? ""}
+                          onChange={(value) => console.log(value)}
+                        />
+                      )}
+                    </fieldset>
+
+                    <fieldset className="flex flex-col col-span-3">
+                      <FieldLabel label="DESCRIPTION" />
+                      {pub.description?.is_changed ? (
+                        <DiffField field={pub.description} />
+                      ) : (
+                        <PrimitiveField
+                          value={pub.description?.new_value ?? ""}
+                          onChange={(value) => console.log(value)}
+                        />
+                      )}
+                    </fieldset>
+                  </div>
+                ),
+              )}
+            </section>
+
+            {/* References Section */}
+            <section
+              className="w-full flex-col border border-black/10 bg-white rounded-3xl overflow-clip pb-4"
+              style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
+            >
+              <SectionHeading
+                sectionLabel="References"
+                sectionIcon="ri:user-star-line"
+              />
+              {references.map((ref: ReferenceEntryChange, rfIndex: number) => (
+                <div
+                  key={ref.entry_id}
+                  className="w-full grid grid-cols-2 gap-3 mb-4 last:mb-0 p-5"
+                >
+                  <div className="flex items-center col-span-2 gap-x-3 px-1 text-xxs font-medium text-text-secondary">
+                    #{rfIndex + 1}
+                    <span className="flex-1 h-[0.025rem] bg-black/15"></span>
+                  </div>
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="NAME" />
+                    <PrimitiveField
+                      value={ref.name ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="POSITION" />
+                    <PrimitiveField
+                      value={ref.position ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="ORGANIZATION" />
+                    <PrimitiveField
+                      value={ref.organization ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="EMAIL" />
+                    <PrimitiveField
+                      value={ref.email ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+
+                  <fieldset className="flex flex-col">
+                    <FieldLabel label="PHONE" />
+                    <PrimitiveField
+                      value={ref.phone ?? ""}
+                      onChange={(value) => console.log(value)}
+                    />
+                  </fieldset>
+                </div>
+              ))}
+            </section>
           </div>
         </div>
       </main>
-      <ScorePanel />
+      <ScorePanel analysis={tailorSession.analysis} />
     </div>
   );
 };

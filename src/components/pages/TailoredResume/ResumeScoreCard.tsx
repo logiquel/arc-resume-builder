@@ -1,24 +1,64 @@
+import { Icon } from "@iconify/react";
+import { useEffect, useState } from "react";
+
 interface ResumeScoreCard {
   score: number;
+  baseScore: number;
 }
-const ResumeScoreCard: React.FC<ResumeScoreCard> = ({ score }) => {
-  const clampedScore = Math.max(0, Math.min(100, score));
+
+const ResumeScoreCard: React.FC<ResumeScoreCard> = ({ score, baseScore }) => {
+  const [currentScore, setCurrentScore] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const clampedTargetScore = Math.max(0, Math.min(100, score));
+
+  useEffect(() => {
+    // Delay animation by 500ms after component mounts
+    const delayTimeout = setTimeout(() => {
+      setHasAnimated(true);
+
+      const duration = 3000; // 3 seconds animation
+      const startTime = performance.now();
+      const startScore = 0;
+      const endScore = clampedTargetScore;
+
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(1, elapsed / duration);
+
+        // Easing function for smooth animation
+        const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+        const newScore = Math.floor(
+          startScore + (endScore - startScore) * easeOutCubic,
+        );
+
+        setCurrentScore(newScore);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }, 1000); // 1000ms delay before animation starts
+
+    return () => clearTimeout(delayTimeout);
+  }, [clampedTargetScore]);
 
   let statusText = "Needs Improvement";
   let statusColor = "text-red-500";
   let statusPillClass = "bg-red-50 text-red-600 border-red-200";
 
-  if (clampedScore > 25) {
+  if (currentScore > 25) {
     statusText = "Fair";
     statusColor = "text-amber-500";
     statusPillClass = "bg-amber-50 text-amber-600 border-amber-200";
   }
-  if (clampedScore > 50) {
+  if (currentScore > 50) {
     statusText = "Average";
     statusColor = "text-orange-400";
     statusPillClass = "bg-orange-50 text-orange-600 border-orange-200";
   }
-  if (clampedScore > 75) {
+  if (currentScore > 75) {
     statusText = "Good";
     statusColor = "text-emerald-500";
     statusPillClass = "bg-emerald-50 text-emerald-600 border-emerald-200";
@@ -45,12 +85,12 @@ const ResumeScoreCard: React.FC<ResumeScoreCard> = ({ score }) => {
   const innerR = 28;
   const innerArcPath = `M ${cx - innerR} ${cy} A ${innerR} ${innerR} 0 0 1 ${cx + innerR} ${cy}`;
 
-  const angle = Math.PI - (clampedScore / 100) * Math.PI;
+  const angle = Math.PI - (currentScore / 100) * Math.PI;
   const needleX = cx + innerR * Math.cos(angle);
   const needleY = cy - innerR * Math.sin(angle);
+
   return (
     <div className="relative z-10 w-full flex flex-col items-center justify-center">
-      {/* <h2 className="text-tiny font-medium text-brand">RESUME SCORE</h2> */}
       <svg viewBox="0 0 100 54" className="w-[60%] overflow-visible">
         {segments.map((seg, i) => (
           <path
@@ -101,17 +141,34 @@ const ResumeScoreCard: React.FC<ResumeScoreCard> = ({ score }) => {
       </svg>
       <div className="w-full mt-3 flex flex-col items-center justify-center text-center">
         <div className="text-lg font-mono tracking-tight text-text-primary leading-none">
-          {clampedScore}
+          {currentScore}
           <span className="ml-0.5 text-base font-sans font-medium text-slate-400">
             %
           </span>
         </div>
-        <p className="text-xxs text-text-secondary">
+
+        <p className="text-xxs text-text-secondary mt-1">
           Your resume score is{" "}
-          <span className={`ml-0.5 font-medium ${statusColor}`}>
+          <span className={`ml-0.5 font-semibold ${statusColor}`}>
             {statusText}
           </span>
         </p>
+
+        <div className="mt-1 flex items-center gap-x-1.5 text-xxs">
+          <div className="gap-x-1 text-text-secondary">
+            <span>Up from Base score</span>
+          </div>
+          <span className="font-semibold text-text-secondary">
+            {baseScore}%
+          </span>
+          <div className="flex items-center gap-x-0.5">
+            <span className="text-emerald-600 text-tiny">+</span>
+            <span className="font-medium text-emerald-600">
+              {currentScore - baseScore}
+            </span>
+            <Icon icon="ph:trend-up" className="text-emerald-500" />
+          </div>
+        </div>
       </div>
     </div>
   );
