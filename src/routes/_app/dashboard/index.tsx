@@ -1,10 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import resumeMock1 from "/sample_resume_image_1.jpg";
-import resumeMock2 from "/sample_resume_image_2.jpg";
-import resumeMock3 from "/sample_resume_image_3.jpg";
-import resumeMock4 from "/sample_resume_image_4.jpg";
-import resumeMock5 from "/sample_resume_image_5.jpg";
-import resumeMock6 from "/sample_resume_image_6.jpg";
 import { Icon } from "@iconify/react";
 import { format, parseISO } from "date-fns";
 import React, { useRef, useState, useEffect } from "react";

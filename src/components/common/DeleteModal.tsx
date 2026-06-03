@@ -20,7 +20,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center">
-      <div className="relative w-90 max-w-[90vw] rounded-4xl bg-white border border-black/10 shadow-2xl p-5 overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-24 before:bg-gradient-to-b before:from-red-500/10 before:to-transparent before:pointer-events-none">
+      <div className="relative w-90 max-w-[90vw] rounded-4xl bg-white border border-black/10 shadow-2xl p-5 overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-24 before:bg-linear-to-b before:from-red-500/10 before:to-transparent before:pointer-events-none">
         <div className="relative flex flex-col gap-2">
           <Icon
             icon="duo-icons:alert-octagon"

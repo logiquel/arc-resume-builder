@@ -168,7 +168,7 @@ const TailoringLoadingScreen = ({
                         isCompleted
                           ? "text-text-muted"
                           : isActive
-                            ? "animate-shine bg-[linear-gradient(120deg,#293056_25%,#3B82F6_50%,#34B6B3_75%)] bg-[length:200%_100%] bg-clip-text text-transparent"
+                            ? "animate-shine bg-[linear-gradient(120deg,#293056_25%,#3B82F6_50%,#34B6B3_75%)] bg-size-[200%_100%] bg-clip-text text-transparent"
                             : "text-text-muted/45"
                       }`}
                     >
