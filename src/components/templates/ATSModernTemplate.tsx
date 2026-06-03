@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface ATSTemplateProps {
+interface ATSModernTemplateProps {
   data: ResumeData;
 }
 
@@ -284,7 +284,7 @@ const renderDescription = (description?: string | string[] | null) => {
   );
 };
 
-export const ATSAesthetic: React.FC<ATSTemplateProps> = ({ data }) => {
+const ATSModernTemplate: React.FC<ATSModernTemplateProps> = ({ data }) => {
   const {
     profile,
     education,
@@ -596,3 +596,5 @@ export const ATSAesthetic: React.FC<ATSTemplateProps> = ({ data }) => {
     </Document>
   );
 };
+
+export default ATSModernTemplate;

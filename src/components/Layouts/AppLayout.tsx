@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import { Icon } from "@iconify/react";
 import AppBreadcrumb from "./AppBreadcrumb";
 import LogiquelWordMark from "../common/LogiquelWordMark";
-import { getActiveRoute } from "@/config/routeConfig";
+import { getActiveRoute } from "#/config/route.config";
 import { useLogoutMutation } from "#/api/auth/auth.mutations";
 
 const AppLayout = () => {

@@ -9,7 +9,7 @@ import {
   Font,
 } from "@react-pdf/renderer";
 
-interface TwoColumnTemplateProps {
+interface DualityTemplateProps {
   data: ResumeData;
 }
 
@@ -196,7 +196,7 @@ const renderDescription = (
   return <Text style={styles.description}>{description}</Text>;
 };
 
-const TwoColumnTemplate: React.FC<TwoColumnTemplateProps> = ({ data }) => {
+const DualityTemplate: React.FC<DualityTemplateProps> = ({ data }) => {
   const {
     profile,
     education,
@@ -442,4 +442,4 @@ const TwoColumnTemplate: React.FC<TwoColumnTemplateProps> = ({ data }) => {
   );
 };
 
-export default TwoColumnTemplate;
+export default DualityTemplate;

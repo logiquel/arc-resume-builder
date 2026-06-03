@@ -1,32 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import type { ResumeData } from "#/types/resume/resume.types";
-
-import { ATSTemplate } from "#/components/templates/ATSTemplate";
-import { ModernTemplate } from "#/components/templates/ModernTemplate";
-import { ClassicTemplate } from "#/components/templates/ClassicTemplate";
+import { getTemplateById, TemplateId } from "#/config/templates.config";
 
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { Icon } from "@iconify/react";
-import TwoColumnTemplate from "#/components/templates/TwoColumnTemplate";
-import { ATSAesthetic } from "#/components/templates/ATSAestheticTemplate";
 
 type ReactPdfModule = typeof import("react-pdf");
 
-const TEMPLATE_MAP = {
-  ats: ATSTemplate,
-  atsAesthetic: ATSAesthetic,
-  modern: ModernTemplate,
-  classic: ClassicTemplate, //OG
-  twoColumn: TwoColumnTemplate,
-} as const;
-
-export type ResumePreviewTemplateKey = keyof typeof TEMPLATE_MAP;
-
 interface ResumePreviewClientProps {
   data: ResumeData;
-  selectedTemplate: ResumePreviewTemplateKey;
+  selectedTemplate: TemplateId;
   sessionId: string;
 }
 
@@ -37,7 +22,6 @@ export default function ResumePreviewClient({
 }: ResumePreviewClientProps) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [numPages, setNumPages] = useState(0);
-  // const [zoom, setZoom] = useState(0.6);
   const [zoom, setZoom] = useState(0.8);
   const [reactPdf, setReactPdf] = useState<ReactPdfModule | null>(null);
   const [isGenerating, setIsGenerating] = useState(true);
@@ -50,6 +34,10 @@ export default function ResumePreviewClient({
   const CANVAS_PADDING_Y = 32 * 2;
   const PAGE_GAP = 32;
   const TOOLBAR_HEIGHT = 0;
+
+  // Get the template component from config
+  const selectedTemplateConfig = getTemplateById(selectedTemplate);
+  const SelectedTemplateComponent = selectedTemplateConfig?.component;
 
   useEffect(() => {
     let mounted = true;
@@ -72,8 +60,15 @@ export default function ResumePreviewClient({
       try {
         setIsGenerating(true);
 
-        const SelectedTemplate = TEMPLATE_MAP[selectedTemplate];
-        const blob = await pdf(<SelectedTemplate data={data} />).toBlob();
+        if (!SelectedTemplateComponent) {
+          throw new Error(`Template "${selectedTemplate}" not found`);
+        }
+
+        // Fixed: Added sessionId prop
+        const blob = await pdf(
+          <SelectedTemplateComponent data={data} sessionId={sessionId} />,
+        ).toBlob();
+
         objectUrl = URL.createObjectURL(blob);
 
         if (!active) {
@@ -100,8 +95,9 @@ export default function ResumePreviewClient({
       active = false;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [data, selectedTemplate]);
+  }, [data, selectedTemplate, sessionId, SelectedTemplateComponent]);
 
+  // Rest of your component remains the same...
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -192,7 +188,7 @@ export default function ResumePreviewClient({
 
   return (
     <div className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">
-      <header className="relative w-full shrink-0 py-1 flex items-center justify-center ">
+      <header className="relative w-full shrink-0 py-1 flex items-center justify-center">
         <div className="h-auto flex items-center">
           <div className="h-full flex items-center gap-2 px-3">
             <button
@@ -206,7 +202,7 @@ export default function ResumePreviewClient({
               />
             </button>
 
-            <span className="w-12 text-center text-xxs text-brand font-medium  py-1 rounded-sm border border-black/5 bg-white">
+            <span className="w-12 text-center text-xxs text-brand font-medium py-1 rounded-sm border border-black/5 bg-white">
               {Math.round(zoom * 100)}%
             </span>
 
@@ -294,4 +290,3 @@ export default function ResumePreviewClient({
     </div>
   );
 }
-//OG

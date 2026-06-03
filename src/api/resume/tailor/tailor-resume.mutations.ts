@@ -2,7 +2,10 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toastManager } from "#/components/addons/toast";
 import { tailoredResumeService } from "./tailor-resume.services";
-import type { CreateTailoredResumePayload, UpdateTailoredResumePayload } from "./tailor-resume.types";
+import type {
+  CreateTailoredResumePayload,
+  UpdateTailoredResumePayload,
+} from "./tailor-resume.types";
 
 export function useCreateTailoredResumeMutation() {
   const queryClient = useQueryClient();
@@ -47,7 +50,7 @@ export function useCreateTailoredResumeMutation() {
   });
 }
 
-// Auto-save mutation 
+// Auto-save mutation
 export function useAutoSaveTailoredResumeMutation(sessionId: string) {
   const queryClient = useQueryClient();
   const mutationQueue = React.useRef<Promise<void>>(Promise.resolve());
@@ -91,3 +94,28 @@ export function useAutoSaveTailoredResumeMutation(sessionId: string) {
   });
 }
 
+export function useUpdateTailoredResumeTemplateMutation(sessionId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (templateId: string) =>
+      tailoredResumeService.update(sessionId, { template_id: templateId }),
+
+    onSuccess: () => {
+      // Invalidate the session query to refetch updated data
+      queryClient.invalidateQueries({
+        queryKey: ["tailored-resume", "detail", sessionId],
+      });
+
+      // Invalidate the list query to refetch all tailored resumes
+      // This ensures the thumbnail and template name update in the dashboard
+      queryClient.invalidateQueries({
+        queryKey: ["tailored-resume", "list"],
+      });
+    },
+
+    onError: (error: Error) => {
+      console.error("[TEMPLATE_UPDATE_ERROR]:", error.message);
+    },
+  });
+}

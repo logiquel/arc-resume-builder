@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { routesConfig } from "@/config/routeConfig";
+import { routesConfig } from "#/config/route.config";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../addons/tooltip";
 import AppLogo from "./AppLogo";
 

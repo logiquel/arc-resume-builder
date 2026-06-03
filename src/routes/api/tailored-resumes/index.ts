@@ -19,7 +19,7 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
             const { data, error } = await supabase
               .from("tailoring_sessions")
               .select(
-                "id, name, base_resume_id, analysis, created_at, updated_at",
+                "id, name, base_resume_id, analysis, template_id, created_at, updated_at",
               )
               .eq("user_id", user.id)
               .order("updated_at", { ascending: false });
@@ -33,20 +33,10 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
               );
             }
 
-            const mappedData =
-              data?.map((item) => ({
-                id: item.id,
-                name: item.name,
-                baseResumeId: item.base_resume_id,
-                analysis: item.analysis,
-                createdAt: item.created_at,
-                updatedAt: item.updated_at,
-              })) ?? [];
-
             return successResponse(
               200,
               "Tailored resumes fetched successfully.",
-              mappedData,
+              data,
             );
           } catch (error) {
             console.error("[TAILORED_RESUME_LIST_GET_ERROR]:", error);

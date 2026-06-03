@@ -10,6 +10,7 @@ export type TailoredResume = {
   user_id: string;
   base_resume_id: string;
   name: string;
+  template_id?: string;
   generation_step: TailoringSession["generation_step"];
   analysis: TailoringSession["analysis"];
   changes: TailoringSession["changes"];
@@ -21,6 +22,7 @@ export type TailoredResumeListItem = {
   id: string;
   name: string;
   base_resume_id: string;
+  template_id?: string;
   analysis: TailoringSession["analysis"];
   created_at: string;
   updated_at: string;
@@ -32,4 +34,5 @@ export interface UpdateTailoredResumePayload {
   name?: string;
   generation_step?: string;
   showToast?: boolean; // Optional: whether to show success/error toasts
+  template_id?: string;
 }

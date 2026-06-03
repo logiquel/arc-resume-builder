@@ -21,7 +21,7 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
           const { data, error } = await supabase
             .from("tailoring_sessions")
             .select(
-              "id, user_id, base_resume_id, name, generation_step, analysis, changes, created_at, updated_at",
+              "id, user_id, base_resume_id, name, generation_step, analysis, changes, template_id, created_at, updated_at",
             )
             .eq("id", sessionId)
             .eq("user_id", user.id)
@@ -70,7 +70,8 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
 
           // Parse request body
           const body = await request.json();
-          const { changes, analysis, name, generation_step } = body;
+          const { changes, analysis, name, generation_step, template_id } =
+            body;
 
           // Build update object with only provided fields
           const updateData: Record<string, unknown> = {};
@@ -86,6 +87,9 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
           }
           if (generation_step !== undefined) {
             updateData.generation_step = generation_step;
+          }
+          if (template_id !== undefined) {
+            updateData.template_id = template_id;
           }
 
           // Check if there's anything to update
@@ -124,7 +128,7 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
             .eq("id", sessionId)
             .eq("user_id", user.id)
             .select(
-              "id, user_id, base_resume_id, name, generation_step, analysis, changes, created_at, updated_at",
+              "id, user_id, base_resume_id, name, generation_step, analysis, changes, template_id, created_at, updated_at",
             )
             .single();
 

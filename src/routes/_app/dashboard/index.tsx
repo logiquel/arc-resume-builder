@@ -27,6 +27,11 @@ import PaperIcon from "#/components/common/PaperIcon";
 import FormIcon from "#/components/common/FormIcon";
 import DeleteModal from "#/components/common/DeleteModal";
 import { useFetchTailoredResumeList } from "#/api/resume/tailor/tailor-resume.queries";
+import {
+  TEMPLATES,
+  TEMPLATES_LIST,
+  type TemplateId,
+} from "#/config/templates.config";
 
 export const Route = createFileRoute("/_app/dashboard/")({
   pendingComponent: () => <div>Loading...</div>,
@@ -257,7 +262,7 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
           )}
         </div>
 
-        <footer className="w-full flex items-center p-2 flex-shrink-0">
+        <footer className="w-full flex items-center p-2 shrink-0">
           <div className="flex items-center gap-1 p-2">
             <div
               className={`h-[0.35rem] rounded-full transition-all duration-200 ${
@@ -302,56 +307,6 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
 };
 // ── Route ────────────────────────────────────────────────────────────────────
 
-const sampleTailoredResumes = [
-  {
-    id: 1,
-    name: "Roman's_SDE_Core.pdf",
-    size: "126.17 KB",
-    image: resumeMock1,
-  },
-  {
-    id: 2,
-    name: "Roman's_FullStack_v2.pdf",
-    size: "142.30 KB",
-    image: resumeMock2,
-  },
-  {
-    id: 3,
-    name: "Roman's_Frontend_React.pdf",
-    size: "118.45 KB",
-    image: resumeMock3,
-  },
-  {
-    id: 4,
-    name: "Roman's_Mobile_KMP.pdf",
-    size: "126.12 KB",
-    image: resumeMock4,
-  },
-  {
-    id: 5,
-    name: "Roman's_Backend_Node.pdf",
-    size: "131.40 KB",
-    image: resumeMock5,
-  },
-  {
-    id: 6,
-    name: "Roman's_DevOps_AWS.pdf",
-    size: "124.85 KB",
-    image: resumeMock6,
-  },
-  {
-    id: 7,
-    name: "Roman's_Systems_Engineer.pdf",
-    size: "129.10 KB",
-    image: resumeMock5,
-  },
-  {
-    id: 8,
-    name: "Roman's_AI_Engineer_v1.pdf",
-    size: "135.22 KB",
-    image: resumeMock6,
-  },
-];
 function RouteComponent() {
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -538,6 +493,24 @@ function RouteComponent() {
     };
   }, [baseResumes.length]);
 
+  // Helper function to get template thumbnail by template_id with fallback
+  const getTemplateThumbnail = (templateId?: string): string => {
+    if (templateId && TEMPLATES[templateId as TemplateId]) {
+      return TEMPLATES[templateId as TemplateId].thumbnail;
+    }
+    // Fallback to first template's thumbnail
+    return TEMPLATES_LIST[0]?.thumbnail || "/default-resume-thumbnail.png";
+  };
+
+  // Helper function to get template name by template_id with fallback
+  const getTemplateName = (templateId?: string): string => {
+    if (templateId && TEMPLATES[templateId as TemplateId]) {
+      return TEMPLATES[templateId as TemplateId].name;
+    }
+    // Fallback to first template's name
+    return TEMPLATES_LIST[0]?.name || "Resume";
+  };
+
   return (
     <>
       <div className="w-full h-full flex flex-col">
@@ -654,7 +627,13 @@ function RouteComponent() {
                             "0 15px 30px -5px rgba(14, 165, 233, 0.5), 0 10px 15px -6px rgba(14, 165, 233, 0.4)",
                         }}
                       >
-                        <div className="bg-white h-full min-w-0 flex-1 rounded-[inherit] border-black/20 overflow-clip"></div>
+                        <div className="h-full min-w-0 flex-1 rounded-[inherit] border-black/20 overflow-clip">
+                          <img
+                            src={getTemplateThumbnail(resume.template_id || "")}
+                            alt={getTemplateName(resume.template_id || "")}
+                            className="h-full w-full object-cover object-top"
+                          />
+                        </div>
                       </div>
                       <div
                         className="absolute bottom-0 w-full flex flex-col bg-[#F9FBFC]/70 backdrop-blur-md px-3 py-2 pt-6 rounded-b-[inherit]"

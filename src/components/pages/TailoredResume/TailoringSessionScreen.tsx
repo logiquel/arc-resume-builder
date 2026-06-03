@@ -1,7 +1,5 @@
 import type { TailoredResume } from "#/api/resume/tailor/tailor-resume.types";
 import { Icon } from "@iconify/react";
-import ScorePanel from "./ScorePanel";
-import DiffField from "./DiffField";
 import type {
   AwardEntryChange,
   CertificateEntryChange,
@@ -14,10 +12,17 @@ import type {
   ReferenceEntryChange,
   SkillEntryChange,
 } from "#/types/resume/tailorSession.types";
-import PrimitiveField from "./PrimitiveField";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { produce } from "immer";
 import { useAutoSaveTailoredResumeMutation } from "#/api/resume/tailor/tailor-resume.mutations";
+import PrimitiveField from "./PrimitiveField";
+import DiffField from "./DiffField";
+import ScorePanel from "./ScorePanel";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "#/components/addons/tooltip";
 
 interface SectionHeadingProps {
   sectionLabel: string;
@@ -45,15 +50,48 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
   </div>
 );
 
+type DiffStatus = "pending" | "accepted" | "rejected";
+
+const FieldStatusBadge: React.FC<{ status?: DiffStatus }> = ({ status }) => {
+  if (!status || status === "pending") return null;
+
+  const isAccepted = status === "accepted";
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          className={`flex items-center text-tiny font-medium uppercase before:content-[''] before:block before:w-[0.035rem] before:h-2 before:bg-current before:mr-2 cursor-pointer ${isAccepted ? "text-emerald-700" : "text-red-600"}`}
+        >
+          <Icon
+            icon="akar-icons:info"
+            className="text-text-muted text-tiny mr-1"
+          />{" "}
+          {status}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="right" className="text-tiny!">
+        {isAccepted ? "Accepted" : "Rejected"} - This change has been{" "}
+        {isAccepted ? "accepted" : "rejected"} based on the AI suggestion and
+        your edits.
+      </TooltipContent>
+    </Tooltip>
+  );
+};
+
 interface FieldLabelProps {
   label: string;
+  status?: DiffStatus;
 }
 
-const FieldLabel: React.FC<FieldLabelProps> = ({ label }) => {
+const FieldLabel: React.FC<FieldLabelProps> = ({ label, status }) => {
   return (
-    <label className="text-tiny text-text-muted font-medium px-2">
-      {label}
-    </label>
+    <div className="flex items-center">
+      <label className="text-tiny text-text-muted font-medium px-2">
+        {label}
+      </label>
+      <FieldStatusBadge status={status} />
+    </div>
   );
 };
 
@@ -343,7 +381,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 </fieldset>
 
                 <fieldset className="flex flex-col col-span-3">
-                  <FieldLabel label="PROFESSIONAL TITLE" />
+                  <FieldLabel
+                    label="PROFESSIONAL TITLE"
+                    status={profile?.professional_title?.status}
+                  />
                   {profile?.professional_title?.is_changed &&
                   !isFieldResolved(profile.professional_title) ? (
                     <DiffField
@@ -376,7 +417,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 </fieldset>
 
                 <fieldset className="flex flex-col col-span-3">
-                  <FieldLabel label="SUMMARY" />
+                  <FieldLabel
+                    label="SUMMARY"
+                    status={profile?.summary?.status}
+                  />
                   {profile?.summary?.is_changed &&
                   !isFieldResolved(profile.summary) ? (
                     <DiffField
@@ -482,7 +526,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
-                    <FieldLabel label="DEGREE" />
+                    <FieldLabel label="DEGREE" status={edu.degree?.status} />
                     {edu.degree?.is_changed && !isFieldResolved(edu.degree) ? (
                       <DiffField
                         field={edu.degree}
@@ -510,7 +554,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
-                    <FieldLabel label="DESCRIPTION" />
+                    <FieldLabel
+                      label="DESCRIPTION"
+                      status={edu.description?.status}
+                    />
                     {edu.description?.is_changed &&
                     !isFieldResolved(edu.description) ? (
                       <DiffField
@@ -617,7 +664,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
-                      <FieldLabel label="POSITION" />
+                      <FieldLabel
+                        label="POSITION"
+                        status={exp.position?.status}
+                      />
                       {exp.position?.is_changed &&
                       !isFieldResolved(exp.position) ? (
                         <DiffField
@@ -649,7 +699,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
-                      <FieldLabel label="DESCRIPTION" />
+                      <FieldLabel
+                        label="DESCRIPTION"
+                        status={exp.description?.status}
+                      />
                       {exp.description?.is_changed &&
                       !isFieldResolved(exp.description) ? (
                         <DiffField
@@ -747,7 +800,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
-                    <FieldLabel label="SUBTITLE" />
+                    <FieldLabel
+                      label="SUBTITLE"
+                      status={project.subtitle?.status}
+                    />
                     {project.subtitle?.is_changed &&
                     !isFieldResolved(project.subtitle) ? (
                       <DiffField
@@ -776,7 +832,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
-                    <FieldLabel label="DESCRIPTION" />
+                    <FieldLabel
+                      label="DESCRIPTION"
+                      status={project.description?.status}
+                    />
                     {project.description?.is_changed &&
                     !isFieldResolved(project.description) ? (
                       <DiffField
@@ -823,10 +882,13 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 sectionLabel="Skills"
                 sectionIcon="hugeicons:compass-01"
               />
-              <div className="w-full grid grid-cols-2 gap-3 p-5">
+              <div className="w-full grid grid-cols-3 gap-3 p-5">
                 {skills?.map((skill: SkillEntryChange, skIndex: number) => (
                   <fieldset key={skill.entry_id} className="flex flex-col">
-                    <FieldLabel label={`SKILL ${skIndex + 1}`} />
+                    <FieldLabel
+                      label={`SKILL ${skIndex + 1}`}
+                      status={skill.name?.status}
+                    />
                     {skill.name.is_changed && !isFieldResolved(skill.name) ? (
                       <DiffField
                         field={skill.name}
@@ -919,7 +981,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
-                      <FieldLabel label="NAME" />
+                      <FieldLabel label="NAME" status={cert.name?.status} />
                       {cert.name?.is_changed && !isFieldResolved(cert.name) ? (
                         <DiffField
                           field={cert.name}
@@ -950,7 +1012,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
-                      <FieldLabel label="DESCRIPTION" />
+                      <FieldLabel
+                        label="DESCRIPTION"
+                        status={cert.description?.status}
+                      />
                       {cert.description?.is_changed &&
                       !isFieldResolved(cert.description) ? (
                         <DiffField
@@ -1091,7 +1156,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
-                    <FieldLabel label="TITLE" />
+                    <FieldLabel label="TITLE" status={award.title?.status} />
                     {award.title?.is_changed &&
                     !isFieldResolved(award.title) ? (
                       <DiffField
@@ -1117,7 +1182,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </fieldset>
 
                   <fieldset className="flex flex-col col-span-3">
-                    <FieldLabel label="DESCRIPTION" />
+                    <FieldLabel
+                      label="DESCRIPTION"
+                      status={award.description?.status}
+                    />
                     {award.description?.is_changed &&
                     !isFieldResolved(award.description) ? (
                       <DiffField
@@ -1205,7 +1273,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
-                      <FieldLabel label="TITLE" />
+                      <FieldLabel label="TITLE" status={pub.title?.status} />
                       {pub.title?.is_changed && !isFieldResolved(pub.title) ? (
                         <DiffField
                           field={pub.title}
@@ -1236,7 +1304,10 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                     </fieldset>
 
                     <fieldset className="flex flex-col col-span-3">
-                      <FieldLabel label="DESCRIPTION" />
+                      <FieldLabel
+                        label="DESCRIPTION"
+                        status={pub.description?.status}
+                      />
                       {pub.description?.is_changed &&
                       !isFieldResolved(pub.description) ? (
                         <DiffField

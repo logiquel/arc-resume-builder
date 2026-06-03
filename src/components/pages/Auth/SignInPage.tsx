@@ -7,7 +7,7 @@ import {
   useSignInMutation,
   useVerifyOtpMutation,
 } from "#/api/auth/auth.mutations";
-import AppLogo from "#/components/Layouts/AppLogo";
+import AppLogo from "#/components/layouts/AppLogo";
 
 interface SignInFormData {
   email: string;

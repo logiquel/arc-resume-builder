@@ -1,4 +1,4 @@
-import AppLayout from "#/components/Layouts/AppLayout";
+import AppLayout from "#/components/layouts/AppLayout";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 // import "../../bones/registry";
 
