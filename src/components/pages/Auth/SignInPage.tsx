@@ -2,12 +2,12 @@ import { Icon } from "@iconify/react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
-import OtpForm from "./OtpForm";
 import {
   useSignInMutation,
   useVerifyOtpMutation,
 } from "#/api/auth/auth.mutations";
 import AppLogo from "#/components/layouts/AppLogo";
+import OtpForm from "./OtpForm";
 
 interface SignInFormData {
   email: string;

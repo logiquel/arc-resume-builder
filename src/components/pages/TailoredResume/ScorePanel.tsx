@@ -1,8 +1,8 @@
 import ResumeStackMock from "#/components/common/Icons/ResumeStackMock";
 import { Link, useParams } from "@tanstack/react-router";
-import ResumeScoreCard from "./ResumeScoreCard";
 import { Icon } from "@iconify/react";
 import type { TailoringSessionAnalysis } from "#/types/resume/tailorSession.types";
+import ResumeScoreCard from "./ResumeScoreCard";
 
 interface ScorePanelProps {
   analysis: TailoringSessionAnalysis;
