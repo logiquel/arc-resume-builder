@@ -21,3 +21,12 @@ export type BaseResumeListItem = {
   created_at: string;
   updated_at: string;
 };
+
+export interface DeleteBaseResumePayload {
+  resumeId: string;
+}
+
+export interface DeleteBaseResumeResponse {
+  id: string;
+  message: string;
+}

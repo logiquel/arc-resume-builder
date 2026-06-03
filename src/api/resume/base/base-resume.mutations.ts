@@ -2,7 +2,10 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toastManager } from "#/components/addons/toast";
 import { baseResumeService } from "./base-resume.services";
-import type { CreateBaseResumePayload } from "./base-resume.types";
+import type {
+  CreateBaseResumePayload,
+  DeleteBaseResumePayload,
+} from "./base-resume.types";
 
 export function useCreateBaseResumeMutation() {
   const queryClient = useQueryClient();
@@ -43,6 +46,27 @@ export function useCreateBaseResumeMutation() {
         timeout: 3000,
         data: { showClose: true },
       });
+    },
+  });
+}
+
+export function useDeleteBaseResumeMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: DeleteBaseResumePayload) =>
+      baseResumeService.delete(payload.resumeId),
+
+    onSuccess: async () => {
+      // Invalidate and refetch base resumes list
+      await queryClient.invalidateQueries({
+        queryKey: ["base-resumes"],
+      });
+    },
+
+    onError: (error: Error) => {
+      // Just log the error, UI will handle showing error state
+      console.error("[DELETE_BASE_RESUME_ERROR]:", error.message);
     },
   });
 }

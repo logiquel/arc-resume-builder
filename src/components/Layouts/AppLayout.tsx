@@ -38,7 +38,7 @@ const AppLayout = () => {
               <h2 className="text-base text-text-primary flex items-center font-medium">
                 {activeRouteLabel}
               </h2>
-              <p className="text-xs text-text-muted hidden">
+              <p className="text-xs text-text-muted">
                 {activeRoute?.description}
               </p>
               <AppBreadcrumb />

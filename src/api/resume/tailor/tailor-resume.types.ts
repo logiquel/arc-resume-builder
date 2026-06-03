@@ -20,10 +20,10 @@ export type TailoredResume = {
 export type TailoredResumeListItem = {
   id: string;
   name: string;
-  baseResumeId: string;
+  base_resume_id: string;
   analysis: TailoringSession["analysis"];
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export interface UpdateTailoredResumePayload {

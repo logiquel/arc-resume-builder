@@ -19,16 +19,16 @@ export const routesConfig: Route[] = [
     key: "dashboard",
     href: "/dashboard",
     label: "Dashboard",
-    description: "Overview of your resumes and activity",
+    description: "Create, edit, organize, and manage all your resumes from one place.",
     icon: "tabler:layout-dashboard",
   },
-  {
-    key: "tailored-resumes",
-    href: "/tailored-resumes", // Or your dynamic path like '/dashboard/analysis/report_id'
-    label: "Resume Analysis",
-    description: "Deep ATS scoring, visual teardowns, and optimization metrics",
-    icon: "icon-park-solid:analysis", // Alternatively: 'tabler:report-analytics' or 'tabler:gauge'
-  },
+  // {
+  //   key: "tailored-resumes",
+  //   href: "/tailored-resumes", // Or your dynamic path like '/dashboard/analysis/report_id'
+  //   label: "Resume Analysis",
+  //   description: "Deep ATS scoring, visual teardowns, and optimization metrics",
+  //   icon: "icon-park-solid:analysis", // Alternatively: 'tabler:report-analytics' or 'tabler:gauge'
+  // },
   // {
   //   key: "preview",
   //   href: "/preview",
@@ -37,35 +37,35 @@ export const routesConfig: Route[] = [
   //   icon: "mdi:paper",
   //   // Note: dynamic segment handled via `getActiveRoute` — /preview/:resume_id
   // },
-  {
-    key: "history",
-    href: "/history",
-    label: "History",
-    description: "View version history of your resume changes",
-    icon: "solar:history-linear",
-    subRoutes: [
-      { href: "/history/commits", label: "Commits" },
-      { href: "/history/compare", label: "Compare Versions" },
-    ],
-  },
-  {
-    key: "templates",
-    href: "/templates",
-    label: "Templates",
-    description: "Browse and apply ATS-friendly resume templates",
-    icon: "tabler:template",
-  },
-  {
-    key: "export",
-    href: "/export",
-    label: "Export",
-    description: "Download your resume as PDF or other formats",
-    icon: "tabler:file-export",
-    subRoutes: [
-      { href: "/export/pdf", label: "Export as PDF" },
-      { href: "/export/json", label: "Export as JSON" },
-    ],
-  },
+  // {
+  //   key: "history",
+  //   href: "/history",
+  //   label: "History",
+  //   description: "View version history of your resume changes",
+  //   icon: "solar:history-linear",
+  //   subRoutes: [
+  //     { href: "/history/commits", label: "Commits" },
+  //     { href: "/history/compare", label: "Compare Versions" },
+  //   ],
+  // },
+  // {
+  //   key: "templates",
+  //   href: "/templates",
+  //   label: "Templates",
+  //   description: "Browse and apply ATS-friendly resume templates",
+  //   icon: "tabler:template",
+  // },
+  // {
+  //   key: "export",
+  //   href: "/export",
+  //   label: "Export",
+  //   description: "Download your resume as PDF or other formats",
+  //   icon: "tabler:file-export",
+  //   subRoutes: [
+  //     { href: "/export/pdf", label: "Export as PDF" },
+  //     { href: "/export/json", label: "Export as JSON" },
+  //   ],
+  // },
   {
     key: "settings",
     href: "/settings",

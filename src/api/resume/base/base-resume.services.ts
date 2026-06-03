@@ -5,6 +5,7 @@ import type {
   BaseResume,
   BaseResumeListItem,
   CreateBaseResumePayload,
+  DeleteBaseResumeResponse,
 } from "./base-resume.types";
 
 export const baseResumeService = {
@@ -112,6 +113,37 @@ export const baseResumeService = {
       }
 
       throw new Error("Failed to fetch base resume");
+    }
+  },
+  delete: async (
+    resumeId: string,
+  ): Promise<ApiSuccessResponse<DeleteBaseResumeResponse>> => {
+    try {
+      const { data: result } = await apiClient.delete<
+        ApiResponse<DeleteBaseResumeResponse>
+      >(`/api/base-resume/${resumeId}`);
+
+      if (!result.success) {
+        throw new Error(result.error.details[0] || result.message);
+      }
+
+      return result;
+    } catch (error: unknown) {
+      if (axios.isAxiosError<ApiResponse<DeleteBaseResumeResponse>>(error)) {
+        const result = error.response?.data;
+
+        if (result && !result.success) {
+          throw new Error(result.error.details[0] || result.message);
+        }
+
+        throw new Error(error.message || "Failed to delete base resume");
+      }
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      throw new Error("Failed to delete base resume");
     }
   },
 };

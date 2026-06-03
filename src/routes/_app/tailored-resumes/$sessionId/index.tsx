@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_app/tailored-resumes/$sessionId/")({
     return {
       breadcrumbs: [
         { label: "Dashboard", href: "/dashboard" },
-        { label: "Senior Full Stack Engineer - Stripe", href: undefined },
+        { label: "Tailor Resume", href: undefined },
       ],
     };
   },

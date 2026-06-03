@@ -14,6 +14,7 @@ import { Route as GatewayIndexRouteImport } from './routes/_gateway/index'
 import { Route as ApiTailoredResumesIndexRouteImport } from './routes/api/tailored-resumes/index'
 import { Route as ApiBaseResumeIndexRouteImport } from './routes/api/base-resume/index'
 import { Route as GatewaySignUpIndexRouteImport } from './routes/_gateway/sign-up/index'
+import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
 import { Route as AppDashboardIndexRouteImport } from './routes/_app/dashboard/index'
 import { Route as ApiTailoredResumesSessionIdRouteImport } from './routes/api/tailored-resumes/$sessionId'
 import { Route as ApiResumesReportIdRouteImport } from './routes/api/resumes/$reportId'
@@ -49,6 +50,11 @@ const GatewaySignUpIndexRoute = GatewaySignUpIndexRouteImport.update({
   id: '/_gateway/sign-up/',
   path: '/sign-up/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AppDashboardIndexRoute = AppDashboardIndexRouteImport.update({
   id: '/dashboard/',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/dashboard/': typeof AppDashboardIndexRoute
+  '/settings/': typeof AppSettingsIndexRoute
   '/sign-up/': typeof GatewaySignUpIndexRoute
   '/api/base-resume/': typeof ApiBaseResumeIndexRoute
   '/api/tailored-resumes/': typeof ApiTailoredResumesIndexRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/dashboard': typeof AppDashboardIndexRoute
+  '/settings': typeof AppSettingsIndexRoute
   '/sign-up': typeof GatewaySignUpIndexRoute
   '/api/base-resume': typeof ApiBaseResumeIndexRoute
   '/api/tailored-resumes': typeof ApiTailoredResumesIndexRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/api/resumes/$reportId': typeof ApiResumesReportIdRoute
   '/api/tailored-resumes/$sessionId': typeof ApiTailoredResumesSessionIdRoute
   '/_app/dashboard/': typeof AppDashboardIndexRoute
+  '/_app/settings/': typeof AppSettingsIndexRoute
   '/_gateway/sign-up/': typeof GatewaySignUpIndexRoute
   '/api/base-resume/': typeof ApiBaseResumeIndexRoute
   '/api/tailored-resumes/': typeof ApiTailoredResumesIndexRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/dashboard/'
+    | '/settings/'
     | '/sign-up/'
     | '/api/base-resume/'
     | '/api/tailored-resumes/'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/dashboard'
+    | '/settings'
     | '/sign-up'
     | '/api/base-resume'
     | '/api/tailored-resumes'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/api/resumes/$reportId'
     | '/api/tailored-resumes/$sessionId'
     | '/_app/dashboard/'
+    | '/_app/settings/'
     | '/_gateway/sign-up/'
     | '/api/base-resume/'
     | '/api/tailored-resumes/'
@@ -269,6 +281,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/sign-up/'
       preLoaderRoute: typeof GatewaySignUpIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/settings/': {
+      id: '/_app/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AppSettingsIndexRouteImport
+      parentRoute: typeof AppRouteRoute
     }
     '/_app/dashboard/': {
       id: '/_app/dashboard/'
@@ -352,12 +371,14 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteRouteChildren {
   AppDashboardIndexRoute: typeof AppDashboardIndexRoute
+  AppSettingsIndexRoute: typeof AppSettingsIndexRoute
   AppTailoredResumesSessionIdIndexRoute: typeof AppTailoredResumesSessionIdIndexRoute
   AppTailoredResumesSessionIdPreviewIndexRoute: typeof AppTailoredResumesSessionIdPreviewIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppDashboardIndexRoute: AppDashboardIndexRoute,
+  AppSettingsIndexRoute: AppSettingsIndexRoute,
   AppTailoredResumesSessionIdIndexRoute: AppTailoredResumesSessionIdIndexRoute,
   AppTailoredResumesSessionIdPreviewIndexRoute:
     AppTailoredResumesSessionIdPreviewIndexRoute,

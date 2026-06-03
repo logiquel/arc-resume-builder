@@ -15,11 +15,18 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "#/components/addons/tooltip";
-import { useCreateBaseResumeMutation } from "#/api/resume/base/base-resume.mutations";
+import {
+  useCreateBaseResumeMutation,
+  useDeleteBaseResumeMutation,
+} from "#/api/resume/base/base-resume.mutations";
 import { useFetchBaseResumeList } from "#/api/resume/base/base-resume.queries";
 import BaseResumeSkeleton from "#/components/common/Skeletons/BaseResumeSkeleton";
 import PlaceholderResume from "#/components/common/PlaceholderResume";
 import { useCreateTailoredResumeMutation } from "#/api/resume/tailor/tailor-resume.mutations";
+import PaperIcon from "#/components/common/PaperIcon";
+import FormIcon from "#/components/common/FormIcon";
+import DeleteModal from "#/components/common/DeleteModal";
+import { useFetchTailoredResumeList } from "#/api/resume/tailor/tailor-resume.queries";
 
 export const Route = createFileRoute("/_app/dashboard/")({
   pendingComponent: () => <div>Loading...</div>,
@@ -41,7 +48,6 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
     </div>
   );
 };
-
 interface AddBaseResumeModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -108,13 +114,32 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
     setResumeName("");
   };
 
+  const handleNext = () => {
+    if (selectedOption === "upload") {
+      handleUpload();
+    }
+  };
+
+  const isNextDisabled = () => {
+    if (selectedOption === "upload") {
+      return !uploadedFile || isPending;
+    }
+    return true; // Form option is disabled
+  };
+
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl w-120 max-w-[90vw] shadow-2xl">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-lg font-semibold text-text-primary">
-            Add New Base Resume
-          </h2>
+    <div className="absolute inset-0 z-50 flex justify-center">
+      <div className="w-100 h-fit mt-[10%] flex flex-col gap-1 p-1 bg-white shadow-2xl border border-black/10 rounded-4xl overflow-hidden transition-all duration-300">
+        <header className="w-full flex gap-2 p-3 justify-between shrink-0">
+          <div className="flex flex-col">
+            <h2 className="text-base">
+              Select how you want to add Base Resume
+            </h2>
+            <p className="text-text-muted text-xxs">
+              Choose a base resume to begin tailoring it for specific job
+              applications
+            </p>
+          </div>
           <button
             onClick={() => {
               onClose();
@@ -122,190 +147,159 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
               setUploadedFile(null);
               setResumeName("");
             }}
-            className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
+            className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow"
           >
-            <Icon icon="carbon:close" className="text-xl text-text-muted" />
+            <Icon icon="iconamoon:close" />
           </button>
-        </div>
+        </header>
 
-        <div className="p-6">
-          {selectedOption === null ? (
-            <div className="flex flex-col gap-4">
-              <button
-                onClick={() => handleOptionSelect("form")}
-                className="group p-6 border-2 border-gray-200 rounded-xl hover:border-brand/50 hover:bg-brand/5 transition-all duration-200 text-left"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-brand/10 rounded-xl group-hover:bg-brand/20 transition-colors">
-                    <Icon
-                      icon="carbon:document"
-                      className="text-2xl text-brand"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-text-primary mb-1">
-                      Fill Resume Form
-                    </h3>
-                    <p className="text-sm text-text-muted">
-                      Manually enter your resume information through our guided
-                      form
-                    </p>
-                    <span className="inline-block mt-2 text-xs text-brand/60 group-hover:text-brand transition-colors">
-                      Coming soon →
-                    </span>
-                  </div>
-                </div>
-              </button>
-
-              <button
-                onClick={() => handleOptionSelect("upload")}
-                className="group p-6 border-2 border-gray-200 rounded-xl hover:border-brand/50 hover:bg-brand/5 transition-all duration-200 text-left"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-brand/10 rounded-xl group-hover:bg-brand/20 transition-colors">
-                    <Icon
-                      icon="carbon:upload"
-                      className="text-2xl text-brand"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-text-primary mb-1">
-                      Upload Resume File
-                    </h3>
-                    <p className="text-sm text-text-muted">
-                      Upload an existing resume file (PDF, DOCX)
-                    </p>
-                  </div>
-                </div>
-              </button>
-            </div>
-          ) : selectedOption === "upload" ? (
-            <div className="flex flex-col gap-5">
-              {!uploadedFile ? (
+        <div className="transition-all duration-300 ease-in-out">
+          {selectedOption === "upload" ? (
+            <div className="w-full px-3 py-1">
+              <div className="w-full aspect-4/1.5">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.docx"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-brand/50 hover:bg-brand/5 transition-all duration-200"
+                  className="w-full h-full flex flex-col items-center p-5 border-2 border-dashed border-brand-100 rounded-3xl shadow-[0_0_30px_rgba(59,130,246,0.08)] cursor-pointer"
                 >
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf,.docx"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
                   <Icon
-                    icon="carbon:cloud-upload"
-                    className="text-4xl text-text-muted mx-auto mb-3"
+                    icon="lets-icons:upload-light"
+                    className="text-text-muted text-xl"
                   />
-                  <p className="text-text-primary font-medium mb-1">
-                    Click to upload or drag and drop
+
+                  <p className="text-text-muted text-xxs text-center font-normal mt-2">
+                    Upload your resume in{" "}
+                    <span className="font-medium text-brand">PDF</span> or{" "}
+                    <span className="font-medium text-brand">DOCX</span> format
+                    to use as the base for AI tailoring.
                   </p>
-                  <p className="text-xs text-text-muted">
-                    PDF or DOCX (Max 10MB)
-                  </p>
+
+                  {uploadedFile && (
+                    <p className="mt-3 text-xxs font-medium text-brand">
+                      {uploadedFile.name}
+                    </p>
+                  )}
                 </div>
-              ) : (
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white rounded-lg border border-gray-200">
-                      <Icon
-                        icon="carbon:document-pdf"
-                        className="text-2xl text-red-500"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-text-primary truncate">
-                        {uploadedFile.name}
-                      </p>
-                      <p className="text-xs text-text-muted">
-                        {(uploadedFile.size / 1024).toFixed(2)} KB
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setUploadedFile(null);
-                        setResumeName("");
-                        if (fileInputRef.current)
-                          fileInputRef.current.value = "";
-                      }}
-                      className="p-1.5 rounded-lg hover:bg-gray-200 transition-colors"
-                    >
-                      <Icon
-                        icon="carbon:trash-can"
-                        className="text-text-muted hover:text-red-500"
-                      />
-                    </button>
-                  </div>
+              </div>
+              {/* Show input whenever a file is uploaded, regardless of resumeName value */}
+              {uploadedFile && (
+                <div className="mt-3 px-1 py-1">
+                  <label className="text-tiny text-brand font-medium block px-1 mb-1 uppercase">
+                    Resume Name
+                  </label>
+                  <input
+                    type="text"
+                    value={resumeName}
+                    onChange={(e) => setResumeName(e.target.value)}
+                    placeholder="Enter resume name"
+                    className="w-full px-3 py-3 text-xs bg-gray-50 rounded-lg focus:outline-none focus:border-brand"
+                  />
                 </div>
               )}
-
-              <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">
-                  Resume Name
-                </label>
-                <input
-                  type="text"
-                  value={resumeName}
-                  onChange={(e) => setResumeName(e.target.value)}
-                  placeholder="e.g., Frontend_Resume_2026"
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
-                />
-                <p className="text-xs text-text-muted mt-1">
-                  Give your base resume a unique name for easy identification
-                </p>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={handleBack}
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-text-secondary hover:bg-gray-50 transition-colors"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={handleUpload}
-                  disabled={!uploadedFile || isPending}
-                  className="flex-1 px-4 py-2 bg-brand text-white rounded-lg hover:bg-brand/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  {isPending ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Uploading...</span>
-                    </div>
-                  ) : (
-                    "Upload Resume"
-                  )}
-                </button>
-              </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
-              <div className="text-center py-8">
-                <Icon
-                  icon="carbon:construction"
-                  className="text-4xl text-text-muted mx-auto mb-3"
-                />
-                <p className="text-text-primary font-medium mb-1">
-                  Coming Soon
-                </p>
-                <p className="text-sm text-text-muted">
-                  Resume form builder is under development
-                </p>
-              </div>
+            <div className="w-full flex flex-col gap-2 p-2">
               <button
-                onClick={handleBack}
-                className="px-4 py-2 border border-gray-200 rounded-lg text-text-secondary hover:bg-gray-50 transition-colors"
+                onClick={() => handleOptionSelect("upload")}
+                className="w-full aspect-[1/0.3] flex border rounded-2xl cursor-pointer overflow-clip p-1"
               >
-                Back to Options
+                <div className="h-full aspect-square flex items-end overflow-clip bg-gray-50 rounded-[inherit]">
+                  <div className="w-full h-[80%] translate-y-1 flex justify-center">
+                    <PaperIcon />
+                  </div>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center items-start gap-y-1 px-3">
+                  <p className="text-sm text-text-primary font-medium">
+                    Upload File
+                  </p>
+
+                  <p className="text-tiny text-text-muted text-start">
+                    Upload your resume in{" "}
+                    <span className="font-medium text-brand">PDF</span> or{" "}
+                    <span className="font-medium text-brand">DOCX</span> format
+                    to use as a base for AI tailoring.
+                  </p>
+                </div>
+              </button>
+
+              <button
+                disabled
+                className="w-full aspect-[1/0.3] flex border rounded-2xl cursor-not-allowed overflow-clip p-1 opacity-70"
+              >
+                <div className="h-full aspect-square flex items-end overflow-clip bg-gray-50 rounded-[inherit]">
+                  <div className="w-full h-[85%] translate-y-1 flex justify-center">
+                    <FormIcon />
+                  </div>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center items-start gap-y-1 px-3">
+                  <p className="text-sm text-text-primary font-medium">
+                    Fill Form
+                  </p>
+
+                  <p className="text-tiny text-text-muted text-start">
+                    Manually input your resume details in a structured form.
+                  </p>
+
+                  <p className="text-tiny text-text-secondary text-start bg-gray-50 px-2 py-0.5 rounded-full mt-1">
+                    Coming Soon!
+                  </p>
+                </div>
               </button>
             </div>
           )}
         </div>
+
+        <footer className="w-full flex items-center p-2 flex-shrink-0">
+          <div className="flex items-center gap-1 p-2">
+            <div
+              className={`h-[0.35rem] rounded-full transition-all duration-200 ${
+                selectedOption === null
+                  ? "w-6 bg-brand"
+                  : "w-[0.35rem] bg-gray-100"
+              }`}
+            ></div>
+            <div
+              className={`h-[0.35rem] rounded-full transition-all duration-200 ${
+                selectedOption !== null
+                  ? "w-6 bg-brand"
+                  : "w-[0.35rem] bg-gray-100"
+              }`}
+            ></div>
+          </div>
+          <div className="flex-1 flex items-center justify-end gap-2">
+            {selectedOption !== null && (
+              <button
+                onClick={handleBack}
+                className="px-5 py-2 text-xxs bg-gray-100 rounded-full cursor-pointer"
+              >
+                Back
+              </button>
+            )}
+            <button
+              onClick={handleNext}
+              disabled={isNextDisabled()}
+              className="px-5 py-2 text-xxs text-white bg-brand rounded-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isPending
+                ? "Uploading..."
+                : selectedOption === null
+                  ? "Next"
+                  : "Upload"}
+            </button>
+          </div>
+        </footer>
       </div>
     </div>
   );
 };
-
 // ── Route ────────────────────────────────────────────────────────────────────
 
 const sampleTailoredResumes = [
@@ -371,8 +365,24 @@ function RouteComponent() {
   const scrollAccumulator = useRef(0);
   const stackRef = useRef<HTMLDivElement>(null);
 
+  const [deleteModalState, setDeleteModalState] = useState<{
+    isOpen: boolean;
+    resumeId: string | null;
+    resumeName: string;
+  }>({
+    isOpen: false,
+    resumeId: null,
+    resumeName: "",
+  });
+
+  const { mutate: deleteBaseResume, isPending: isDeletingBaseResume } =
+    useDeleteBaseResumeMutation();
+
   const { data: baseResumes = [], isLoading: isBaseResumesLoading } =
     useFetchBaseResumeList();
+
+  const { data: tailoredResumes = [], isLoading: isTailoredResumesLoading } =
+    useFetchTailoredResumeList();
 
   const { mutate: createTailoredResume, isPending: isTailoringPending } =
     useCreateTailoredResumeMutation();
@@ -432,6 +442,54 @@ function RouteComponent() {
         },
       },
     );
+  };
+
+  const handleDeleteClick = (
+    e: React.MouseEvent,
+    resumeId: string,
+    resumeName: string,
+  ) => {
+    e.stopPropagation();
+    setDeleteModalState({
+      isOpen: true,
+      resumeId,
+      resumeName,
+    });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteModalState.resumeId) return;
+
+    deleteBaseResume(
+      { resumeId: deleteModalState.resumeId },
+      {
+        onSuccess: () => {
+          setDeleteModalState({
+            isOpen: false,
+            resumeId: null,
+            resumeName: "",
+          });
+          // Reset active index if needed
+          if (baseResumes.length === 1) {
+            setActiveIndex(0);
+          }
+        },
+        onError: (error) => {
+          console.error("Failed to delete:", error);
+          // Optionally show error state
+          setDeleteModalState((prev) => ({ ...prev, isOpen: false }));
+        },
+      },
+    );
+  };
+
+  const handleCloseDeleteModal = () => {
+    if (isDeletingBaseResume) return;
+    setDeleteModalState({
+      isOpen: false,
+      resumeId: null,
+      resumeName: "",
+    });
   };
 
   useEffect(() => {
@@ -528,43 +586,98 @@ function RouteComponent() {
             <section className="w-full flex flex-col p-4">
               <SectionHeading label="MY TAILORED RESUMES" />
               <div className="w-full flex-1 grid grid-cols-5 gap-2">
-                {sampleTailoredResumes.map((resume, i) => (
-                  <div
-                    key={i}
-                    className="relative flex-1 border-black/15 flex flex-col items-center bg-[#FAFAFA]/0 rounded-0 overflow-clip cursor-pointer hover:border-brand transition-all duration-300 group"
-                  >
+                {isTailoredResumesLoading ? (
+                  // Loading skeletons
+                  Array.from({ length: 5 }).map((_, i) => (
                     <div
-                      className="h-40 aspect-12/15 border bg-[#E7E8F1] rounded border-black/10 translate-y-3 group-hover:translate-y-0 transition-all duration-300"
-                      style={{
-                        boxShadow:
-                          "0 15px 30px -5px rgba(14, 165, 233, 0.5), 0 10px 15px -6px rgba(14, 165, 233, 0.4)",
-                      }}
+                      key={i}
+                      className="relative flex-1 border-black/15 flex flex-col items-center bg-[#FAFAFA]/0 rounded-0 overflow-clip"
                     >
-                      <div className="bg-white h-full flex-1 rounded-[inherit] border border-black/20 overflow-clip">
-                        <img
-                          src={resume.image}
-                          className="h-full object-cover"
-                        />
+                      <div
+                        className="h-40 aspect-12/15 bg-[#E7E8F1] rounded border-2 border-black/5 translate-y-3 animate-pulse"
+                        style={{
+                          boxShadow:
+                            "0 15px 30px -5px rgba(14, 165, 233, 0.5), 0 10px 15px -6px rgba(14, 165, 233, 0.4)",
+                        }}
+                      >
+                        <div className="bg-white h-full min-w-0 flex-1 rounded-[inherit] border-black/20 overflow-clip">
+                          <PlaceholderResume />
+                        </div>
+                      </div>
+                      <div
+                        className="absolute bottom-0 w-full flex flex-col bg-[#F9FBFC]/70 backdrop-blur-md px-3 py-2 pt-6 rounded-b-[inherit]"
+                        style={{
+                          maskImage:
+                            "linear-gradient(to top, black 60%, transparent 100%)",
+                          WebkitMaskImage:
+                            "linear-gradient(to top, black 60%, transparent 100%)",
+                        }}
+                      >
+                        <div className="h-2 w-3/4 bg-gray-200 rounded animate-pulse mb-1" />
+                        <div className="h-2 w-1/2 bg-gray-200 rounded animate-pulse" />
                       </div>
                     </div>
+                  ))
+                ) : tailoredResumes.length === 0 ? (
+                  // Empty state
+                  <div className="col-span-5 flex flex-col items-center justify-center py-12">
+                    <Icon
+                      icon="mdi:file-document-outline"
+                      className="text-4xl text-text-muted mb-3"
+                    />
+                    <p className="text-sm text-text-muted">
+                      No tailored resumes yet
+                    </p>
+                    <p className="text-xxs text-text-muted mt-1">
+                      Create your first tailored resume by clicking "Get
+                      Started"
+                    </p>
+                  </div>
+                ) : (
+                  // Actual tailored resumes
+                  tailoredResumes.map((resume, i) => (
                     <div
-                      className="absolute bottom-0 w-full flex flex-col bg-[#F9FBFC]/70 backdrop-blur-md px-3 py-2 pt-6 rounded-b-[inherit]"
-                      style={{
-                        maskImage:
-                          "linear-gradient(to top, black 60%, transparent 100%)",
-                        WebkitMaskImage:
-                          "linear-gradient(to top, black 60%, transparent 100%)",
+                      key={resume.id || i}
+                      className="relative flex-1 border-black/15 flex flex-col items-center bg-[#FAFAFA]/0 rounded-0 overflow-clip cursor-pointer hover:border-brand transition-all duration-300 group"
+                      onClick={() => {
+                        // Navigate to tailored resume detail
+                        navigate({
+                          to: "/tailored-resumes/$sessionId",
+                          params: { sessionId: resume.id },
+                        });
                       }}
                     >
-                      <h2 className="text-tiny text-text-primary font-medium">
-                        {resume.name}
-                      </h2>
-                      <h3 className="text-tiny text-text-muted font-mono">
-                        Last edited 2m ago
-                      </h3>
+                      <div
+                        className="h-40 aspect-12/15 bg-[#E7E8F1] rounded border-2 border-black/5 translate-y-3 group-hover:translate-y-0 transition-all duration-300"
+                        style={{
+                          boxShadow:
+                            "0 15px 30px -5px rgba(14, 165, 233, 0.5), 0 10px 15px -6px rgba(14, 165, 233, 0.4)",
+                        }}
+                      >
+                        <div className="bg-white h-full min-w-0 flex-1 rounded-[inherit] border-black/20 overflow-clip"></div>
+                      </div>
+                      <div
+                        className="absolute bottom-0 w-full flex flex-col bg-[#F9FBFC]/70 backdrop-blur-md px-3 py-2 pt-6 rounded-b-[inherit]"
+                        style={{
+                          maskImage:
+                            "linear-gradient(to top, black 60%, transparent 100%)",
+                          WebkitMaskImage:
+                            "linear-gradient(to top, black 60%, transparent 100%)",
+                        }}
+                      >
+                        <h2 className="text-tiny text-text-primary font-medium truncate w-full">
+                          {resume.name || `Tailored Resume ${i + 1}`}
+                        </h2>
+                        <h3 className="text-tiny text-text-muted font-mono">
+                          Last edited{" "}
+                          {resume.updated_at
+                            ? format(parseISO(resume.updated_at), "MMM do")
+                            : "recently"}
+                        </h3>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </section>
           </main>
@@ -671,9 +784,9 @@ function RouteComponent() {
                           {offset === 0 && (
                             <button
                               className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white shadow z-20 p-1 rounded-full border cursor-pointer group"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
+                              onClick={(e) =>
+                                handleDeleteClick(e, resume.id, resume.name)
+                              }
                             >
                               <Icon
                                 icon="carbon:trash-can"
@@ -865,8 +978,14 @@ function RouteComponent() {
           </div>
         </div>
       )}
+
+      <DeleteModal
+        isOpen={deleteModalState.isOpen}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        resumeName={deleteModalState.resumeName}
+        isDeleting={isDeletingBaseResume}
+      />
     </>
   );
 }
-
-//OG
