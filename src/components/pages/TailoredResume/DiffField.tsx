@@ -82,7 +82,7 @@ const RenderInlineDiff = ({ oldValue, newValue }: RenderInlineDiffProps) => {
         return (
           <span
             key={i}
-            className={`text-xs text-text-primary ${i === 0 ? "px-1" : "px-0.5"}`}
+            className={`text-xs text-text-primary ${i === 0 ? "px-0" : "px-0.5"}`}
           >
             {part.value}
           </span>
@@ -236,11 +236,14 @@ const DiffField = ({ field, onAccept, onReject }: DiffFieldProps) => {
   return (
     <div className="flex flex-col">
       {renderByMode()}
-      <div className="flex items-center gap-2 mt-2 px-2">
+      <div className="flex items-center justify-end gap-2 mt-2 px-0">
+        <div className="w-3 border-t border-dashed border-black/30" />
+
         <ActionButtons
           onAccept={onAccept || (() => {})}
           onReject={onReject || (() => {})}
         />
+        <div className="flex-1 border-t border-dashed border-black/30" />
       </div>
     </div>
   );
