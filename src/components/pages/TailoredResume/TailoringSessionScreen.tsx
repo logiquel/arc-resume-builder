@@ -11,6 +11,8 @@ import type {
   PublicationEntryChange,
   ReferenceEntryChange,
   SkillEntryChange,
+  DiffFormat,
+  DiffField as DiffFieldType,
 } from "#/types/resume/tailorSession.types";
 import { useState, useCallback, useRef, useEffect } from "react";
 import { produce } from "immer";
@@ -31,6 +33,27 @@ import CertificateForm from "./Forms/CertificateForm";
 import PublicationForm from "./Forms/PublicationForm";
 import ReferenceForm from "./Forms/ReferenceForm";
 import SkillForm from "./Forms/SkillForm";
+
+// Helper to generate unique IDs for new entries
+const generateEntryId = (prefix: string): string => {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+};
+
+// Helper to create a DiffField from a plain value for new entries
+function createDiffFieldFromValue<T>(
+  value: T,
+  format: DiffFormat = "text",
+): DiffFieldType<T> {
+  return {
+    old_value: value,
+    new_value: value,
+    old_format: format,
+    new_format: format,
+    diff_mode: "inline",
+    status: "pending",
+    is_changed: false,
+  };
+}
 
 interface SectionHeadingProps {
   sectionLabel: string;
@@ -188,11 +211,22 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
       ) as TailoredResume["changes"],
   );
 
+  // Modal states
+  const [showProjectForm, setShowProjectForm] = useState(false);
+  const [showEducationForm, setShowEducationForm] = useState(false);
+  const [showExperienceForm, setShowExperienceForm] = useState(false);
+  const [showSkillForm, setShowSkillForm] = useState(false);
+  const [showCertificateForm, setShowCertificateForm] = useState(false);
+  const [showAwardForm, setShowAwardForm] = useState(false);
+  const [showPublicationForm, setShowPublicationForm] = useState(false);
+  const [showReferenceForm, setShowReferenceForm] = useState(false);
+
   // Keep a ref in sync so the debounced save always reads the latest state
   const changesRef = useRef(changes);
   changesRef.current = changes;
 
   // ── Auto-save ────────────────────────────────────────────────────────────
+
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -324,7 +358,6 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 your resume.
               </h3>
             </div>
-            {/* Auto-save pill */}
           </div>
 
           <div className="flex-1 overflow-y-auto hide-scrollbar space-y-4 px-3 pb-3">
@@ -464,11 +497,23 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
               {education?.map((edu: EducationEntryChange, edIndex: number) => (
                 <div className="w-full flex-col" key={edu.entry_id}>
                   <div
-                    className={`bg-gray-50 px-6 py-2 flex items-center col-span-3 gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
+                    className={`w-full bg-gray-50 px-6 py-2 flex items-center justify-between gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
                       edIndex === 0 ? "border-b" : "border-y"
                     }`}
                   >
-                    #{edIndex + 1}
+                    <span>#{edIndex + 1}</span>
+                    <button
+                      onClick={() => {
+                        setChanges(
+                          produce((draft) => {
+                            draft?.education.splice(edIndex, 1);
+                          }),
+                        );
+                      }}
+                      className="text-text-muted hover:text-red-700 transition-colors cursor-pointer"
+                    >
+                      <Icon icon="lucide:trash" className="text-xs" />
+                    </button>
                   </div>
                   <div className="w-full grid grid-cols-3 gap-3 p-5">
                     <fieldset className="flex flex-col">
@@ -607,12 +652,19 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </div>
                 </div>
               ))}
-              <div className="w-full px-2 py-3">
-                <div className="w-full flex items-center border-2 border-dashed border-brand/10 bg-gray-50 py-3 rounded-md">
-                  <span className="text-xxs text-text-muted mx-auto">
-                    Add a new education entry
+              <div className="w-full px-4 py-3">
+                <button
+                  onClick={() => setShowEducationForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-dashed border-brand/20 bg-gray-50 hover:bg-gray-100 hover:border-brand/30 transition-all duration-200 cursor-pointer group"
+                >
+                  <Icon
+                    icon="ph:plus"
+                    className="text-brand/60 text-sm group-hover:text-brand"
+                  />
+                  <span className="text-xxs text-text-muted font-medium group-hover:text-brand/80">
+                    Add New Education Entry
                   </span>
-                </div>
+                </button>
               </div>
             </section>
 
@@ -630,11 +682,23 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 (exp: ExperienceEntryChange, exIndex: number) => (
                   <div className="w-full flex-col" key={exp.entry_id}>
                     <div
-                      className={`bg-gray-50 px-6 py-2 flex items-center col-span-3 gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
+                      className={`w-full bg-gray-50 px-6 py-2 flex items-center justify-between gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
                         exIndex === 0 ? "border-b" : "border-y"
                       }`}
                     >
-                      #{exIndex + 1}
+                      <span>#{exIndex + 1}</span>
+                      <button
+                        onClick={() => {
+                          setChanges(
+                            produce((draft) => {
+                              draft?.experience.splice(exIndex, 1);
+                            }),
+                          );
+                        }}
+                        className="text-text-muted hover:text-red-700 transition-colors cursor-pointer"
+                      >
+                        <Icon icon="lucide:trash" className="text-xs" />
+                      </button>
                     </div>
                     <div className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5">
                       <fieldset className="flex flex-col">
@@ -766,12 +830,19 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </div>
                 ),
               )}
-              <div className="w-full px-2 py-3">
-                <div className="w-full flex items-center border-2 border-dashed border-brand/10 bg-gray-50 py-3 rounded-md">
-                  <span className="text-xxs text-text-muted mx-auto">
-                    Add a new experience entry
+              <div className="w-full px-4 py-3">
+                <button
+                  onClick={() => setShowExperienceForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-dashed border-brand/20 bg-gray-50 hover:bg-gray-100 hover:border-brand/30 transition-all duration-200 cursor-pointer group"
+                >
+                  <Icon
+                    icon="ph:plus"
+                    className="text-brand/60 text-sm group-hover:text-brand"
+                  />
+                  <span className="text-xxs text-text-muted font-medium group-hover:text-brand/80">
+                    Add New Experience Entry
                   </span>
-                </div>
+                </button>
               </div>
             </section>
 
@@ -787,11 +858,23 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
               {projects?.map((project: ProjectEntryChange, pjIndex: number) => (
                 <div className="w-full flex-col" key={project.entry_id}>
                   <div
-                    className={`bg-gray-50 px-6 py-2 flex items-center col-span-3 gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
+                    className={`w-full bg-gray-50 px-6 py-2 flex items-center justify-between gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
                       pjIndex === 0 ? "border-b" : "border-y"
                     }`}
                   >
-                    #{pjIndex + 1}
+                    <span>#{pjIndex + 1}</span>
+                    <button
+                      onClick={() => {
+                        setChanges(
+                          produce((draft) => {
+                            draft?.projects.splice(pjIndex, 1);
+                          }),
+                        );
+                      }}
+                      className="text-text-muted hover:text-red-700 transition-colors cursor-pointer"
+                    >
+                      <Icon icon="lucide:trash" className="text-xs" />
+                    </button>
                   </div>
                   <div className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5">
                     <fieldset className="flex flex-col">
@@ -915,6 +998,20 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </div>
                 </div>
               ))}
+              <div className="w-full px-4 py-3">
+                <button
+                  onClick={() => setShowProjectForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-dashed border-brand/20 bg-gray-50 hover:bg-gray-100 hover:border-brand/30 transition-all duration-200 cursor-pointer group"
+                >
+                  <Icon
+                    icon="ph:plus"
+                    className="text-brand/60 text-sm group-hover:text-brand"
+                  />
+                  <span className="text-xxs text-text-muted font-medium group-hover:text-brand/80">
+                    Add New Project Entry
+                  </span>
+                </button>
+              </div>
             </section>
 
             {/* Skills Section */}
@@ -954,6 +1051,20 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </fieldset>
                 ))}
               </div>
+              <div className="w-full px-4 py-3">
+                <button
+                  onClick={() => setShowSkillForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-dashed border-brand/20 bg-gray-50 hover:bg-gray-100 hover:border-brand/30 transition-all duration-200 cursor-pointer group"
+                >
+                  <Icon
+                    icon="ph:plus"
+                    className="text-brand/60 text-sm group-hover:text-brand"
+                  />
+                  <span className="text-xxs text-text-muted font-medium group-hover:text-brand/80">
+                    Add New Skill
+                  </span>
+                </button>
+              </div>
             </section>
 
             {/* Certificates Section */}
@@ -969,11 +1080,23 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 (cert: CertificateEntryChange, cfIndex: number) => (
                   <div className="w-full flex-col" key={cert.entry_id}>
                     <div
-                      className={`bg-gray-50 px-6 py-2 flex items-center col-span-3 gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
+                      className={`w-full bg-gray-50 px-6 py-2 flex items-center justify-between gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
                         cfIndex === 0 ? "border-b" : "border-y"
                       }`}
                     >
-                      #{cfIndex + 1}
+                      <span>#{cfIndex + 1}</span>
+                      <button
+                        onClick={() => {
+                          setChanges(
+                            produce((draft) => {
+                              draft?.certificates.splice(cfIndex, 1);
+                            }),
+                          );
+                        }}
+                        className="text-text-muted hover:text-red-700 transition-colors cursor-pointer"
+                      >
+                        <Icon icon="lucide:trash" className="text-xs" />
+                      </button>
                     </div>
                     <div className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5">
                       <fieldset className="flex flex-col">
@@ -1102,6 +1225,20 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </div>
                 ),
               )}
+              <div className="w-full px-4 py-3">
+                <button
+                  onClick={() => setShowCertificateForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-dashed border-brand/20 bg-gray-50 hover:bg-gray-100 hover:border-brand/30 transition-all duration-200 cursor-pointer group"
+                >
+                  <Icon
+                    icon="ph:plus"
+                    className="text-brand/60 text-sm group-hover:text-brand"
+                  />
+                  <span className="text-xxs text-text-muted font-medium group-hover:text-brand/80">
+                    Add New Certificate Entry
+                  </span>
+                </button>
+              </div>
             </section>
 
             {/* Languages Section */}
@@ -1179,11 +1316,23 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
               {awards?.map((award: AwardEntryChange, awIndex: number) => (
                 <div className="w-full flex-col" key={award.entry_id}>
                   <div
-                    className={`bg-gray-50 px-6 py-2 flex items-center col-span-3 gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
+                    className={`w-full bg-gray-50 px-6 py-2 flex items-center justify-between gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
                       awIndex === 0 ? "border-b" : "border-y"
                     }`}
                   >
-                    #{awIndex + 1}
+                    <span>#{awIndex + 1}</span>
+                    <button
+                      onClick={() => {
+                        setChanges(
+                          produce((draft) => {
+                            draft?.awards.splice(awIndex, 1);
+                          }),
+                        );
+                      }}
+                      className="text-text-muted hover:text-red-700 transition-colors cursor-pointer"
+                    >
+                      <Icon icon="lucide:trash" className="text-xs" />
+                    </button>
                   </div>
                   <div className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5">
                     <fieldset className="flex flex-col">
@@ -1276,6 +1425,20 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </div>
                 </div>
               ))}
+              <div className="w-full px-4 py-3">
+                <button
+                  onClick={() => setShowAwardForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-dashed border-brand/20 bg-gray-50 hover:bg-gray-100 hover:border-brand/30 transition-all duration-200 cursor-pointer group"
+                >
+                  <Icon
+                    icon="ph:plus"
+                    className="text-brand/60 text-sm group-hover:text-brand"
+                  />
+                  <span className="text-xxs text-text-muted font-medium group-hover:text-brand/80">
+                    Add New Award Entry
+                  </span>
+                </button>
+              </div>
             </section>
 
             {/* Publications Section */}
@@ -1291,11 +1454,23 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                 (pub: PublicationEntryChange, pbIndex: number) => (
                   <div className="w-full flex-col" key={pub.entry_id}>
                     <div
-                      className={`bg-gray-50 px-6 py-2 flex items-center col-span-3 gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
+                      className={`w-full bg-gray-50 px-6 py-2 flex items-center justify-between gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
                         pbIndex === 0 ? "border-b" : "border-y"
                       }`}
                     >
-                      #{pbIndex + 1}
+                      <span>#{pbIndex + 1}</span>
+                      <button
+                        onClick={() => {
+                          setChanges(
+                            produce((draft) => {
+                              draft?.publications.splice(pbIndex, 1);
+                            }),
+                          );
+                        }}
+                        className="text-text-muted hover:text-red-700 transition-colors cursor-pointer"
+                      >
+                        <Icon icon="lucide:trash" className="text-xs" />
+                      </button>
                     </div>
                     <div className="w-full grid grid-cols-3 gap-3 mb-4 last:mb-0 p-5">
                       <fieldset className="flex flex-col">
@@ -1411,6 +1586,20 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </div>
                 ),
               )}
+              <div className="w-full px-4 py-3">
+                <button
+                  onClick={() => setShowPublicationForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-dashed border-brand/20 bg-gray-50 hover:bg-gray-100 hover:border-brand/30 transition-all duration-200 cursor-pointer group"
+                >
+                  <Icon
+                    icon="ph:plus"
+                    className="text-brand/60 text-sm group-hover:text-brand"
+                  />
+                  <span className="text-xxs text-text-muted font-medium group-hover:text-brand/80">
+                    Add New Publication Entry
+                  </span>
+                </button>
+              </div>
             </section>
 
             {/* References Section */}
@@ -1425,11 +1614,23 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
               {references?.map((ref: ReferenceEntryChange, rfIndex: number) => (
                 <div className="w-full flex-col" key={ref.entry_id}>
                   <div
-                    className={`bg-gray-50 px-6 py-2 flex items-center col-span-3 gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
+                    className={`w-full bg-gray-50 px-6 py-2 flex items-center justify-between gap-x-3 text-tiny font-medium text-text-secondary border-black/5 ${
                       rfIndex === 0 ? "border-b" : "border-y"
                     }`}
                   >
-                    #{rfIndex + 1}
+                    <span>#{rfIndex + 1}</span>
+                    <button
+                      onClick={() => {
+                        setChanges(
+                          produce((draft) => {
+                            draft?.references.splice(rfIndex, 1);
+                          }),
+                        );
+                      }}
+                      className="text-text-muted hover:text-red-700 transition-colors cursor-pointer"
+                    >
+                      <Icon icon="lucide:trash" className="text-xs" />
+                    </button>
                   </div>
                   <div className="w-full grid grid-cols-2 gap-3 mb-4 last:mb-0 p-5">
                     <fieldset className="flex flex-col">
@@ -1490,11 +1691,287 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
                   </div>
                 </div>
               ))}
+              <div className="w-full px-4 py-3">
+                <button
+                  onClick={() => setShowReferenceForm(true)}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border-2 border-dashed border-brand/20 bg-gray-50 hover:bg-gray-100 hover:border-brand/30 transition-all duration-200 cursor-pointer group"
+                >
+                  <Icon
+                    icon="ph:plus"
+                    className="text-brand/60 text-sm group-hover:text-brand"
+                  />
+                  <span className="text-xxs text-text-muted font-medium group-hover:text-brand/80">
+                    Add New Reference Entry
+                  </span>
+                </button>
+              </div>
             </section>
           </div>
         </div>
       </main>
-      <SkillForm />
+
+      {/* Project Form Modal */}
+      {showProjectForm && (
+        <ProjectForm
+          onClose={() => setShowProjectForm(false)}
+          onSave={(formData) => {
+            const newProject: ProjectEntryChange = {
+              entry_id: generateEntryId("proj"),
+              title: formData.title,
+              link: formData.link,
+              start_date: formData.start_date || null,
+              end_date: formData.end_date || null,
+              subtitle: createDiffFieldFromValue(
+                formData.subtitle || "",
+                "text",
+              ),
+              description: createDiffFieldFromValue(
+                formData.description.filter((b) => b.trim().length > 0),
+                "bullet_points",
+              ),
+            };
+
+            setChanges(
+              produce((draft) => {
+                if (!draft) return;
+                if (!draft.projects) {
+                  draft.projects = [];
+                }
+                draft.projects.push(newProject);
+              }),
+            );
+
+            setShowProjectForm(false);
+          }}
+        />
+      )}
+
+      {/* Education Form Modal */}
+      {showEducationForm && (
+        <EducationForm
+          onClose={() => setShowEducationForm(false)}
+          onSave={(formData) => {
+            const newEducation: EducationEntryChange = {
+              entry_id: generateEntryId("edu"),
+              institution: formData.institution,
+              location: formData.location,
+              link: formData.link,
+              start_date: formData.start_date || null,
+              end_date: formData.end_date || null,
+              degree: createDiffFieldFromValue(formData.degree || "", "text"),
+              score: formData.score,
+              description: createDiffFieldFromValue(
+                formData.description.filter((b: string) => b.trim().length > 0),
+                formData.description_format === "bullet_points"
+                  ? "bullet_points"
+                  : "para",
+              ),
+            };
+
+            setChanges(
+              produce((draft) => {
+                if (!draft) return;
+                if (!draft.education) {
+                  draft.education = [];
+                }
+                draft.education.push(newEducation);
+              }),
+            );
+
+            setShowEducationForm(false);
+          }}
+        />
+      )}
+
+      {/* Experience Form Modal */}
+      {showExperienceForm && (
+        <ExperienceForm
+          onClose={() => setShowExperienceForm(false)}
+          onSave={(formData) => {
+            const newExperience: ExperienceEntryChange = {
+              entry_id: generateEntryId("exp"),
+              company: formData.company,
+              location: formData.location,
+              start_date: formData.start_date || null,
+              end_date: formData.end_date || null,
+              position: createDiffFieldFromValue(
+                formData.position || "",
+                "text",
+              ),
+              description: createDiffFieldFromValue(
+                formData.description.filter((b: string) => b.trim().length > 0),
+                formData.description_format === "bullet_points"
+                  ? "bullet_points"
+                  : "para",
+              ),
+            };
+
+            setChanges(
+              produce((draft) => {
+                if (!draft) return;
+                if (!draft.experience) {
+                  draft.experience = [];
+                }
+                draft.experience.push(newExperience);
+              }),
+            );
+
+            setShowExperienceForm(false);
+          }}
+        />
+      )}
+
+      {/* Skill Form Modal */}
+      {showSkillForm && (
+        <SkillForm
+          onClose={() => setShowSkillForm(false)}
+          onSave={(formData) => {
+            const newSkill: SkillEntryChange = {
+              entry_id: generateEntryId("skill"),
+              name: createDiffFieldFromValue(formData.name, "text"),
+              level: formData.level || null,
+            };
+
+            setChanges(
+              produce((draft) => {
+                if (!draft) return;
+                if (!draft.skills) {
+                  draft.skills = [];
+                }
+                draft.skills.push(newSkill);
+              }),
+            );
+
+            setShowSkillForm(false);
+          }}
+        />
+      )}
+
+      {/* Certificate Form Modal */}
+      {showCertificateForm && (
+        <CertificateForm
+          onClose={() => setShowCertificateForm(false)}
+          onSave={(formData) => {
+            const newCertificate: CertificateEntryChange = {
+              entry_id: generateEntryId("cert"),
+              issuer: formData.issuer,
+              issue_date: formData.issue_date || null,
+              expiry_date: formData.expiry_date || null,
+              link: formData.link,
+              name: createDiffFieldFromValue(formData.name || "", "text"),
+              description: createDiffFieldFromValue(
+                formData.description || "",
+                "text",
+              ),
+            };
+
+            setChanges(
+              produce((draft) => {
+                if (!draft) return;
+                if (!draft.certificates) {
+                  draft.certificates = [];
+                }
+                draft.certificates.push(newCertificate);
+              }),
+            );
+
+            setShowCertificateForm(false);
+          }}
+        />
+      )}
+
+      {/* Award Form Modal */}
+      {showAwardForm && (
+        <AwardForm
+          onClose={() => setShowAwardForm(false)}
+          onSave={(formData) => {
+            const newAward: AwardEntryChange = {
+              entry_id: generateEntryId("awd"),
+              awarder: formData.awarder,
+              date: formData.date || null,
+              title: createDiffFieldFromValue(formData.title || "", "text"),
+              description: createDiffFieldFromValue(
+                formData.description || "",
+                "text",
+              ),
+            };
+
+            setChanges(
+              produce((draft) => {
+                if (!draft) return;
+                if (!draft.awards) {
+                  draft.awards = [];
+                }
+                draft.awards.push(newAward);
+              }),
+            );
+
+            setShowAwardForm(false);
+          }}
+        />
+      )}
+
+      {/* Publication Form Modal */}
+      {showPublicationForm && (
+        <PublicationForm
+          onClose={() => setShowPublicationForm(false)}
+          onSave={(formData) => {
+            const newPublication: PublicationEntryChange = {
+              entry_id: generateEntryId("pub"),
+              publisher: formData.publisher,
+              date: formData.date || null,
+              link: formData.link,
+              title: createDiffFieldFromValue(formData.title || "", "text"),
+              description: createDiffFieldFromValue(
+                formData.description || "",
+                "text",
+              ),
+            };
+
+            setChanges(
+              produce((draft) => {
+                if (!draft) return;
+                if (!draft.publications) {
+                  draft.publications = [];
+                }
+                draft.publications.push(newPublication);
+              }),
+            );
+
+            setShowPublicationForm(false);
+          }}
+        />
+      )}
+
+      {/* Reference Form Modal */}
+      {showReferenceForm && (
+        <ReferenceForm
+          onClose={() => setShowReferenceForm(false)}
+          onSave={(formData) => {
+            const newReference: ReferenceEntryChange = {
+              entry_id: generateEntryId("ref"),
+              name: formData.name,
+              position: formData.position,
+              organization: formData.organization,
+              email: formData.email,
+              phone: formData.phone,
+            };
+
+            setChanges(
+              produce((draft) => {
+                if (!draft) return;
+                if (!draft.references) {
+                  draft.references = [];
+                }
+                draft.references.push(newReference);
+              }),
+            );
+
+            setShowReferenceForm(false);
+          }}
+        />
+      )}
+
       <ScorePanel analysis={tailorSession.analysis} />
     </div>
   );

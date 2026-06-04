@@ -2,12 +2,20 @@ import { Icon } from "@iconify/react";
 import { useRef, useState, useEffect } from "react";
 import clsx from "clsx";
 
-interface ExperienceFormData {
+export interface ExperienceFormData {
   position: string;
   company: string;
+  location: string;
   start_date: string;
   end_date: string;
   description: string[];
+  description_format?: "text" | "para" | "bullet_points";
+}
+
+interface ExperienceFormProps {
+  onClose: () => void;
+  onSave: (data: ExperienceFormData) => void;
+  initialData?: ExperienceFormData;
 }
 
 const autoResize = (el: HTMLTextAreaElement | null) => {
@@ -72,19 +80,27 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({
   );
 };
 
-const ExperienceForm = () => {
-  const [formData, setFormData] = useState<ExperienceFormData>({
-    position: "",
-    company: "",
-    start_date: "",
-    end_date: "",
-    description: [""],
-  });
+const ExperienceForm: React.FC<ExperienceFormProps> = ({
+  onClose,
+  onSave,
+  initialData,
+}) => {
+  const [formData, setFormData] = useState<ExperienceFormData>(
+    initialData || {
+      position: "",
+      company: "",
+      location: "",
+      start_date: "",
+      end_date: "",
+      description: [""],
+      description_format: "bullet_points",
+    },
+  );
 
   const bulletRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
 
   const updateField = (
-    field: keyof Omit<ExperienceFormData, "description">,
+    field: keyof Omit<ExperienceFormData, "description" | "description_format">,
     value: string,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -136,11 +152,11 @@ const ExperienceForm = () => {
       ...formData,
       description: formData.description.filter((b) => b.trim().length > 0),
     };
-    console.log("Experience Entry:", payload);
+    onSave(payload);
   };
 
   return (
-    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
+    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30 bg-black/20 backdrop-blur-sm">
       <div className="w-120 flex flex-col bg-white border border-black/10 shadow-2xl rounded-3xl ring-4 ring-white/50">
         <header className="w-full flex gap-2 p-3 justify-between shrink-0">
           <div className="flex items-center">
@@ -149,7 +165,10 @@ const ExperienceForm = () => {
               Add New Experience Entry
             </h2>
           </div>
-          <button className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow">
+          <button
+            onClick={onClose}
+            className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow"
+          >
             <Icon icon="iconamoon:close" />
           </button>
         </header>
@@ -174,6 +193,17 @@ const ExperienceForm = () => {
               value={formData.company}
               onChange={(v) => updateField("company", v)}
               placeholder="e.g. Acme Inc."
+            />
+          </fieldset>
+
+          <fieldset className="min-w-0 flex flex-col gap-y-1.5">
+            <label className="text-tiny text-text-muted font-medium tracking-[0.08em]">
+              LOCATION
+            </label>
+            <AutoTextarea
+              value={formData.location}
+              onChange={(v) => updateField("location", v)}
+              placeholder="e.g. San Francisco, CA"
             />
           </fieldset>
 
@@ -268,7 +298,10 @@ const ExperienceForm = () => {
         </div>
 
         <footer className="w-full flex items-center justify-end gap-2 p-3 shrink-0">
-          <button className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors"
+          >
             Cancel
           </button>
           <button

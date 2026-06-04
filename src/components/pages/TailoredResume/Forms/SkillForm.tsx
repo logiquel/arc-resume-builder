@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { RadioGroup, RadioGroupItem } from "#/components/addons/radio-group";
 
-type SkillLevel =
+export type SkillLevel =
   | "beginner"
   | "amateur"
   | "competent"
@@ -11,9 +11,15 @@ type SkillLevel =
   | "expert"
   | null;
 
-interface SkillFormData {
+export interface SkillFormData {
   name: string;
   level: SkillLevel;
+}
+
+interface SkillFormProps {
+  onClose: () => void;
+  onSave: (data: SkillFormData) => void;
+  initialData?: SkillFormData;
 }
 
 const SKILL_LEVELS: Exclude<SkillLevel, null>[] = [
@@ -83,11 +89,17 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({
   );
 };
 
-const SkillForm = () => {
-  const [formData, setFormData] = useState<SkillFormData>({
-    name: "",
-    level: null,
-  });
+const SkillForm: React.FC<SkillFormProps> = ({
+  onClose,
+  onSave,
+  initialData,
+}) => {
+  const [formData, setFormData] = useState<SkillFormData>(
+    initialData || {
+      name: "",
+      level: null,
+    },
+  );
 
   const updateField = <K extends keyof SkillFormData>(
     field: K,
@@ -102,11 +114,11 @@ const SkillForm = () => {
       name: formData.name.trim(),
     };
 
-    console.log("Skill Entry:", payload);
+    onSave(payload);
   };
 
   return (
-    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
+    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30 bg-black/20 backdrop-blur-sm">
       <div className="w-120 flex flex-col bg-white border border-black/10 shadow-2xl rounded-3xl ring-4 ring-white/50">
         <header className="w-full flex gap-2 p-3 justify-between shrink-0">
           <div className="flex items-center">
@@ -115,7 +127,10 @@ const SkillForm = () => {
               Add New Skill Entry
             </h2>
           </div>
-          <button className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow">
+          <button
+            onClick={onClose}
+            className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow"
+          >
             <Icon icon="iconamoon:close" />
           </button>
         </header>
@@ -167,7 +182,10 @@ const SkillForm = () => {
         </div>
 
         <footer className="w-full flex items-center justify-end gap-2 p-3 shrink-0">
-          <button className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors"
+          >
             Cancel
           </button>
           <button

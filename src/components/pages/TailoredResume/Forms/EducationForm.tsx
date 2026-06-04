@@ -2,7 +2,7 @@ import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
-interface EducationFormData {
+export interface EducationFormData {
   degree: string;
   institution: string;
   score: string;
@@ -11,6 +11,13 @@ interface EducationFormData {
   end_date: string;
   link: string;
   description: string[];
+  description_format?: "text" | "para" | "bullet_points";
+}
+
+interface EducationFormProps {
+  onClose: () => void;
+  onSave: (data: EducationFormData) => void;
+  initialData?: EducationFormData;
 }
 
 const autoResize = (el: HTMLTextAreaElement | null) => {
@@ -75,22 +82,29 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({
   );
 };
 
-const EducationForm = () => {
-  const [formData, setFormData] = useState<EducationFormData>({
-    degree: "",
-    institution: "",
-    score: "",
-    location: "",
-    start_date: "",
-    end_date: "",
-    link: "",
-    description: [""],
-  });
+const EducationForm: React.FC<EducationFormProps> = ({
+  onClose,
+  onSave,
+  initialData,
+}) => {
+  const [formData, setFormData] = useState<EducationFormData>(
+    initialData || {
+      degree: "",
+      institution: "",
+      score: "",
+      location: "",
+      start_date: "",
+      end_date: "",
+      link: "",
+      description: [""],
+      description_format: "bullet_points",
+    },
+  );
 
   const bulletRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
 
   const updateField = (
-    field: keyof Omit<EducationFormData, "description">,
+    field: keyof Omit<EducationFormData, "description" | "description_format">,
     value: string,
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -140,17 +154,17 @@ const EducationForm = () => {
   const handleSave = () => {
     const payload = {
       ...formData,
-      start_date: formData.start_date.trim() || null,
-      end_date: formData.end_date.trim() || null,
+      start_date: formData.start_date.trim() || "",
+      end_date: formData.end_date.trim() || "",
       link: formData.link.trim(),
       description: formData.description.filter((b) => b.trim().length > 0),
     };
 
-    console.log("Education Entry:", payload);
+    onSave(payload);
   };
 
   return (
-    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
+    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30 bg-black/20 backdrop-blur-sm">
       <div className="w-120 flex flex-col bg-white border border-black/10 shadow-2xl rounded-3xl ring-4 ring-white/50">
         <header className="w-full flex gap-2 p-3 justify-between shrink-0">
           <div className="flex items-center">
@@ -159,7 +173,10 @@ const EducationForm = () => {
               Add New Education Entry
             </h2>
           </div>
-          <button className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow">
+          <button
+            onClick={onClose}
+            className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow"
+          >
             <Icon icon="iconamoon:close" />
           </button>
         </header>
@@ -318,7 +335,10 @@ const EducationForm = () => {
         </div>
 
         <footer className="w-full flex items-center justify-end gap-2 p-3 shrink-0">
-          <button className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors"
+          >
             Cancel
           </button>
           <button

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { RadioGroup, RadioGroupItem } from "#/components/addons/radio-group";
 
-type LanguageLevel =
+export type LanguageLevel =
   | "beginner"
   | "intermediate"
   | "advanced"
@@ -11,9 +11,15 @@ type LanguageLevel =
   | "native"
   | null;
 
-interface LanguageFormData {
+export interface LanguageFormData {
   name: string;
   level: LanguageLevel;
+}
+
+interface LanguageFormProps {
+  onClose: () => void;
+  onSave: (data: LanguageFormData) => void;
+  initialData?: LanguageFormData;
 }
 
 const LANGUAGE_LEVELS: Exclude<LanguageLevel, null>[] = [
@@ -83,11 +89,17 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({
   );
 };
 
-const LanguageForm = () => {
-  const [formData, setFormData] = useState<LanguageFormData>({
-    name: "",
-    level: null,
-  });
+const LanguageForm: React.FC<LanguageFormProps> = ({
+  onClose,
+  onSave,
+  initialData,
+}) => {
+  const [formData, setFormData] = useState<LanguageFormData>(
+    initialData || {
+      name: "",
+      level: null,
+    },
+  );
 
   const updateField = <K extends keyof LanguageFormData>(
     field: K,
@@ -102,11 +114,11 @@ const LanguageForm = () => {
       name: formData.name.trim(),
     };
 
-    console.log("Language Entry:", payload);
+    onSave(payload);
   };
 
   return (
-    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
+    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30 bg-black/20 backdrop-blur-sm">
       <div className="w-120 flex flex-col bg-white border border-black/10 shadow-2xl rounded-3xl ring-4 ring-white/50">
         <header className="w-full flex gap-2 p-3 justify-between shrink-0">
           <div className="flex items-center">
@@ -115,7 +127,10 @@ const LanguageForm = () => {
               Add New Language Entry
             </h2>
           </div>
-          <button className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow">
+          <button
+            onClick={onClose}
+            className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow"
+          >
             <Icon icon="iconamoon:close" />
           </button>
         </header>
@@ -167,7 +182,10 @@ const LanguageForm = () => {
         </div>
 
         <footer className="w-full flex items-center justify-end gap-2 p-3 shrink-0">
-          <button className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors"
+          >
             Cancel
           </button>
           <button

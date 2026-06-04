@@ -2,13 +2,19 @@ import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
-interface ProjectFormData {
+export interface ProjectFormData {
   title: string;
   subtitle: string;
   link: string;
   start_date: string;
   end_date: string;
   description: string[];
+}
+
+interface ProjectFormProps {
+  onClose: () => void;
+  onSave: (data: ProjectFormData) => void;
+  initialData?: ProjectFormData;
 }
 
 const autoResize = (el: HTMLTextAreaElement | null) => {
@@ -29,6 +35,8 @@ const textareaClass = clsx(
   "focus:border-[#0A65CC]/40",
   "focus:shadow-[0_0_0_4px_rgba(10,101,204,0.08),0_4px_14px_rgba(10,101,204,0.10),inset_0_1px_0_rgba(255,255,255,0.9)]",
   "placeholder:text-xxs",
+  "placeholder:truncate",
+  "placeholder:max-w-[95%]",
 );
 
 interface AutoTextareaProps {
@@ -73,15 +81,21 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({
   );
 };
 
-const ProjectForm = () => {
-  const [formData, setFormData] = useState<ProjectFormData>({
-    title: "",
-    subtitle: "",
-    link: "",
-    start_date: "",
-    end_date: "",
-    description: [""],
-  });
+const ProjectForm: React.FC<ProjectFormProps> = ({
+  onClose,
+  onSave,
+  initialData,
+}) => {
+  const [formData, setFormData] = useState<ProjectFormData>(
+    initialData || {
+      title: "",
+      subtitle: "",
+      link: "",
+      start_date: "",
+      end_date: "",
+      description: [""],
+    },
+  );
 
   const bulletRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
 
@@ -136,17 +150,17 @@ const ProjectForm = () => {
   const handleSave = () => {
     const payload = {
       ...formData,
-      start_date: formData.start_date.trim() || null,
-      end_date: formData.end_date.trim() || null,
+      start_date: formData.start_date.trim() || "",
+      end_date: formData.end_date.trim() || "",
       link: formData.link.trim(),
       description: formData.description.filter((b) => b.trim().length > 0),
     };
 
-    console.log("Project Entry:", payload);
+    onSave(payload);
   };
 
   return (
-    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
+    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30 bg-black/20 backdrop-blur-sm">
       <div className="w-120 flex flex-col bg-white border border-black/10 shadow-2xl rounded-3xl ring-4 ring-white/50">
         <header className="w-full flex gap-2 p-3 justify-between shrink-0">
           <div className="flex items-center">
@@ -155,7 +169,10 @@ const ProjectForm = () => {
               Add New Project Entry
             </h2>
           </div>
-          <button className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow">
+          <button
+            onClick={onClose}
+            className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow"
+          >
             <Icon icon="iconamoon:close" />
           </button>
         </header>
@@ -292,7 +309,10 @@ const ProjectForm = () => {
         </div>
 
         <footer className="w-full flex items-center justify-end gap-2 p-3 shrink-0">
-          <button className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors"
+          >
             Cancel
           </button>
           <button

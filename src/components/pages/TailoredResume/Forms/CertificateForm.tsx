@@ -2,13 +2,19 @@ import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
-interface CertificateFormData {
+export interface CertificateFormData {
   name: string;
   issuer: string;
   issue_date: string;
   expiry_date: string;
   link: string;
   description: string;
+}
+
+interface CertificateFormProps {
+  onClose: () => void;
+  onSave: (data: CertificateFormData) => void;
+  initialData?: CertificateFormData;
 }
 
 const autoResize = (el: HTMLTextAreaElement | null) => {
@@ -70,15 +76,21 @@ const AutoTextarea: React.FC<AutoTextareaProps> = ({
   );
 };
 
-const CertificateForm = () => {
-  const [formData, setFormData] = useState<CertificateFormData>({
-    name: "",
-    issuer: "",
-    issue_date: "",
-    expiry_date: "",
-    link: "",
-    description: "",
-  });
+const CertificateForm: React.FC<CertificateFormProps> = ({
+  onClose,
+  onSave,
+  initialData,
+}) => {
+  const [formData, setFormData] = useState<CertificateFormData>(
+    initialData || {
+      name: "",
+      issuer: "",
+      issue_date: "",
+      expiry_date: "",
+      link: "",
+      description: "",
+    },
+  );
 
   const updateField = (field: keyof CertificateFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -87,17 +99,17 @@ const CertificateForm = () => {
   const handleSave = () => {
     const payload = {
       ...formData,
-      issue_date: formData.issue_date.trim() || null,
-      expiry_date: formData.expiry_date.trim() || null,
+      issue_date: formData.issue_date.trim() || "",
+      expiry_date: formData.expiry_date.trim() || "",
       link: formData.link.trim(),
       description: formData.description.trim(),
     };
 
-    console.log("Certificate Entry:", payload);
+    onSave(payload);
   };
 
   return (
-    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
+    <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30 bg-black/20 backdrop-blur-sm">
       <div className="w-120 flex flex-col bg-white border border-black/10 shadow-2xl rounded-3xl ring-4 ring-white/50">
         <header className="w-full flex gap-2 p-3 justify-between shrink-0">
           <div className="flex items-center">
@@ -106,7 +118,10 @@ const CertificateForm = () => {
               Add New Certificate Entry
             </h2>
           </div>
-          <button className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow">
+          <button
+            onClick={onClose}
+            className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow"
+          >
             <Icon icon="iconamoon:close" />
           </button>
         </header>
@@ -202,7 +217,10 @@ const CertificateForm = () => {
         </div>
 
         <footer className="w-full flex items-center justify-end gap-2 p-3 shrink-0">
-          <button className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-xs rounded-full bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors"
+          >
             Cancel
           </button>
           <button
