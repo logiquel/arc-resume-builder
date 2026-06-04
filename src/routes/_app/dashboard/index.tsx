@@ -28,8 +28,12 @@ import {
 } from "#/config/templates.config";
 
 export const Route = createFileRoute("/_app/dashboard/")({
-  pendingComponent: () => <div>Loading...</div>,
   component: RouteComponent,
+  loader: async () => {
+    return {
+      breadcrumbs: [{ label: "Dashboard", href: "undefined" }],
+    };
+  },
 });
 
 interface SectionHeadingProps {

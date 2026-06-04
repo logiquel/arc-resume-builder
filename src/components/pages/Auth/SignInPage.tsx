@@ -86,6 +86,9 @@ const SignInPage = () => {
 
   const currentSlide = carouselSlides[activeSlide];
 
+  const inputClass =
+    "w-full px-3 py-2 rounded-md bg-gray-50 text-text-primary outline-none border border-black/10 text-xxs placeholder:font-normal placeholder:text-tiny mt-2 disabled:opacity-60 transition-all duration-200 focus:border-[#0A65CC]/40 hover:border-black/12 focus:shadow-[0_0_0_4px_rgba(10,101,204,0.08),0_4px_14px_rgba(10,101,204,0.10),inset_0_1px_0_rgba(255,255,255,0.9)]";
+
   return (
     <div className="w-full h-full flex items-center justify-center bg-white overflow-hidden">
       <div className="w-full h-full flex items-center z-20 overflow-clip border-black/10">
@@ -149,7 +152,7 @@ const SignInPage = () => {
                             onChange={(e) => field.handleChange(e.target.value)}
                             onBlur={field.handleBlur}
                             disabled={isPendingRequest}
-                            className="w-full px-2 py-3 bg-gray-100 rounded-md outline-none text-text-primary text-xxs placeholder:font-normal placeholder:text-tiny mt-2 disabled:opacity-60"
+                            className={inputClass}
                           />
                           <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                             {field.state.meta.isTouched &&

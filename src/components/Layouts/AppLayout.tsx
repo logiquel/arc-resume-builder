@@ -39,7 +39,7 @@ const AppLayout = () => {
                 {activeRouteLabel}
               </h2>
               <p className="text-xs text-text-muted">
-                {activeRoute?.description}
+                {/* {activeRoute?.description} */}
               </p>
               <AppBreadcrumb />
             </div>
