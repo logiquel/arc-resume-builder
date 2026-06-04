@@ -74,7 +74,7 @@ export default function AppBreadcrumb({
   }
 
   return (
-    <div className="relative w-full flex items-center flex-1  ml-1 pl-3 before:content-[''] before:absolute before:left-0 before:w-2.5 before:h-[0.02rem] before:bg-gray-400 after:content-[''] after:absolute after:left-0 after:top-0 after:w-[0.02rem] after:h-2.5 after:bg-gray-400">
+    <div className="relative w-full flex items-center flex-1  ml-1 pl-3 before:content-[''] before:absolute before:left-0 before:w-2.5 before:h-[0.02rem] before:bg-gray-400 after:content-[''] after:absolute after:left-0 after:-top-px after:w-[0.02rem] after:h-2.5 after:bg-gray-400">
       <Breadcrumb>
         <BreadcrumbList>
           {finalItems.map((item, index) => {

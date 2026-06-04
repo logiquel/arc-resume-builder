@@ -23,6 +23,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "#/components/addons/tooltip";
+import ExperienceForm from "./Forms/ExperienceForm";
+import AwardForm from "./Forms/AwardForm";
+import ProjectForm from "./Forms/ProjectForm";
+import EducationForm from "./Forms/EducationForm";
+import CertificateForm from "./Forms/CertificateForm";
+import PublicationForm from "./Forms/PublicationForm";
+import ReferenceForm from "./Forms/ReferenceForm";
+import SkillForm from "./Forms/SkillForm";
 
 interface SectionHeadingProps {
   sectionLabel: string;
@@ -1486,56 +1494,7 @@ const TailoringSessionScreen: React.FC<TailoringSessionScreenProps> = ({
           </div>
         </div>
       </main>
-      <div className="absolute inset-0 w-full h-full flex items-center justify-center z-30">
-        <div className="w-120 flex flex-col bg-white border border-black/10 shadow-2xl rounded-3xl ring-4 ring-white/50">
-          <header className="w-full flex gap-2 p-3 justify-between shrink-0">
-            <div className="flex items-center">
-              <Icon icon="bitcoin-icons:menu-filled" className="text-brand" />
-              <h2 className="text-base font-medium text-text-primary pl-2">
-                Add New Experience Entry
-              </h2>
-            </div>
-            <button className="self-start flex items-center justify-center border rounded-full p-2 cursor-pointer shadow">
-              <Icon icon="iconamoon:close" />
-            </button>
-          </header>
-          <div className="w-full grid grid-cols-2 gap-x-5 gap-y-4 p-4 overflow-hidden">
-            <fieldset className="min-w-0 flex flex-col gap-y-2">
-              <label className="text-tiny text-text-muted font-medium">
-                POSITION
-              </label>
-              <input className="w-full py-2 px-2 rounded bg-gray-100 text-text-primary text-xs border border-transparent outline-0 transition-colors focus:bg-gray-100" />
-            </fieldset>
-
-            <fieldset className="min-w-0 flex flex-col gap-y-2">
-              <label className="text-tiny text-text-muted font-medium">
-                COMPANY
-              </label>
-              <input className="w-full py-2 px-2 rounded bg-gray-100 text-text-primary text-xs border border-transparent outline-0 transition-colors focus:bg-gray-100" />
-            </fieldset>
-
-            <fieldset className="min-w-0 flex flex-col gap-y-2">
-              <label className="text-tiny text-text-muted font-medium">
-                START DATE
-              </label>
-              <input className="w-full py-2 px-2 rounded bg-gray-100 text-text-primary text-xs border border-transparent outline-0 transition-colors focus:bg-gray-100" />
-            </fieldset>
-
-            <fieldset className="min-w-0 flex flex-col gap-y-2">
-              <label className="text-tiny text-text-muted font-medium">
-                END DATE
-              </label>
-              <input className="w-full py-2 px-2 rounded bg-gray-100 text-text-primary text-xs border border-transparent outline-0 transition-colors focus:bg-gray-100" />
-            </fieldset>
-            <fieldset className="min-w-0 flex flex-col gap-y-2 col-span-2">
-              <label className="text-tiny text-text-muted font-medium">
-                DESCRIPTION
-              </label>
-            </fieldset>
-          </div>
-          <footer className="w-full flex items-center p-2 shrink-0"></footer>
-        </div>
-      </div>
+      <SkillForm />
       <ScorePanel analysis={tailorSession.analysis} />
     </div>
   );
