@@ -182,8 +182,8 @@ const SignInPage = () => {
                             </span>
                             {requestOtpMutation.isPending && (
                               <Icon
-                                icon="mingcute:loading-2-line"
-                                className="size-4 animate-spin text-white"
+                                icon="mingcute:loading-fill"
+                                className="size-4 text-white animate-spin"
                               />
                             )}
                           </button>

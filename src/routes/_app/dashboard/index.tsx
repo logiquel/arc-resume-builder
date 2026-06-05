@@ -591,18 +591,27 @@ function RouteComponent() {
                   ))
                 ) : tailoredResumes.length === 0 ? (
                   // Empty state
-                  <div className="col-span-5 flex flex-col items-center justify-center py-12">
-                    <Icon
-                      icon="mdi:file-document-outline"
-                      className="text-4xl text-text-muted mb-3"
-                    />
-                    <p className="text-sm text-text-muted">
-                      No tailored resumes yet
+                  <div className="w-full flex flex-col items-center justify-center col-span-5">
+                    <div className="relative w-25 shadow-xl border border-black/10 rounded-lg">
+                      <span className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 w-5 h-5 rounded-full flex items-center justify-center text-tiny text-brand border border-black/10 shadow bg-white">
+                        0
+                      </span>
+                      <PlaceholderResume />
+                    </div>
+                    <p className="text-xxs text-text-secondary font-medium mt-3">
+                      You don't have any tailored resumes yet
                     </p>
-                    <p className="text-xxs text-text-muted mt-1">
-                      Create your first tailored resume by clicking "Get
-                      Started"
+                    <p className="text-xxs text-text-muted">
+                      Click button below to create new
                     </p>
+                    <button
+                      type="button"
+                      onClick={handleGetStarted}
+                      className="hover:border-brand/30 flex items-center gap-x-1 mt-2 px-3 py-2 text-tiny font-medium text-white bg-brand rounded-full shadow-xs transition-all duration-300 group-hover:bg-brand/90 hover:scale-[1.02] cursor-pointer"
+                    >
+                      <Icon icon="ic:round-plus" className="text-sm" />
+                      Create New
+                    </button>
                   </div>
                 ) : (
                   // Actual tailored resumes

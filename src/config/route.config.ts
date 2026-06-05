@@ -19,7 +19,8 @@ export const routesConfig: Route[] = [
     key: "dashboard",
     href: "/dashboard",
     label: "Dashboard",
-    description: "Create, edit, organize, and manage all your resumes from one place.",
+    description:
+      "Create, edit, organize, and manage all your resumes from one place.",
     icon: "tabler:layout-dashboard",
   },
   // {
@@ -66,17 +67,17 @@ export const routesConfig: Route[] = [
   //     { href: "/export/json", label: "Export as JSON" },
   //   ],
   // },
-  {
-    key: "settings",
-    href: "/settings",
-    label: "Settings",
-    description: "Manage your account and preferences",
-    icon: "tabler:settings",
-    subRoutes: [
-      { href: "/settings/profile", label: "Profile" },
-      { href: "/settings/billing", label: "Billing" },
-    ],
-  },
+  // {
+  //   key: "settings",
+  //   href: "/settings",
+  //   label: "Settings",
+  //   description: "Manage your account and preferences",
+  //   icon: "tabler:settings",
+  //   subRoutes: [
+  //     { href: "/settings/profile", label: "Profile" },
+  //     { href: "/settings/billing", label: "Billing" },
+  //   ],
+  // },
 ];
 
 export function getActiveRoute(pathname: string): Route | undefined {

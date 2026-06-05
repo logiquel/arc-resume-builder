@@ -131,7 +131,7 @@ const OtpForm = ({
             </span>
             {isSubmitting && (
               <Icon
-                icon="mingcute:loading-2-line"
+                icon="mingcute:loading-fill"
                 className="size-4 animate-spin text-white"
               />
             )}

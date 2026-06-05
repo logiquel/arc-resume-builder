@@ -4,6 +4,7 @@ import { useState } from "react";
 import { routesConfig } from "#/config/route.config";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../addons/tooltip";
 import AppLogo from "./AppLogo";
+import { useLogoutMutation } from "#/api/auth/auth.mutations";
 
 const Sidebar = () => {
   const routes = routesConfig;
@@ -14,6 +15,8 @@ const Sidebar = () => {
   const toggleRoute = (key: string) => {
     setOpenRoutes((prev) => ({ ...prev, [key]: !prev[key] }));
   };
+
+  const { mutate: logout, isPending: isLoggingOut } = useLogoutMutation();
 
   return (
     <aside
@@ -161,6 +164,103 @@ const Sidebar = () => {
             </section>
           );
         })}
+      </div>
+      <div className="w-full border-t py-2">
+        {/* Profile */}
+        <Tooltip disableHoverableContent={!isSidebarCollapse}>
+          <TooltipTrigger asChild>
+            <Link
+              to="/"
+              className={`flex items-center h-13 ${
+                isSidebarCollapse ? "p-0" : "p-2"
+              }`}
+            >
+              <div
+                className={`w-full h-full z-10 flex items-center ${
+                  pathname === "/profile" || pathname.startsWith("/profile/")
+                    ? !isSidebarCollapse
+                      ? "bg-brand text-white rounded-full"
+                      : ""
+                    : "text-text-muted hover:text-text-primary"
+                }`}
+              >
+                <div className="h-full aspect-square flex items-center justify-center shrink-0">
+                  <div
+                    className={`h-full aspect-1/1.5 rounded-full flex items-center justify-center ${
+                      isSidebarCollapse &&
+                      (pathname === "/profile" ||
+                        pathname.startsWith("/profile/"))
+                        ? "bg-brand text-white"
+                        : ""
+                    }`}
+                  >
+                    <Icon
+                      icon="ri:user-6-line"
+                      className="text-sm text-brand"
+                    />
+                  </div>
+                </div>
+
+                {!isSidebarCollapse && (
+                  <div className="h-full flex-1 flex items-center min-w-0">
+                    <p className="text-xs truncate">Profile</p>
+                  </div>
+                )}
+              </div>
+            </Link>
+          </TooltipTrigger>
+
+          {isSidebarCollapse && (
+            <TooltipContent side="right" className="text-xxs!">
+              Profile
+            </TooltipContent>
+          )}
+        </Tooltip>
+
+        {/* Logout */}
+        <Tooltip disableHoverableContent={!isSidebarCollapse}>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => logout()}
+              disabled={isLoggingOut}
+              className={`w-full flex items-center h-13 cursor-pointer group disabled:cursor-not-allowed text-destructive disabled:text-text-muted disabled:opacity-45 ${
+                isSidebarCollapse ? "p-0" : "p-2"
+              }`}
+            >
+              <div
+                className={`w-full h-full z-10 flex items-center ${!isSidebarCollapse && "group-hover:bg-destructive/5 rounded-md"}`}
+              >
+                <div className="h-full aspect-square flex items-center justify-center shrink-0">
+                  <div
+                    className={`h-full aspect-1/1.5 rounded-full flex items-center justify-center ${isSidebarCollapse && "group-hover:bg-destructive/5"}`}
+                  >
+                    <Icon
+                      icon={
+                        isLoggingOut
+                          ? "mingcute:loading-fill"
+                          : "ri:logout-circle-line"
+                      }
+                      className={`text-sm ${isLoggingOut && "animate-spin text-destructive! opacity-100!"} `}
+                    />
+                  </div>
+                </div>
+
+                {!isSidebarCollapse && (
+                  <div className="h-full flex-1 flex items-center min-w-0">
+                    <p className="text-xs truncate">Logout</p>
+                  </div>
+                )}
+              </div>
+            </button>
+          </TooltipTrigger>
+
+          {isSidebarCollapse && (
+            <TooltipContent side="right" className="text-xxs!">
+              Logout
+            </TooltipContent>
+          )}
+        </Tooltip>
       </div>
     </aside>
   );

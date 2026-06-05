@@ -1,7 +1,7 @@
 const PlaceholderResume = () => {
   return (
     <svg
-      className="w-full"
+      className="w-full rounded-[inherit]"
       viewBox="0 0 197 279"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

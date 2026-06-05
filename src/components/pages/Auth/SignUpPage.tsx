@@ -158,7 +158,7 @@ const SignUpPage = () => {
                             onBlur={field.handleBlur}
                             disabled={isPendingRequest}
                             placeholder="E.g. John"
-                             className={inputClass}
+                            className={inputClass}
                           />
                           <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                             {field.state.meta.isTouched &&
@@ -187,7 +187,7 @@ const SignUpPage = () => {
                             onBlur={field.handleBlur}
                             disabled={isPendingRequest}
                             placeholder="E.g. Doe"
-                             className={inputClass}
+                            className={inputClass}
                           />
                           <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                             {field.state.meta.isTouched &&
@@ -221,7 +221,7 @@ const SignUpPage = () => {
                             onChange={(e) => field.handleChange(e.target.value)}
                             onBlur={field.handleBlur}
                             disabled={isPendingRequest}
-                             className={inputClass}
+                            className={inputClass}
                           />
                           <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                             {field.state.meta.isTouched &&
@@ -257,7 +257,7 @@ const SignUpPage = () => {
                             onBlur={field.handleBlur}
                             disabled={isPendingRequest}
                             placeholder="+91 1234567890"
-                             className={inputClass}
+                            className={inputClass}
                           />
                           <span className="h-5 flex items-center text-destructive text-tiny mt-1">
                             {field.state.meta.isTouched &&
@@ -285,7 +285,7 @@ const SignUpPage = () => {
                             </span>
                             {signUpMutation.isPending && (
                               <Icon
-                                icon="mingcute:loading-2-line"
+                                icon="mingcute:loading-fill"
                                 className="size-4 animate-spin text-white"
                               />
                             )}
