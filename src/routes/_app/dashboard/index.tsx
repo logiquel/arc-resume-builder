@@ -27,30 +27,26 @@ import {
   type TemplateId,
 } from "#/config/templates.config";
 
-export const Route = createFileRoute("/_app/dashboard/")({
-  component: RouteComponent,
-  loader: async () => {
-    return {
-      breadcrumbs: [{ label: "Dashboard", href: "undefined" }],
-    };
-  },
-});
-
+//  HELPER COMPONENTS ────────────────────────────────────────────────────────────────────
 interface SectionHeadingProps {
   label: string;
   secondaryLabel?: string;
+  className?: string;
 }
 const SectionHeading: React.FC<SectionHeadingProps> = ({
   label,
   secondaryLabel,
+  className,
 }) => {
   return (
-    <div className="w-full flex items-center gap-x-2 bg-[#F9FBFC] mb-4 px-1">
+    // bg-[#F9FBFC]
+    <div className={`w-full flex items-center gap-x-2 mb-4 px-1 ${className}`}>
       <h1 className="text-xs uppercase text-brand font-medium">{label}</h1>
-      <span className="flex-1 h-[0.025rem] bg-gray-300">{secondaryLabel}</span>
+      <span className="flex-1 h-[0.025rem] bg-black/10">{secondaryLabel}</span>
     </div>
   );
 };
+
 interface AddBaseResumeModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -303,9 +299,26 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
     </div>
   );
 };
-// ── Route ────────────────────────────────────────────────────────────────────
+
+// ── ROUTE ────────────────────────────────────────────────────────────────────
+
+export const Route = createFileRoute("/_app/dashboard/")({
+  component: RouteComponent,
+  loader: async () => {
+    return {
+      breadcrumbs: [
+        {
+          label: "Manage your resumes and craft your professional story.",
+          href: "undefined",
+        },
+      ],
+    };
+  },
+});
 
 function RouteComponent() {
+  const { user } = Route.useRouteContext();
+
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAddBaseModalOpen, setIsAddBaseModalOpen] = useState(false);
@@ -509,14 +522,37 @@ function RouteComponent() {
     return TEMPLATES_LIST[0]?.name || "Resume";
   };
 
+  const isFreePlan = true;
+
   return (
     <>
-      <div className="w-full h-full flex flex-col">
-        <div className="w-full flex flex-col px-5 py-3 sticky top-0 z-10 bg-[#F9FBFC]">
-          <h1 className="text-base font-medium text-text-primary">
-            Good Morning, Steve
+      <div className="w-full h-full flex flex-col  bg-white">
+        <div
+          className={`w-full ${isFreePlan ? "flex" : "hidden"} items-center justify-center py-2 bg-linear-to-b from-sky-100 to-white`}
+        >
+          <Icon
+            icon="akar-icons:info"
+            className="text-xxs text-text-muted mr-1"
+          />
+          <span className="text-brand text-xxs">
+            You're on the Free plan.
+            <button className="cusor-pointer px-1 border-b cursor-pointer hover:border-brand">
+              Upgrade
+            </button>
+            to unlock premium features.
+          </span>
+        </div>
+        <div
+          className={`w-full flex flex-col px-5 ${isFreePlan ? "pb-3" : "py-3"}  sticky top-0 z-10 bg-white`}
+        >
+          <h1 className="flex items-center text-base font-medium text-text-primary">
+            <Icon
+              icon="meteor-icons:sparkle"
+              className="text-sm mr-1 text-brand"
+            />
+            Hello, {user?.firstName || "User"}
           </h1>
-          <h2 className="text-xs text-text-muted">
+          <h2 className="text-xs text-text-muted pl-5">
             A new day, a new opportunity! Let's create something amazing
             together.
           </h2>
@@ -525,7 +561,7 @@ function RouteComponent() {
           <main className="flex-1 h-full overflow-y-scroll hide-scrollbar pb-10">
             <section className="w-full flex flex-col gap-x-2 p-4">
               <div className="flex-1">
-                <div className="w-[34vw] aspect-21/9 flex rounded-[2rem] border border-black/10 bg-white shadow-[0_8px_32px_0_rgba(14,165,233,0.04),inset_0_1px_1px_0_rgba(255,255,255,0.3)] group">
+                <div className="w-[34vw] aspect-21/9 flex rounded-[2rem] border border-black/10 bg-white shadow-[0_12px_40px_rgba(14,165,233,0.12),inset_0_1px_1px_rgba(255,255,255,0.4)] group">
                   <div className="flex-1 h-full flex flex-col justify-between p-6">
                     <div className="flex flex-col gap-y-1.5">
                       <h2 className="text-base font-semibold text-text-primary tracking-tight leading-snug">
@@ -554,8 +590,12 @@ function RouteComponent() {
                 </div>
               </div>
             </section>
+
             <section className="w-full flex flex-col p-4">
-              <SectionHeading label="MY TAILORED RESUMES" />
+              <SectionHeading
+                label="MY TAILORED RESUMES"
+                className="sticky top-0 bg-white z-10 py-2"
+              />
               <div className="w-full flex-1 grid grid-cols-5 gap-2">
                 {isTailoredResumesLoading ? (
                   // Loading skeletons
@@ -618,7 +658,7 @@ function RouteComponent() {
                   tailoredResumes.map((resume, i) => (
                     <div
                       key={resume.id || i}
-                      className="relative flex-1 border-black/15 flex flex-col items-center bg-[#FAFAFA]/0 rounded-0 overflow-clip cursor-pointer hover:border-brand transition-all duration-300 group"
+                      className="relative flex-1 border-black/5 flex flex-col items-center bg-[#FAFAFA]/0 rounded-0 overflow-clip cursor-pointer hover:border-brand transition-all duration-300 group"
                       onClick={() => {
                         // Navigate to tailored resume detail
                         navigate({
@@ -628,13 +668,13 @@ function RouteComponent() {
                       }}
                     >
                       <div
-                        className="h-40 aspect-12/15 bg-[#E7E8F1] rounded border-2 border-black/5 translate-y-3 group-hover:translate-y-0 transition-all duration-300"
+                        className="h-40 aspect-12/15 bg-[#E7E8F1] rounded border-black/5 translate-y-3 group-hover:translate-y-0 transition-all duration-300"
                         style={{
                           boxShadow:
                             "0 15px 30px -5px rgba(14, 165, 233, 0.5), 0 10px 15px -6px rgba(14, 165, 233, 0.4)",
                         }}
                       >
-                        <div className="h-full min-w-0 flex-1 rounded-[inherit] border-black/20 overflow-clip">
+                        <div className="h-full min-w-0 flex-1 rounded-[inherit] border border-black/10 overflow-clip">
                           <img
                             src={getTemplateThumbnail(resume.template_id || "")}
                             alt={getTemplateName(resume.template_id || "")}
@@ -643,7 +683,14 @@ function RouteComponent() {
                         </div>
                       </div>
                       <div
-                        className="absolute bottom-0 w-full flex flex-col bg-[#F9FBFC]/70 backdrop-blur-md px-3 py-2 pt-6 rounded-b-[inherit]"
+                        className="absolute bottom-0 w-full flex flex-col
+                        bg-linear-to-t
+                        from-white/80
+                        via-white/65
+                        to-white/20
+                        backdrop-blur-xl
+                        border-t border-white/70
+                        px-3 pb-1 pt-6 rounded-b-[inherit]"
                         style={{
                           maskImage:
                             "linear-gradient(to top, black 60%, transparent 100%)",
@@ -871,42 +918,83 @@ function RouteComponent() {
             </div>
 
             {currentStep === 1 ? (
-              <div className="w-full h-90 grid grid-cols-5 p-5 gap-6 overflow-scroll custom-scrollbar">
-                {baseResumes.map((base, idx) => (
-                  <div
-                    key={base.id}
-                    onClick={() => setSelectedBaseResumeId(base.id)}
-                    className="relative w-full flex flex-col cursor-pointer group"
-                  >
+              baseResumes.length > 0 ? (
+                <div className="w-full h-90 grid grid-cols-5 p-5 gap-6 overflow-scroll custom-scrollbar">
+                  {baseResumes.map((base, idx) => (
                     <div
-                      className={`w-full aspect-12/14 overflow-hidden rounded-lg bg-white border-2 transition-all duration-200 ${
-                        selectedBaseResumeId === base.id
-                          ? "border-brand"
-                          : "border-black/10 group-hover:border-brand"
-                      }`}
+                      key={base.id}
+                      onClick={() => setSelectedBaseResumeId(base.id)}
+                      className="relative w-full flex flex-col cursor-pointer group"
                     >
-                      <PlaceholderResume />
-                    </div>
-                    <span className="text-xxs text-text-primary leading-snug text-wrap w-[95%] truncate mt-2 px-1">
-                      <span className="font-medium mb-2 mr-1 text-text-muted transition-all duration-200">
-                        #{idx + 1}.
-                      </span>
-                      {base.name}
-                    </span>
-                    <span className="text-tiny text-text-muted leading-snug text-wrap w-[95%] truncate mt-0.5 px-1">
-                      {format(parseISO(base.updated_at), "MMMM do, yyyy")}
-                    </span>
-                    {selectedBaseResumeId === base.id && (
-                      <div className="w-4.5 h-4.5 rounded-full shadow-sm bg-brand flex items-center justify-center absolute top-0 right-0 translate-x-1/3 -translate-y-1/3">
-                        <Icon
-                          icon="mingcute:check-fill"
-                          className="text-white w-[50%] h-[50%]"
-                        />
+                      <div
+                        className={`w-full aspect-12/14 overflow-hidden rounded-lg bg-white border-2 transition-all duration-200 ${
+                          selectedBaseResumeId === base.id
+                            ? "border-brand"
+                            : "border-black/10 group-hover:border-brand"
+                        }`}
+                      >
+                        <PlaceholderResume />
                       </div>
-                    )}
+
+                      <span className="text-xxs text-text-primary leading-snug w-[95%] truncate mt-2 px-1">
+                        <span className="font-medium mr-1 text-text-muted">
+                          #{idx + 1}.
+                        </span>
+                        {base.name}
+                      </span>
+
+                      <span className="text-tiny text-text-muted leading-snug w-[95%] truncate mt-0.5 px-1">
+                        {format(parseISO(base.updated_at), "MMMM do, yyyy")}
+                      </span>
+
+                      {selectedBaseResumeId === base.id && (
+                        <div className="w-4.5 h-4.5 rounded-full shadow-sm bg-brand flex items-center justify-center absolute top-0 right-0 translate-x-1/3 -translate-y-1/3">
+                          <Icon
+                            icon="mingcute:check-fill"
+                            className="text-white w-[50%] h-[50%]"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="w-full h-90 border flex flex-col items-center justify-center text-center px-8">
+                  <div className="relative aspect-[2/0.7] h-20">
+                    <div className="absolute inset-0 flex flex-col justify-evenly p-5 gap-y-1 rounded-2xl shadow-lg border border-black/12 bg-white">
+                      <div className="flex items-center gap-x-2">
+                        <div className="h-3 w-6 bg-gray-200 rounded"></div>
+                        <div className="h-3 w-32 bg-gray-200 rounded"></div>
+                      </div>
+                      <div className="w-full flex items-center gap-x-1 ml-5">
+                        <div className="h-3 w-3 bg-gray-200 rounded"></div>
+                        <div className="h-3 w-24 bg-gray-200 rounded"></div>
+                      </div>
+                    </div>
+                    <div className="w-6 h-6 shadow absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white z-20 p-1 rounded-full border cursor-pointer group">
+                      <span className="text-tiny">0</span>
+                    </div>
                   </div>
-                ))}
-              </div>
+                  <p className="text-xs text-text-secondary mt-3">
+                    No base resumes found
+                  </p>
+                  <p className="text-xxs text-text-muted max-w-xs mt-1">
+                    Add a base resume to use AI tailoring and generate
+                    job-specific versions.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsAddBaseModalOpen(true);
+                      handleCloseModal();
+                    }}
+                    className="hover:border-brand/30 flex items-center gap-x-1 mt-2 px-3 py-2 text-tiny font-medium text-white bg-brand rounded-full shadow-xs transition-all duration-300 group-hover:bg-brand/90 hover:scale-[1.02] cursor-pointer"
+                  >
+                    <Icon icon="ic:round-plus" className="text-sm" />
+                    Add New Base Resume
+                  </button>
+                </div>
+              )
             ) : (
               <div className="w-full h-90 px-4">
                 <textarea

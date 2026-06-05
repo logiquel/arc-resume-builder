@@ -18,8 +18,17 @@ import {
 } from "#/components/addons/toast";
 import { OfflineBanner } from "#/components/common/OfflineBanner";
 
+export interface AppUser {
+  id: string;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+}
+
 interface MyRouterContext {
   queryClient: QueryClient;
+  user: AppUser | null;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({

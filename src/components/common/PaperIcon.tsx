@@ -7,8 +7,8 @@ const PaperIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M76.2017 4H8C3.58172 4 0 7.58172 0 12V142.877C0 147.295 3.58172 150.877 8 150.877H108.43C112.848 150.877 116.43 147.295 116.43 142.877V51.4365L76.2017 4Z"
         fill="white"
       />
@@ -26,9 +26,9 @@ const PaperIcon = () => {
           width="54.125"
           height="61.2627"
           filterUnits="userSpaceOnUse"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
         >
-          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
