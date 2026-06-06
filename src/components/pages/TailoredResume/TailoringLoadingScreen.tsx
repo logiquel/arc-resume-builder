@@ -153,7 +153,7 @@ const TailoringLoadingScreen = ({
                         />
                       ) : isActive ? (
                         <Icon
-                          icon="si:spinner-fill"
+                          icon="mingcute:loading-fill"
                           className="text-sm text-sky-500 animate-spin shrink-0"
                         />
                       ) : (

@@ -39,8 +39,8 @@ function RouteComponent() {
     return (
       <div className="w-full h-full flex items-center justify-center overflow-hidden">
         <Icon
-          icon="si:spinner-fill"
-          className="text-base text-text-primary animate-spin shrink-0"
+          icon="eos-icons:three-dots-loading"
+          className="text-base scale-125 text-text-primary shrink-0"
         />
       </div>
     );
