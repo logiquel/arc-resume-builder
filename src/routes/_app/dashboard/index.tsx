@@ -298,7 +298,7 @@ function RouteComponent() {
             <span className="text-brand font-display font-semibold text-lg tracking-widest italic">
               Hello,
             </span>
-            <span className="text-text-primary font-semibold text-lg ml-0.5">
+            <span className="text-text-primary font-mono font-medium tracking-tighter text-lg ml-0.5">
               {user?.firstName || "User"}
             </span>
           </div>
