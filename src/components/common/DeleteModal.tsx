@@ -16,7 +16,9 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
   resumeName = "this resume",
   isDeleting = false,
 }) => {
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center">
