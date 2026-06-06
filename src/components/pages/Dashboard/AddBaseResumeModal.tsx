@@ -122,7 +122,7 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
                 />
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full h-full flex flex-col items-center p-5 border-2 border-dashed border-brand-100 rounded-3xl shadow-[0_0_30px_rgba(59,130,246,0.08)] cursor-pointer"
+                  className="w-full h-full flex flex-col items-center p-5 border-2 border-dashed border-brand-100 rounded-3xl bg-linear-to-b from-blue-50 to-white hover:from-blue-50 hover:to-blue-50 shadow-[0_0_30px_rgba(59,130,246,0.08)] hover:border-black/30 transition-all duration-300 cursor-pointer"
                 >
                   <Icon
                     icon="lets-icons:upload-light"
@@ -131,9 +131,14 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
 
                   <p className="text-text-muted text-xxs text-center font-normal mt-2">
                     Upload your resume in{" "}
-                    <span className="font-medium text-brand">PDF</span> or{" "}
-                    <span className="font-medium text-brand">DOCX</span> format
-                    to use as the base for AI tailoring.
+                    <span className="font-medium text-brand font-mono">
+                      PDF
+                    </span>{" "}
+                    or{" "}
+                    <span className="font-medium text-brand font-mono">
+                      DOCX
+                    </span>{" "}
+                    format to use as the base for AI tailoring.
                   </p>
 
                   {uploadedFile && (
@@ -163,10 +168,10 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
             <div className="w-full flex flex-col gap-2 p-2">
               <button
                 onClick={() => handleOptionSelect("upload")}
-                className="w-full aspect-[1/0.3] flex border rounded-2xl cursor-pointer overflow-clip p-1"
+                className="w-full aspect-[1/0.3] flex border rounded-2xl cursor-pointer hover:border-black/20 bg-linear-to-b hover:from-blue-50 hover:to-white overflow-clip p-1 group"
               >
-                <div className="h-full aspect-square flex items-end overflow-clip bg-gray-50 rounded-[inherit]">
-                  <div className="w-full h-[80%] translate-y-1 flex justify-center">
+                <div className="h-full aspect-square flex items-end overflow-clip bg-gradient-to-b from-brand/20 to-brand/10 rounded-[inherit]">
+                  <div className="w-full h-[80%] translate-y-2 flex justify-center group-hover:translate-y-0 transition-all duration-300">
                     <PaperIcon />
                   </div>
                 </div>
@@ -187,10 +192,10 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
 
               <button
                 disabled
-                className="w-full aspect-[1/0.3] flex border rounded-2xl cursor-not-allowed overflow-clip p-1 opacity-70"
+                className="w-full aspect-[1/0.3] flex border rounded-2xl cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 hover:border-black/20 bg-linear-to-b hover:from-blue-50 hover:to-white overflow-clip p-1 group"
               >
-                <div className="h-full aspect-square flex items-end overflow-clip bg-gray-50 rounded-[inherit]">
-                  <div className="w-full h-[85%] translate-y-1 flex justify-center">
+                <div className="h-full aspect-square flex items-end overflow-clip bg-gradient-to-b from-brand/20 to-brand/10 rounded-[inherit]">
+                  <div className="w-full h-[80%] translate-y-2 flex justify-center group-hover:translate-y-0 transition-all duration-300">
                     <FormIcon />
                   </div>
                 </div>

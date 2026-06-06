@@ -290,13 +290,18 @@ function RouteComponent() {
         <div
           className={`w-full flex flex-col px-5 ${isFreePlan ? "pb-3" : "py-3"}  sticky top-0 z-10 bg-white`}
         >
-          <h1 className="flex items-center text-base font-medium text-text-primary">
+          <div className="flex items-center">
             <Icon
               icon="meteor-icons:sparkle"
               className="text-sm mr-1 text-brand"
             />
-            Hello, {user?.firstName || "User"}
-          </h1>
+            <span className="text-brand font-display font-semibold text-lg tracking-widest italic">
+              Hello,
+            </span>
+            <span className="text-text-primary font-semibold text-lg ml-0.5">
+              {user?.firstName || "User"}
+            </span>
+          </div>
           <h2 className="text-xs text-text-muted pl-5">
             A new day, a new opportunity! Let's create something amazing
             together.
