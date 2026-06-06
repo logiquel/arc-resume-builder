@@ -51,6 +51,10 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
 export const Route = createFileRoute("/_app/dashboard/")({
   pendingComponent: () => <p>Loading...</p>,
   component: RouteComponent,
+  staticData: {
+    pageLabel: "Dashboard",
+    pageDescription: "Manage your resume creations all at one place",
+  },
 });
 
 function RouteComponent() {

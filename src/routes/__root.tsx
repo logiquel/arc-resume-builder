@@ -1,11 +1,10 @@
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
+  Link,
 } from "@tanstack/react-router";
-// import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-// import { TanStackDevtools } from "@tanstack/react-devtools";
-// import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 
 import appCss from "../styles.css?url";
 
@@ -59,8 +58,40 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
-  shellComponent: RootDocument,
+  component: RootComponent,
+  notFoundComponent: RootNotFound,
 });
+
+function RootComponent() {
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  );
+}
+
+function RootNotFound() {
+  return (
+    <RootDocument>
+      <div className="w-full h-full min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <h1 className="text-lg font-semibold text-text-primary">
+            Page not found
+          </h1>
+          <p className="text-sm text-text-muted">
+            The page you are looking for does not exist.
+          </p>
+          <Link
+            to="/dashboard"
+            className="text-sm text-brand border-b border-transparent hover:border-brand"
+          >
+            Go to dashboard
+          </Link>
+        </div>
+      </div>
+    </RootDocument>
+  );
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (

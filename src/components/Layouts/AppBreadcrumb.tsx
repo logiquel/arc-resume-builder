@@ -1,6 +1,11 @@
 import * as React from "react";
 import { Fragment } from "react";
-import { Link, useMatches, useRouterState } from "@tanstack/react-router";
+import {
+  isMatch,
+  Link,
+  useMatches,
+  useRouterState,
+} from "@tanstack/react-router";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,14 +32,34 @@ function dedupeBreadcrumbs(items: BreadcrumbItemType[]) {
 
   for (const item of items) {
     const key = `${item.label}::${item.href ?? ""}`;
-    if (!map.has(key)) map.set(key, item);
+    if (!map.has(key)) {
+      map.set(key, item);
+    }
   }
 
   return Array.from(map.values());
 }
 
+function normalizeBreadcrumbs(items: unknown): BreadcrumbItemType[] {
+  if (!Array.isArray(items)) return [];
+
+  return items
+    .filter(
+      (item): item is BreadcrumbItemType =>
+        typeof item === "object" &&
+        item !== null &&
+        "label" in item &&
+        typeof item.label === "string",
+    )
+    .map((item) => ({
+      label: item.label,
+      href: typeof item.href === "string" ? item.href : undefined,
+    }))
+    .filter((item) => item.label.trim().length > 0);
+}
+
 function useRouterBreadcrumbItems(
-  suspendWhilePending?: boolean,
+  suspendWhilePending = false,
 ): BreadcrumbItemType[] {
   const matches = useMatches();
 
@@ -42,33 +67,32 @@ function useRouterBreadcrumbItems(
     select: (s) => s.location.href !== s.resolvedLocation?.href,
   });
 
+  const items = React.useMemo(() => {
+    const resolvedItems = matches.flatMap((match) => {
+      if (isMatch(match, "loaderData.breadcrumbs")) {
+        return normalizeBreadcrumbs(match.loaderData?.breadcrumbs);
+      }
+
+      if (Array.isArray(match.staticData?.breadcrumbs)) {
+        return normalizeBreadcrumbs(match.staticData.breadcrumbs);
+      }
+
+      return [];
+    });
+
+    return dedupeBreadcrumbs(resolvedItems);
+  }, [matches]);
+
   if (suspendWhilePending && isRoutePending) {
     return [];
   }
 
-  const items = matches.flatMap((match: any) => {
-    const staticItems = Array.isArray(match.staticData?.breadcrumbs)
-      ? match.staticData.breadcrumbs
-      : undefined;
-
-    const loaderItems = Array.isArray(match.loaderData?.breadcrumbs)
-      ? match.loaderData.breadcrumbs
-      : undefined;
-
-    const breadcrumbs = loaderItems ?? staticItems ?? [];
-
-    return breadcrumbs.map((item: { label: string; href?: string }) => ({
-      label: String(item.label),
-      href: item.href,
-    }));
-  });
-
-  return dedupeBreadcrumbs(items).filter((item) => Boolean(item.label));
+  return items;
 }
 
 export default function AppBreadcrumb({
   items,
-  separator = ">",
+  separator,
   suspendWhilePending = false,
 }: AppBreadcrumbProps) {
   const routerItems = useRouterBreadcrumbItems(suspendWhilePending);
@@ -104,7 +128,13 @@ export default function AppBreadcrumb({
 
                 {!isLast && (
                   <BreadcrumbSeparator className="text-tiny">
-                    <Icon icon="ei:chevron-right" className="scale-[1.5]" />
+                    {separator ?? (
+                      <Icon
+                        icon="ei:chevron-right"
+                        ssr={true}
+                        className="scale-[1.5]"
+                      />
+                    )}
                   </BreadcrumbSeparator>
                 )}
               </Fragment>

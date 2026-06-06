@@ -9,15 +9,10 @@ export const Route = createFileRoute("/_app/tailored-resumes/$sessionId/")({
   component: RouteComponent,
   staticData: {
     pageLabel: "Tailor Resume",
-  },
-
-  loader: async () => {
-    return {
-      breadcrumbs: [
-        { label: "Dashboard", href: "/dashboard" },
-        { label: "Tailor Resume", href: undefined },
-      ],
-    };
+    breadcrumbs: [
+      { label: "Dashboard", href: "/dashboard" },
+      { label: "Tailor Resume" },
+    ],
   },
 });
 

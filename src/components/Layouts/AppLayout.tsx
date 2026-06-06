@@ -1,8 +1,8 @@
 // AppLayout.tsx
 import {
   Outlet,
+  useMatches,
   useRouter,
-  useLocation,
   useRouterState,
 } from "@tanstack/react-router";
 import { Icon } from "@iconify/react";
@@ -15,18 +15,12 @@ import { usePageMeta } from "#/hooks/usePageMeta";
 const AppLayout = () => {
   const router = useRouter();
 
-  const { pathname, isRoutePending } = useRouterState({
-    select: (s) => ({
-      pathname: s.location.pathname,
-      isRoutePending: s.location.href !== s.resolvedLocation?.href,
-    }),
-  });
+  const matches = useMatches();
+  const currentMatch = matches[matches.length - 1];
 
-  const activeRoute = getActiveRoute(pathname);
-  const { pageLabel, pageDescription } = usePageMeta();
+  const label = currentMatch?.staticData?.pageLabel ?? "Page";
+  const description = currentMatch?.staticData?.pageDescription ?? "";
 
-  const label = pageLabel ?? activeRoute?.label ?? "Page";
-  const description = pageDescription ?? activeRoute?.description;
   return (
     <div className="w-full h-full flex flex-col overflow-hidden bg-[#F9FBFC]">
       <div className="w-full min-h-0 flex-1 flex">
@@ -45,21 +39,13 @@ const AppLayout = () => {
                 className="w-[50%] h-[50%] text-brand"
               />
             </button>
-            {/* <div className="flex flex-col">
-              {isRoutePending ? (
-                <span className="w-30 h-2 mb-2 bg-gray-100 animate-pulse rounded-full"></span>
-              ) : (
-                <h2 className="text-base text-text-primary flex items-center font-medium">
-                  {label}
-                </h2>
-              )}
-              {isRoutePending ? (
-                <span className="w-100 h-2  bg-gray-100 animate-pulse rounded-full"></span>
-              ) : (
-                <p className="text-xs text-text-muted">{description}</p>
-              )}
-              <AppBreadcrumb suspendWhilePending={isRoutePending} />
-            </div> */}
+            <div className="flex flex-col">
+              <h2 className="text-base text-text-primary flex items-center font-medium">
+                {label}
+              </h2>
+              <p className="text-xs text-text-muted">{description}</p>
+              <AppBreadcrumb />
+            </div>
           </header>
 
           <div className="flex-1 min-h-0 min-w-0">
