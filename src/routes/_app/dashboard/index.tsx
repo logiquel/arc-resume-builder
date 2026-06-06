@@ -38,7 +38,9 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
   return (
     // bg-[#F9FBFC]
     <div className={`w-full flex items-center gap-x-2 mb-4 px-1 ${className}`}>
-      <h1 className="text-xxs uppercase text-brand font-medium tracking-[0.2px]">{label}</h1>
+      <h1 className="text-xxs uppercase text-brand font-medium tracking-[0.2px]">
+        {label}
+      </h1>
       <span className="flex-1 h-[0.025rem] bg-black/10">{secondaryLabel}</span>
     </div>
   );
@@ -47,17 +49,8 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
 // ── ROUTE ────────────────────────────────────────────────────────────────────
 
 export const Route = createFileRoute("/_app/dashboard/")({
+  pendingComponent: () => <p>Loading...</p>,
   component: RouteComponent,
-  loader: async () => {
-    return {
-      breadcrumbs: [
-        {
-          label: "Manage your resumes and craft your professional story.",
-          href: "undefined",
-        },
-      ],
-    };
-  },
 });
 
 function RouteComponent() {

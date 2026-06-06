@@ -1,7 +1,6 @@
-// components/app-breadcrumb.tsx
 import * as React from "react";
 import { Fragment } from "react";
-import { Link, isMatch, useMatches } from "@tanstack/react-router";
+import { Link, useMatches, useRouterState } from "@tanstack/react-router";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,6 +19,7 @@ export interface BreadcrumbItemType {
 interface AppBreadcrumbProps {
   items?: BreadcrumbItemType[];
   separator?: React.ReactNode;
+  suspendWhilePending?: boolean;
 }
 
 function dedupeBreadcrumbs(items: BreadcrumbItemType[]) {
@@ -27,22 +27,26 @@ function dedupeBreadcrumbs(items: BreadcrumbItemType[]) {
 
   for (const item of items) {
     const key = `${item.label}::${item.href ?? ""}`;
-
-    if (!map.has(key)) {
-      map.set(key, item);
-    }
+    if (!map.has(key)) map.set(key, item);
   }
 
   return Array.from(map.values());
 }
 
-function useRouterBreadcrumbItems(): BreadcrumbItemType[] {
+function useRouterBreadcrumbItems(
+  suspendWhilePending?: boolean,
+): BreadcrumbItemType[] {
   const matches = useMatches();
 
-  const items = matches.flatMap((match: any) => {
-    // We use any here specifically for the flatMap iteration
-    // because matches are a complex union of all route types.
+  const isRoutePending = useRouterState({
+    select: (s) => s.location.href !== s.resolvedLocation?.href,
+  });
 
+  if (suspendWhilePending && isRoutePending) {
+    return [];
+  }
+
+  const items = matches.flatMap((match: any) => {
     const staticItems = Array.isArray(match.staticData?.breadcrumbs)
       ? match.staticData.breadcrumbs
       : undefined;
@@ -53,7 +57,7 @@ function useRouterBreadcrumbItems(): BreadcrumbItemType[] {
 
     const breadcrumbs = loaderItems ?? staticItems ?? [];
 
-    return breadcrumbs.map((item: { label: string; href: string }) => ({
+    return breadcrumbs.map((item: { label: string; href?: string }) => ({
       label: String(item.label),
       href: item.href,
     }));
@@ -65,16 +69,15 @@ function useRouterBreadcrumbItems(): BreadcrumbItemType[] {
 export default function AppBreadcrumb({
   items,
   separator = ">",
+  suspendWhilePending = false,
 }: AppBreadcrumbProps) {
-  const routerItems = useRouterBreadcrumbItems();
+  const routerItems = useRouterBreadcrumbItems(suspendWhilePending);
   const finalItems = items?.length ? items : routerItems;
 
-  if (!finalItems.length) {
-    return null;
-  }
+  if (!finalItems.length) return null;
 
   return (
-    <div className="relative w-full flex items-center flex-1  ml-1 pl-3 before:content-[''] before:absolute before:left-0 before:w-2.5 before:h-[0.02rem] before:bg-gray-400 after:content-[''] after:absolute after:left-0 after:-top-px after:w-[0.02rem] after:h-2.5 after:bg-gray-400">
+    <div className="relative w-full flex items-center flex-1 ml-1 pl-3 before:content-[''] before:absolute before:left-0 before:w-2.5 before:h-[0.02rem] before:bg-gray-400 after:content-[''] after:absolute after:left-0 after:-top-px after:w-[0.02rem] after:h-2.5 after:bg-gray-400">
       <Breadcrumb>
         <BreadcrumbList>
           {finalItems.map((item, index) => {
@@ -101,7 +104,6 @@ export default function AppBreadcrumb({
 
                 {!isLast && (
                   <BreadcrumbSeparator className="text-tiny">
-                    {/* {separator} */}
                     <Icon icon="ei:chevron-right" className="scale-[1.5]" />
                   </BreadcrumbSeparator>
                 )}

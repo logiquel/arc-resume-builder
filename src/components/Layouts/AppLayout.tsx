@@ -1,21 +1,32 @@
 // AppLayout.tsx
-import { Outlet, useRouter, useLocation } from "@tanstack/react-router";
+import {
+  Outlet,
+  useRouter,
+  useLocation,
+  useRouterState,
+} from "@tanstack/react-router";
 import { Icon } from "@iconify/react";
 import LogiquelWordMark from "../common/LogiquelWordMark";
 import { getActiveRoute } from "#/config/route.config";
-import { useLogoutMutation } from "#/api/auth/auth.mutations";
 import Sidebar from "./Sidebar";
 import AppBreadcrumb from "./AppBreadcrumb";
+import { usePageMeta } from "#/hooks/usePageMeta";
 
 const AppLayout = () => {
   const router = useRouter();
-  const { pathname } = useLocation();
+
+  const { pathname, isRoutePending } = useRouterState({
+    select: (s) => ({
+      pathname: s.location.pathname,
+      isRoutePending: s.location.href !== s.resolvedLocation?.href,
+    }),
+  });
 
   const activeRoute = getActiveRoute(pathname);
-  const activeRouteLabel = activeRoute?.label ?? "Page";
+  const { pageLabel, pageDescription } = usePageMeta();
 
-  const logout = useLogoutMutation();
-
+  const label = pageLabel ?? activeRoute?.label ?? "Page";
+  const description = pageDescription ?? activeRoute?.description;
   return (
     <div className="w-full h-full flex flex-col overflow-hidden bg-[#F9FBFC]">
       <div className="w-full min-h-0 flex-1 flex">
@@ -24,7 +35,7 @@ const AppLayout = () => {
 
         {/* --- Main Content --- */}
         <main className="flex-1 min-w-0 h-full flex flex-col">
-          <header className="h-16 w-full flex items-center gap-2.5 px-4 pt-2 pb-1.5 bg-white border-b">
+          <header className="min-h-16 w-full flex items-center gap-2.5 px-4 pt-2 pb-1.5 bg-white border-b">
             <button
               onClick={() => router.history.back()}
               className="h-[60%] aspect-square shrink-0 flex items-center justify-center border rounded-md bg-gray-50 hover:bg-gray-100 cursor-pointer"
@@ -34,15 +45,21 @@ const AppLayout = () => {
                 className="w-[50%] h-[50%] text-brand"
               />
             </button>
-            <div className="flex flex-col">
-              <h2 className="text-base text-text-primary flex items-center font-medium">
-                {activeRouteLabel}
-              </h2>
-              <p className="text-xs text-text-muted">
-                {/* {activeRoute?.description} */}
-              </p>
-              <AppBreadcrumb />
-            </div>
+            {/* <div className="flex flex-col">
+              {isRoutePending ? (
+                <span className="w-30 h-2 mb-2 bg-gray-100 animate-pulse rounded-full"></span>
+              ) : (
+                <h2 className="text-base text-text-primary flex items-center font-medium">
+                  {label}
+                </h2>
+              )}
+              {isRoutePending ? (
+                <span className="w-100 h-2  bg-gray-100 animate-pulse rounded-full"></span>
+              ) : (
+                <p className="text-xs text-text-muted">{description}</p>
+              )}
+              <AppBreadcrumb suspendWhilePending={isRoutePending} />
+            </div> */}
           </header>
 
           <div className="flex-1 min-h-0 min-w-0">

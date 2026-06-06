@@ -7,6 +7,9 @@ import TailoringSessionScreen from "#/components/pages/TailoredResume/TailoringS
 
 export const Route = createFileRoute("/_app/tailored-resumes/$sessionId/")({
   component: RouteComponent,
+  staticData: {
+    pageLabel: "Tailor Resume",
+  },
 
   loader: async () => {
     return {
