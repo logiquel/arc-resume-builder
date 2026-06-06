@@ -4,7 +4,7 @@ import { getCookies, setCookie } from "@tanstack/react-start/server";
 export function createClient() {
   return createServerClient(
     import.meta.env.VITE_SUPABASE_URL!,
-    import.meta.env.VITE_SUPABASE_KEY!,
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
         getAll() {
@@ -32,7 +32,7 @@ export function createClient() {
 // export function createClient() {
 //   return createServerClient(
 //     import.meta.env.VITE_SUPABASE_URL!,
-//     import.meta.env.VITE_SUPABASE_KEY!,
+//     import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!,
 //     {
 //       cookies: {
 //         getAll() {
