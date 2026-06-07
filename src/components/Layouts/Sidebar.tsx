@@ -170,7 +170,7 @@ const Sidebar = () => {
         <Tooltip disableHoverableContent={!isSidebarCollapse}>
           <TooltipTrigger asChild>
             <Link
-              to="/"
+              to="/profile"
               className={`flex items-center h-13 ${
                 isSidebarCollapse ? "p-0" : "p-2"
               }`}
@@ -196,7 +196,7 @@ const Sidebar = () => {
                   >
                     <Icon
                       icon="ri:user-6-line"
-                      className="text-sm text-brand"
+                      className={`text-sm ${pathname === "/profile" || pathname.startsWith("/profile/") ? "text-white" : "text-brand"}`}
                     />
                   </div>
                 </div>
