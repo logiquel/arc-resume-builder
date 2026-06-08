@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@100..900&family=Space+Grotesk:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Geist+Mono:ital,wght@0,100..900;1,100..900&family=Instrument+Serif:ital@0;1&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -6,8 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Outfit", sans-serif;
-  --font-mono: "Space Grotesk", sans-serif;
+  --font-sans: "DM Sans", sans-serif;
+  --font-mono: "Geist Mono", monospace;
   --font-display: "Instrument Serif", serif;
   /* --color-brand: #0a65cc; */
   --color-brand: #0a65cc;
@@ -39,6 +39,13 @@
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 .hide-scrollbar {

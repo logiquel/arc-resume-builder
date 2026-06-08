@@ -18,6 +18,9 @@ const config = defineConfig({
     viteReact(),
     // boneyardPlugin(),
   ],
+  // optimizeDeps: {
+  //   exclude: ["gsap"],
+  // },
 });
 
 export default config;

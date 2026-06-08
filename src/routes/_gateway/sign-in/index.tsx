@@ -1,7 +1,7 @@
 import SignInPage from "#/components/pages/Auth/SignInPage";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_gateway/")({
+export const Route = createFileRoute("/_gateway/sign-in/")({
   beforeLoad: ({ context }) => {
     if (context.user) {
       throw redirect({
