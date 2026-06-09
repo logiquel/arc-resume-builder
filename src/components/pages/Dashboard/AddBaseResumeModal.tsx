@@ -170,7 +170,7 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
                 onClick={() => handleOptionSelect("upload")}
                 className="w-full aspect-[1/0.3] flex border rounded-2xl cursor-pointer hover:border-black/20 bg-linear-to-b hover:from-blue-50 hover:to-white overflow-clip p-1 group"
               >
-                <div className="h-full aspect-square flex items-end overflow-clip bg-gradient-to-b from-brand/20 to-brand/10 rounded-[inherit]">
+                <div className="h-full aspect-square flex items-end overflow-clip bg-linear-to-b from-brand/20 to-brand/10 rounded-[inherit]">
                   <div className="w-full h-[80%] translate-y-2 flex justify-center group-hover:translate-y-0 transition-all duration-300">
                     <PaperIcon />
                   </div>
@@ -194,7 +194,7 @@ const AddBaseResumeModal: React.FC<AddBaseResumeModalProps> = ({
                 disabled
                 className="w-full aspect-[1/0.3] flex border rounded-2xl cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 hover:border-black/20 bg-linear-to-b hover:from-blue-50 hover:to-white overflow-clip p-1 group"
               >
-                <div className="h-full aspect-square flex items-end overflow-clip bg-gradient-to-b from-brand/20 to-brand/10 rounded-[inherit]">
+                <div className="h-full aspect-square flex items-end overflow-clip bg-linear-to-b from-brand/20 to-brand/10 rounded-[inherit]">
                   <div className="w-full h-[80%] translate-y-2 flex justify-center group-hover:translate-y-0 transition-all duration-300">
                     <FormIcon />
                   </div>

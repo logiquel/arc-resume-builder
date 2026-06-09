@@ -7,6 +7,10 @@ import HeroSection from "./sections/HeroSection";
 import SubHeroSection from "./sections/SubHeroSection";
 import HowItWorksSection from "./sections/HowItWorksSection";
 import InfoGraphicSection from "./sections/InfoGraphicSection";
+import FeaturesSection from "./sections/FeaturesSection";
+import PlansSection from "./sections/PlansSection";
+import SubFooterSection from "./sections/SubFooterSection";
+import FooterSection from "./sections/FooterSection";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 
@@ -39,7 +43,11 @@ export default function HomePage() {
         <SubHeroSection />
         <HowItWorksSection />
         <InfoGraphicSection />
-        <div className="w-full h-screen"></div>
+        <FeaturesSection />
+        <PlansSection />
+        <SubFooterSection />
+        <FooterSection />
+        {/* <div className="w-full h-screen"></div> */}
       </div>
     </div>
   );

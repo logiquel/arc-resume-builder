@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
@@ -454,7 +454,7 @@ const InfoGraphicSection = () => {
                     ref={(el) => {
                       if (el) diffRemovesRef.current[0] = el;
                     }}
-                    className="text-tiny text-red-800 line-through font-mono font-medium mt-2 break-words"
+                    className="text-tiny text-red-800 line-through font-mono font-medium mt-2 wrap-break-word"
                   >
                     - Improved website performance
                   </p>
@@ -462,7 +462,7 @@ const InfoGraphicSection = () => {
                     ref={(el) => {
                       if (el) diffAddsRef.current[0] = el;
                     }}
-                    className="text-tiny text-green-800 font-mono font-medium w-full sm:w-[75%] break-words"
+                    className="text-tiny text-green-800 font-mono font-medium w-full sm:w-[75%] wrap-break-word"
                   >
                     + Improved website performance by 42% through frontend
                     optimization
@@ -473,7 +473,7 @@ const InfoGraphicSection = () => {
                     ref={(el) => {
                       if (el) diffRemovesRef.current[1] = el;
                     }}
-                    className="text-tiny text-red-800 line-through font-mono font-medium mt-2 break-words"
+                    className="text-tiny text-red-800 line-through font-mono font-medium mt-2 wrap-break-word"
                   >
                     - Fixed UI bugs in dashboard
                   </p>
@@ -481,7 +481,7 @@ const InfoGraphicSection = () => {
                     ref={(el) => {
                       if (el) diffAddsRef.current[1] = el;
                     }}
-                    className="text-tiny text-green-800 font-mono font-medium w-full sm:w-[75%] break-words"
+                    className="text-tiny text-green-800 font-mono font-medium w-full sm:w-[75%] wrap-break-word"
                   >
                     + Resolved 30+ UI issues improving usability and consistency
                     across devices.
@@ -501,7 +501,7 @@ const InfoGraphicSection = () => {
                     ref={(el) => {
                       if (el) diffAddsRef.current[2] = el;
                     }}
-                    className="text-tiny text-green-800 font-mono font-medium mt-2 break-words"
+                    className="text-tiny text-green-800 font-mono font-medium mt-2 wrap-break-word"
                   >
                     -{" "}
                     <span className="text-red-800 line-through">
