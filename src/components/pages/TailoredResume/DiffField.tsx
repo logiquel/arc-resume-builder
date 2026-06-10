@@ -193,7 +193,6 @@ interface DiffFieldProps {
 }
 
 const DiffField = ({ field, onAccept, onReject }: DiffFieldProps) => {
-  console.log("🚀 ~ field:", field);
   const renderByMode = () => {
     switch (field.diff_mode) {
       case "inline":
