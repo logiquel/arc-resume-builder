@@ -277,7 +277,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="w-full py-20 lg:py-32">
+    <section ref={sectionRef} id="features" className="w-full py-20 lg:py-32">
       {/* Section header */}
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <div className="max-w-2xl">

@@ -201,6 +201,7 @@ const HeroSection = () => {
   return (
     <section
       ref={sectionRef}
+      id="hero"
       className="relative h-screen min-h-[700px] overflow-hidden"
     >
       <video

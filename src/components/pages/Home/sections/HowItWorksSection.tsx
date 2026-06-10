@@ -129,7 +129,7 @@ const HowItWorksSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-20 lg:py-32">
+    <section ref={sectionRef} id="howItWords" className="w-full py-20 lg:py-32">
       <div className="mx-auto flex w-full max-w-7xl flex-col px-6 lg:px-12">
         <span
           ref={eyebrowRef}

@@ -42,9 +42,12 @@ const Sidebar = () => {
               </TooltipContent>
             </Tooltip>
           ) : (
-            <div className="h-[90%] flex flex-col items-center justify-center pl-2">
+            <Link
+              to="/"
+              className="h-[90%] flex flex-col items-center justify-center pl-2"
+            >
               <AppLogo />
-            </div>
+            </Link>
           )}
         </div>
         {!isSidebarCollapse && (

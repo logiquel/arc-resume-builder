@@ -1,10 +1,12 @@
 interface AppLogoProps {
   secondaryColor?: string;
   tagLineColor?: string;
+  showTagLine?: boolean;
 }
 const AppLogo: React.FC<AppLogoProps> = ({
   secondaryColor = "#1c2b36",
   tagLineColor = "#7a9099",
+  showTagLine = true,
 }) => {
   return (
     <div className="h-full flex flex-col items-start justify-center gap-0.5 min-h-0">
@@ -25,14 +27,16 @@ const AppLogo: React.FC<AppLogoProps> = ({
           fill="#0A8CFF"
         />
       </svg>
-      <span
-        className={`text-[7px] font-semibold tracking-[0.2em] uppercase whitespace-nowrap`}
-        style={{
-          color: tagLineColor,
-        }}
-      >
-        AI Resume Builder{" "}
-      </span>
+      {showTagLine && (
+        <span
+          className={`text-[7px] font-semibold tracking-[0.2em] uppercase whitespace-nowrap`}
+          style={{
+            color: tagLineColor,
+          }}
+        >
+          AI Resume Builder{" "}
+        </span>
+      )}
     </div>
   );
 };

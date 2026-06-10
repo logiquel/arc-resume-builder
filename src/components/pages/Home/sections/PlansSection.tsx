@@ -262,7 +262,7 @@ const PlansSection = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-20 lg:py-32">
+    <section ref={sectionRef} id="pricing" className="w-full py-20 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
         <div className="mx-auto max-w-4xl text-center">
           <span
