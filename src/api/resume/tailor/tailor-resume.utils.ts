@@ -223,7 +223,25 @@ export async function analyzeJobDescription(jd: string) {
   });
 
   const parsed = response.output_parsed;
-  if (!parsed) throw new Error("Failed to parse Job Description parameters.");
+  if (!parsed) {
+    throw new Error("Failed to parse Job Description parameters.");
+  }
+
+  console.log(
+    "OPENAI_TOKEN_USAGE JD ANALYSIS",
+    JSON.stringify(
+      {
+        model: response.model,
+        response_id: response.id,
+        input_tokens: response.usage?.input_tokens ?? 0,
+        output_tokens: response.usage?.output_tokens ?? 0,
+        total_tokens: response.usage?.total_tokens ?? 0,
+      },
+      null,
+      2,
+    ),
+  );
+
   return parsed;
 }
 
@@ -268,7 +286,7 @@ export async function buildTailoringSessionData({
   }
 
   console.log(
-    "OPENAI_TOKEN_USAGE",
+    "OPENAI_TOKEN_USAGE TAILORING",
     JSON.stringify(
       {
         model: response.model,
