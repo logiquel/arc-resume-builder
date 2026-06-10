@@ -259,12 +259,12 @@ const HeroSection = () => {
             </p>
 
             <div ref={ctaRef} className="mt-10">
-              <button className="group inline-flex items-center rounded-full bg-white p-1 shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+              <button className="group inline-flex items-center rounded-full bg-white p-1 shadow-2xl transition-all duration-300 cursor-pointer">
                 <span className="px-5 text-xs font-semibold uppercase tracking-wide text-text-primary sm:px-6 sm:text-sm">
                   Start Tailoring Free
                 </span>
 
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand transition-transform duration-300 group-hover:translate-x-1 sm:h-14 sm:w-14">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand sm:h-14 sm:w-14">
                   <Icon
                     icon="mi:arrow-up"
                     className="rotate-45 text-lg text-white"

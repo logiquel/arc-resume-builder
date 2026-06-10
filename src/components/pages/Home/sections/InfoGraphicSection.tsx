@@ -619,7 +619,7 @@ const InfoGraphicSection = () => {
                 <span className="font-semibold text-text-secondary">{62}%</span>
                 <div className="flex items-center gap-x-0.5">
                   <span className="text-emerald-600 text-tiny">+</span>
-                  <span className="font-medium text-emerald-600">
+                  <span className="font-medium text-emerald-600 w-5">
                     {currentScore - 62}
                   </span>
                   <Icon icon="ph:trend-up" className="text-emerald-500" />
