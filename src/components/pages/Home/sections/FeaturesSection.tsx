@@ -128,7 +128,7 @@ const FeatureRow = ({
     <div className="flex flex-col justify-center gap-3 py-4 md:py-0">
       <h3
         ref={headingRef}
-        className="font-display text-xl italic leading-snug tracking-[0.02em] text-text-primary sm:text-2xl lg:text-[1.65rem]"
+        className="font-display text-xl font-semibold italic leading-snug tracking-[0.02em] text-text-primary sm:text-2xl lg:text-[1.65rem]"
       >
         {heading}
       </h3>

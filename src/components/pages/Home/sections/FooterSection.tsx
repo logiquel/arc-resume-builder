@@ -16,7 +16,7 @@ const FooterSection: React.FC<FooterSectionProps> = ({
       links: [
         { label: "Features", href: "#features" },
         { label: "How it works", href: "#how-it-works" },
-        { label: "Plans & Pricing", href: "#plans" },
+        { label: "Plans & Pricing", href: "#pricing" },
         ...(!user ? [{ label: "Register", href: "#register" }] : []),
       ],
     },

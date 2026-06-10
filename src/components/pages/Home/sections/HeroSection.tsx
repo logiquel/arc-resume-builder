@@ -225,7 +225,7 @@ const HeroSection = () => {
               ref={badgeRef}
               className="mb-6 inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 backdrop-blur-md"
             >
-              <span className="text-xs font-medium uppercase tracking-wide text-white/90">
+              <span className="text-tiny font-medium uppercase tracking-wide text-white/90">
                 AI-Powered Resume Tailoring
               </span>
             </div>
