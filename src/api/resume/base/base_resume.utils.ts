@@ -289,7 +289,7 @@ export async function buildBaseResumeData(
     ),
   );
 
-  console.log("[BASE_RESUME_DATA]", JSON.stringify(normalized, null, 2));
+  // console.log("[BASE_RESUME_DATA]", JSON.stringify(normalized, null, 2));
 
   return normalized;
 }

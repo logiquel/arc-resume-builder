@@ -56,6 +56,7 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
             const body = (await request.json()) as {
               base_resume_id?: string;
               job_description?: string;
+              name?: string;
             };
 
             const baseResumeId =
@@ -66,6 +67,11 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
               typeof body.job_description === "string"
                 ? body.job_description.trim()
                 : "";
+
+            const name =
+              typeof body.name === "string" && body.name.trim()
+                ? body.name.trim()
+                : "Untitled Resume";
 
             // Validation Checks
             if (!baseResumeId) {
@@ -83,6 +89,15 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
                 "Validation failed",
                 "VALIDATION_ERROR",
                 ["Job description is required."],
+              );
+            }
+
+            if (!name) {
+              return errorResponse(
+                400,
+                "Validation failed",
+                "VALIDATION_ERROR",
+                ["Resume name is required."],
               );
             }
 
@@ -115,7 +130,7 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
                 .insert({
                   user_id: user.id,
                   base_resume_id: baseResumeId,
-                  name: "Initializing Workspace...",
+                  name: name,
                   generation_step: "PLACEHOLDER_CREATED", // Explicit Step 1 State Flag
                   analysis: {
                     base_score: 0,
@@ -205,7 +220,6 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
                 const { error: finalizationError } = await supabase
                   .from("tailoring_sessions")
                   .update({
-                    name: aiPayload.name,
                     analysis: aiPayload.analysis,
                     changes: aiPayload.changes,
                     generation_step: "COMPLETED",
@@ -224,7 +238,7 @@ export const Route = createFileRoute("/api/tailored-resumes/")({
                   .from("tailoring_sessions")
                   .update({
                     generation_step: "READING_BASE_DATA",
-                    name: "Generation Interrupted",
+                    name: name,
                     "analysis.summary":
                       "The pipeline encountered a parsing error. Please verify parameters and hit retry.",
                   })

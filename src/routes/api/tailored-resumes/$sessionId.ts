@@ -158,6 +158,49 @@ export const Route = createFileRoute("/api/tailored-resumes/$sessionId")({
           );
         }
       },
+      DELETE: async ({ params, context }) => {
+        try {
+          const { supabase, user } = context;
+          const sessionId =
+            typeof params.sessionId === "string" ? params.sessionId.trim() : "";
+
+          if (!sessionId) {
+            return errorResponse(400, "Validation failed", "VALIDATION_ERROR", [
+              "sessionId is required.",
+            ]);
+          }
+
+          const { error } = await supabase
+            .from("tailoring_sessions")
+            .delete()
+            .eq("id", sessionId)
+            .eq("user_id", user.id);
+
+          if (error) {
+            return errorResponse(
+              500,
+              "Failed to delete tailored resume",
+              "DELETE_FAILED",
+              [error.message],
+            );
+          }
+
+          return successResponse(
+            200,
+            "Tailored resume deleted successfully.",
+            null,
+          );
+        } catch (error) {
+          console.error("[TAILORED_RESUME_DELETE_ERROR]:", error);
+
+          return errorResponse(
+            500,
+            "Internal server error",
+            "INTERNAL_SERVER_ERROR",
+            ["Something went wrong while deleting the tailored resume."],
+          );
+        }
+      },
     },
   },
 });

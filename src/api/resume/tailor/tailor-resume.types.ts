@@ -3,6 +3,7 @@ import type { TailoringSession } from "#/types/resume/tailorSession.types";
 export type CreateTailoredResumePayload = {
   base_resume_id: string;
   job_description: string;
+  name: string;
 };
 
 export type TailoredResume = {

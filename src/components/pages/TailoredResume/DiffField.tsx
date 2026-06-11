@@ -171,16 +171,17 @@ const RenderStructuralDiff = ({
         </span>
       </div>
       <div className="flex flex-col gap-y-1.5">
-        {newBullets.map((bullet, i) => (
-          <div
-            key={i}
-            className="relative leading-snug whitespace-pre-wrap flex items-center before:content-['+'] before:absolute before:-translate-x-2.5 before:text-green-600 before:text-xs before:inline-block before:mr-1"
-          >
-            <span className="flex-1 bg-green-100 text-xs text-green-800 px-1">
-              {bullet}
-            </span>
-          </div>
-        ))}
+        {Array.isArray(newBullets) &&
+          newBullets.map((bullet, i) => (
+            <div
+              key={i}
+              className="relative leading-snug whitespace-pre-wrap flex items-center before:content-['+'] before:absolute before:-translate-x-2.5 before:text-green-600 before:text-xs"
+            >
+              <span className="flex-1 bg-green-100 text-xs text-green-800 px-1">
+                {bullet}
+              </span>
+            </div>
+          ))}
       </div>
     </div>
   );

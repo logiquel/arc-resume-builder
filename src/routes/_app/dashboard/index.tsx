@@ -13,7 +13,10 @@ import { useDeleteBaseResumeMutation } from "#/api/resume/base/base-resume.mutat
 import { useFetchBaseResumeList } from "#/api/resume/base/base-resume.queries";
 import BaseResumeSkeleton from "#/components/common/Skeletons/BaseResumeSkeleton";
 import PlaceholderResume from "#/components/common/PlaceholderResume";
-import { useCreateTailoredResumeMutation } from "#/api/resume/tailor/tailor-resume.mutations";
+import {
+  useCreateTailoredResumeMutation,
+  useDeleteTailoredResumeMutation,
+} from "#/api/resume/tailor/tailor-resume.mutations";
 import DeleteModal from "#/components/common/DeleteModal";
 import { useFetchTailoredResumeList } from "#/api/resume/tailor/tailor-resume.queries";
 import {
@@ -70,6 +73,8 @@ function RouteComponent() {
     string | null
   >(null);
   const [jobDescription, setJobDescription] = useState("");
+  const [resumeName, setResumeName] = useState("");
+
   const scrollAccumulator = useRef(0);
   const stackRef = useRef<HTMLDivElement>(null);
 
@@ -83,14 +88,33 @@ function RouteComponent() {
     resumeName: "",
   });
 
+  const [deleteTailoredModalState, setDeleteTailoredModalState] = useState<{
+    isOpen: boolean;
+    resumeId: string | null;
+    resumeName: string;
+  }>({
+    isOpen: false,
+    resumeId: null,
+    resumeName: "",
+  });
+
   const { mutate: deleteBaseResume, isPending: isDeletingBaseResume } =
     useDeleteBaseResumeMutation();
+
+  const { mutate: deleteTailoredResume, isPending: isDeletingTailoredResume } =
+    useDeleteTailoredResumeMutation();
 
   const { data: baseResumes = [], isLoading: isBaseResumesLoading } =
     useFetchBaseResumeList();
 
-  const { data: tailoredResumes = [], isLoading: isTailoredResumesLoading } =
-    useFetchTailoredResumeList();
+  const {
+    data: tailoredResumes = [],
+    isLoading: isTailoredResumesLoading,
+    isFetching: isTailoredResumesFetching,
+  } = useFetchTailoredResumeList();
+
+  const showTailoredLoading =
+    isTailoredResumesLoading || isTailoredResumesFetching;
 
   const { mutate: createTailoredResume, isPending: isTailoringPending } =
     useCreateTailoredResumeMutation();
@@ -105,6 +129,7 @@ function RouteComponent() {
     setCurrentStep(1);
     setSelectedBaseResumeId(null);
     setJobDescription("");
+    setResumeName("");
   };
 
   const handleGetStarted = () => {
@@ -124,6 +149,8 @@ function RouteComponent() {
   const handleNextStep = () => {
     if (currentStep === 1 && selectedBaseResumeId) {
       setCurrentStep(2);
+    } else if (currentStep === 2 && jobDescription.trim()) {
+      setCurrentStep(3);
     }
   };
 
@@ -136,6 +163,7 @@ function RouteComponent() {
       {
         base_resume_id: selectedBaseResumeId,
         job_description: jobDescription.trim(),
+        name: resumeName.trim(),
       },
       {
         onSuccess: async (response) => {
@@ -194,6 +222,49 @@ function RouteComponent() {
   const handleCloseDeleteModal = () => {
     if (isDeletingBaseResume) return;
     setDeleteModalState({
+      isOpen: false,
+      resumeId: null,
+      resumeName: "",
+    });
+  };
+
+  // -- for tailored resume deletion
+  const handleDeleteTailoredClick = (
+    e: React.MouseEvent,
+    resumeId: string,
+    resumeName: string,
+  ) => {
+    e.stopPropagation();
+    setDeleteTailoredModalState({
+      isOpen: true,
+      resumeId,
+      resumeName,
+    });
+  };
+
+  const handleConfirmTailoredDelete = () => {
+    if (!deleteTailoredModalState.resumeId) return;
+
+    deleteTailoredResume(deleteTailoredModalState.resumeId, {
+      onSuccess: () => {
+        setDeleteTailoredModalState({
+          isOpen: false,
+          resumeId: null,
+          resumeName: "",
+        });
+      },
+      onError: () => {
+        setDeleteTailoredModalState((prev) => ({
+          ...prev,
+          isOpen: false,
+        }));
+      },
+    });
+  };
+
+  const handleCloseTailoredDeleteModal = () => {
+    if (isDeletingTailoredResume) return;
+    setDeleteTailoredModalState({
       isOpen: false,
       resumeId: null,
       resumeName: "",
@@ -347,7 +418,7 @@ function RouteComponent() {
                 className="sticky top-0 bg-white z-10 py-2"
               />
               <div className="w-full flex-1 grid grid-cols-5 gap-2">
-                {isTailoredResumesLoading ? (
+                {showTailoredLoading ? (
                   // Loading skeletons
                   Array.from({ length: 5 }).map((_, i) => (
                     <div
@@ -418,12 +489,23 @@ function RouteComponent() {
                       }}
                     >
                       <div
-                        className="h-40 aspect-12/15 bg-[#E7E8F1] rounded border-black/5 translate-y-3 group-hover:translate-y-0 transition-all duration-300"
+                        className="h-40 aspect-12/15 bg-[#E7E8F1] rounded border-black/5 translate-y-4 group-hover:translate-y-2 transition-all duration-300"
                         style={{
                           boxShadow:
                             "0 15px 30px -5px rgba(14, 165, 233, 0.5), 0 10px 15px -6px rgba(14, 165, 233, 0.4)",
                         }}
                       >
+                        <button
+                          className="absolute top-0 right-0 -translate-y-1/3 translate-x-1/3 flex items-center justify-center bg-white shadow z-20 p-1 rounded-full border cursor-pointer group"
+                          onClick={(e) =>
+                            handleDeleteTailoredClick(e, resume.id, resume.name)
+                          }
+                        >
+                          <Icon
+                            icon="carbon:trash-can"
+                            className="text-xs text-text-muted transition-colors duration-200 group-hover:text-red-600"
+                          />
+                        </button>
                         <div className="h-full min-w-0 flex-1 rounded-[inherit] border border-black/10 overflow-clip">
                           <img
                             src={getTemplateThumbnail(resume.template_id || "")}
@@ -645,18 +727,22 @@ function RouteComponent() {
       {/* Tailor Resume Modal */}
       {isTailorModalOpen && (
         <div className="absolute inset-0 z-50 flex items-center justify-center">
-          <div className="relative w-180 max-w-[90vw] rounded-4xl bg-white border border-black/10 shadow-2xl overflow-hidden">
+          <div className="relative w-150 max-w-[90vw] rounded-4xl bg-white border border-black/10 shadow-2xl overflow-hidden">
             <div className="w-full p-5 flex gap-2 justify-between">
               <div className="flex flex-col">
                 <h2 className="text-base font-semibold">
                   {currentStep === 1
                     ? "Select a Base Resume to get Started"
-                    : "Paste Job Description"}
+                    : currentStep === 2
+                      ? "Paste Job Description"
+                      : "Name Your Resume"}
                 </h2>
                 <p className="text-text-muted text-xxs">
                   {currentStep === 1
                     ? "Choose a base resume to begin tailoring it for specific job applications."
-                    : "Paste the job description to tailor your resume accordingly"}
+                    : currentStep === 2
+                      ? "Paste the job description to tailor your resume accordingly"
+                      : "Give your tailored resume a memorable name"}
                 </p>
               </div>
               <button
@@ -669,7 +755,7 @@ function RouteComponent() {
 
             {currentStep === 1 ? (
               baseResumes.length > 0 ? (
-                <div className="w-full h-90 grid grid-cols-5 p-5 gap-6 overflow-scroll custom-scrollbar">
+                <div className="w-full h-90 grid grid-cols-4 p-5 gap-6 overflow-scroll custom-scrollbar">
                   {baseResumes.map((base, idx) => (
                     <div
                       key={base.id}
@@ -745,13 +831,33 @@ function RouteComponent() {
                   </button>
                 </div>
               )
-            ) : (
+            ) : currentStep === 2 ? (
               <div className="w-full h-90 px-4">
                 <textarea
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
-                  className="w-full h-full resize-none focus:outline-none p-5 border rounded-2xl text-xxs placeholder:text-text-muted transition-all duration-200"
+                  className="w-full h-full resize-none focus:outline-none p-5 border border-black/10 rounded-2xl text-xxs placeholder:text-text-muted transition-all duration-200"
                   placeholder="Paste job description here..."
+                  style={{
+                    boxShadow:
+                      "0 0 20px rgba(14, 165, 233, 0.15), rgba(149, 157, 165, 0.2) 0px 8px 24px",
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="w-full h-auto px-4 flex flex-col justify-center gap-y-3">
+                <p className="text-xxs text-text-muted px-1">
+                  Example:{" "}
+                  <span className="font-medium text-text-primary">
+                    John's Frontend Resume
+                  </span>
+                </p>
+                <input
+                  type="text"
+                  value={resumeName}
+                  onChange={(e) => setResumeName(e.target.value)}
+                  className="w-full focus:outline-none px-5 py-3.5 border rounded-xl text-xxs placeholder:text-text-muted transition-all duration-200"
+                  placeholder="e.g. John's Frontend Resume"
                   style={{
                     boxShadow:
                       "0 0 20px rgba(14, 165, 233, 0.15), rgba(149, 157, 165, 0.2) 0px 8px 24px",
@@ -776,26 +882,41 @@ function RouteComponent() {
                       : "bg-gray-300 w-[0.35rem]"
                   }`}
                 />
+                <div
+                  className={`h-[0.35rem] rounded-full transition-all duration-200 ${
+                    currentStep === 3
+                      ? "bg-brand w-6"
+                      : "bg-gray-300 w-[0.35rem]"
+                  }`}
+                />
               </div>
               <div className="flex-1 flex justify-end gap-2">
-                {currentStep === 2 && (
+                {currentStep > 1 && (
                   <button
-                    onClick={() => setCurrentStep(1)}
-                    className="px-5 py-2 text-xxs bg-gray-100 rounded-full cursor-pointer"
+                    onClick={() => setCurrentStep((s) => s - 1)}
+                    disabled={isTailoringPending}
+                    className="px-5 py-2 text-xxs bg-gray-100 rounded-full cursor-pointer disabled:opacity-50"
                   >
                     Back
                   </button>
                 )}
                 <button
-                  onClick={currentStep === 1 ? handleNextStep : handleTailor}
+                  onClick={currentStep < 3 ? handleNextStep : handleTailor}
                   disabled={
-                    currentStep === 1
+                    isTailoringPending ||
+                    (currentStep === 1
                       ? !selectedBaseResumeId
-                      : !jobDescription.trim()
+                      : currentStep === 2
+                        ? !jobDescription.trim()
+                        : !resumeName.trim())
                   }
                   className="px-5 py-2 text-xxs text-white bg-brand rounded-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {currentStep === 1 ? "Next" : "Tailor"}
+                  {currentStep < 3
+                    ? "Next"
+                    : isTailoringPending
+                      ? "Tailoring..."
+                      : "Tailor"}
                 </button>
               </div>
             </div>
@@ -809,6 +930,13 @@ function RouteComponent() {
         onConfirm={handleConfirmDelete}
         resumeName={deleteModalState.resumeName}
         isDeleting={isDeletingBaseResume}
+      />
+      <DeleteModal
+        isOpen={deleteTailoredModalState.isOpen}
+        onClose={handleCloseTailoredDeleteModal}
+        onConfirm={handleConfirmTailoredDelete}
+        resumeName={deleteTailoredModalState.resumeName}
+        isDeleting={isDeletingTailoredResume}
       />
       {showPricingModal && (
         <PricingPlanModal setShowPricingModal={setShowPricingModal} />

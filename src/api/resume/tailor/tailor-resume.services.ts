@@ -135,4 +135,35 @@ export const tailoredResumeService = {
       throw new Error("Failed to update tailored resume");
     }
   },
+  delete: async (
+    tailoredResumeId: string,
+  ): Promise<ApiSuccessResponse<null>> => {
+    try {
+      const { data: result } = await apiClient.delete<ApiResponse<null>>(
+        `/api/tailored-resumes/${tailoredResumeId}`,
+      );
+
+      if (!result.success) {
+        throw new Error(result.error.details[0] || result.message);
+      }
+
+      return result;
+    } catch (error: unknown) {
+      if (axios.isAxiosError<ApiResponse<null>>(error)) {
+        const result = error.response?.data;
+
+        if (result && !result.success) {
+          throw new Error(result.error.details[0] || result.message);
+        }
+
+        throw new Error(error.message || "Failed to delete tailored resume");
+      }
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+
+      throw new Error("Failed to delete tailored resume");
+    }
+  },
 };

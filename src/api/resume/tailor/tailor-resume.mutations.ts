@@ -119,3 +119,49 @@ export function useUpdateTailoredResumeTemplateMutation(sessionId: string) {
     },
   });
 }
+
+export function useDeleteTailoredResumeMutation() {
+  const queryClient = useQueryClient();
+  const toastId = React.useRef("");
+
+  return useMutation({
+    mutationFn: (sessionId: string) => tailoredResumeService.delete(sessionId),
+
+    onMutate: () => {
+      toastId.current = toastManager.add({
+        title: "Deleting tailored resume…",
+        description: "Please wait while we delete your resume.",
+        type: "loading",
+        timeout: 0,
+      });
+    },
+
+    onSuccess: async (_, sessionId) => {
+      await queryClient.invalidateQueries({
+        queryKey: ["tailored-resume", "list"],
+      });
+
+      await queryClient.removeQueries({
+        queryKey: ["tailored-resume", "detail", sessionId],
+      });
+
+      toastManager.update(toastId.current, {
+        title: "Tailored resume deleted",
+        description: "Your tailored resume has been deleted successfully.",
+        type: "success",
+        timeout: 3000,
+      });
+    },
+
+    onError: (error: any) => {
+      toastManager.update(toastId.current, {
+        title: "Delete failed",
+        description:
+          error?.message || "Something went wrong. Please try again.",
+        type: "error",
+        timeout: 3000,
+        data: { showClose: true },
+      });
+    },
+  });
+}

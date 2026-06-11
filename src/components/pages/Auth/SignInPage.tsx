@@ -60,7 +60,7 @@ const SignInPage = () => {
 
   const signInForm = useForm({
     defaultValues: {
-      email: "praveenlohar.in@gmail.com",
+      email: "",
     } satisfies SignInFormData,
     onSubmit: async ({ value }) => {
       await requestOtpMutation.mutateAsync({ email: value.email });
