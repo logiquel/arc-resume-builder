@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createFileRoute, useMatches, useRouter } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 import { Icon } from "@iconify/react";
-// import AppBreadcrumb from "../../components/layouts/AppBreadcrumb";
+import AppBreadcrumb from "#/components/layouts/AppBreadcrumb";
 
 export const Route = createFileRoute("/legal/terms")({
   staticData: {
@@ -99,7 +99,7 @@ function TermsPage() {
               {description}
             </p>
           )}
-          {/* <AppBreadcrumb /> */}
+          <AppBreadcrumb />
         </div>
       </header>
 
