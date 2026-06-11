@@ -23,7 +23,6 @@ const PRIVACY_SECTIONS = [
 
 function PrivacyPage() {
   const router = useRouter();
-
   const matches = useMatches();
   const currentMatch = matches[matches.length - 1];
 
@@ -35,6 +34,7 @@ function PrivacyPage() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Simplified scroll telemetry handler (removes heavy DOM querying logic)
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -42,23 +42,9 @@ function PrivacyPage() {
     const progress = scrollTop / (scrollHeight - clientHeight);
     setScrollProgress(Math.min(progress, 1));
     setShowBackToTop(scrollTop > 400);
-
-    const containerRect = el.getBoundingClientRect();
-    let current = "";
-
-    for (const s of PRIVACY_SECTIONS) {
-      const sec = document.getElementById(s.id);
-      if (sec) {
-        const rect = sec.getBoundingClientRect();
-        const relativeTop = rect.top - containerRect.top;
-        if (relativeTop <= 80) {
-          current = s.id;
-        }
-      }
-    }
-    setActiveSection(current || PRIVACY_SECTIONS[0].id);
   }, []);
 
+  // Sync scroll listener
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -66,6 +52,43 @@ function PrivacyPage() {
     handleScroll();
     return () => el.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
+
+  // Modern Intersection Observer setup for active Table of Contents tracking
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const visibleSections = new Map<string, boolean>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          visibleSections.set(entry.target.id, entry.isIntersecting);
+        });
+
+        // Locate first intersecting item present in array topology
+        const currentVisible = PRIVACY_SECTIONS.find((s) =>
+          visibleSections.get(s.id),
+        );
+        if (currentVisible) {
+          setActiveSection(currentVisible.id);
+        }
+      },
+      {
+        root: container,
+        // Aligns precisely with 'scroll-mt-8' layout vectors (32px top padding margin matrix)
+        rootMargin: "-32px 0px -70% 0px",
+        threshold: 0,
+      },
+    );
+
+    PRIVACY_SECTIONS.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const scrollToTop = () => {
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
@@ -102,6 +125,11 @@ function PrivacyPage() {
           )}
           <AppBreadcrumb />
         </div>
+        {/* Visual Progress Bar UI Element */}
+        <div
+          className="absolute bottom-0 left-0 h-0.5 bg-brand transition-all duration-100 ease-out"
+          style={{ width: `${scrollProgress * 100}%` }}
+        />
       </header>
 
       {/* Main Structural Body Viewport */}
@@ -111,7 +139,7 @@ function PrivacyPage() {
           ref={scrollRef}
           className="flex-1 h-full overflow-y-auto bg-linear-to-b from-white to-gray-50/30 hide-scrollbar px-6 md:px-12 lg:px-16 py-12 md:py-16"
         >
-          <div className="max-w-[680px] ml-auto mr-auto lg:mr-16 xl:mx-auto">
+          <div className="max-w-170 ml-auto mr-auto lg:mr-16 xl:mx-auto">
             {/* Document Header */}
             <header className="pb-10 mb-14">
               <div className="flex items-center gap-2.5 mb-6">
@@ -478,7 +506,8 @@ function PrivacyPage() {
                       className={`font-mono mr-1.5 text-tiny transition-opacity duration-200 ${
                         activeSection === s.id ? "opacity-60" : "opacity-30"
                       }`}
-                    >
+                    />
+                    <span className="font-mono mr-1.5 text-tiny opacity-30 group-hover:opacity-60">
                       {s.number}.
                     </span>
                     {s.title}

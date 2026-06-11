@@ -30,7 +30,6 @@ function TermsPage() {
   const label = currentMatch?.staticData?.pageLabel ?? "Page";
   const description = currentMatch?.staticData?.pageDescription ?? "";
 
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("");
   const [showBackToTop, setShowBackToTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -38,9 +37,8 @@ function TermsPage() {
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const { scrollTop, scrollHeight, clientHeight } = el;
-    const progress = scrollTop / (scrollHeight - clientHeight);
-    setScrollProgress(Math.min(progress, 1));
+    const { scrollTop } = el;
+
     setShowBackToTop(scrollTop > 400);
 
     const containerRect = el.getBoundingClientRect();
@@ -111,7 +109,7 @@ function TermsPage() {
           ref={scrollRef}
           className="flex-1 h-full overflow-y-auto bg-linear-to-b from-white to-gray-50/30 hide-scrollbar px-6 md:px-12 lg:px-16 py-12 md:py-16"
         >
-          <div className="max-w-[680px] ml-auto mr-auto lg:mr-16 xl:mx-auto">
+          <div className="max-w-170 ml-auto mr-auto lg:mr-16 xl:mx-auto">
             {/* Document Header */}
             <header className="pb-10 mb-14">
               <div className="flex items-center gap-2.5 mb-6">
@@ -486,6 +484,7 @@ function SectionHeading({
   );
 }
 
+// Fixed fluid styling from text-xs down to text-tiny/xxs where optimal
 function Callout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative bg-brand/3 border border-brand/8 p-5 my-5 rounded-xl overflow-hidden">
