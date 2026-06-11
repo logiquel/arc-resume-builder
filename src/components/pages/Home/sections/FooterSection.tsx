@@ -23,8 +23,8 @@ const FooterSection: React.FC<FooterSectionProps> = ({
     {
       title: "Legal",
       links: [
-        { label: "Privacy & Policies", href: "#privacy" },
-        { label: "Terms and Conditions", href: "#terms" },
+        { label: "Privacy & Policies", href: "/legal/privacy" },
+        { label: "Terms and Conditions", href: "/legal/terms" },
       ],
     },
     {

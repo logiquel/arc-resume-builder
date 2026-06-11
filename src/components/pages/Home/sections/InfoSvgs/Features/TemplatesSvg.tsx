@@ -22,9 +22,9 @@ const TemplatesSvg = () => {
         height="369.618"
         rx="29.8092"
         stroke="#D6DDEB"
-        stroke-width="0.381533"
+        strokeWidth="0.381533"
       />
-      <g clip-path="url(#clip0_1298_925)">
+      <g clipPath="url(#clip0_1298_925)">
         <rect
           x="29.6836"
           y="91.3828"
@@ -62,7 +62,7 @@ const TemplatesSvg = () => {
           x2="154.2"
           y2="124.763"
           stroke="#BDC0C3"
-          stroke-width="0.132195"
+          strokeWidth="0.132195"
         />
         <rect
           x="36.1094"
@@ -110,7 +110,7 @@ const TemplatesSvg = () => {
           x2="149.312"
           y2="156.092"
           stroke="#BDC0C3"
-          stroke-width="0.132195"
+          strokeWidth="0.132195"
         />
         <rect
           x="36.1094"
@@ -270,7 +270,7 @@ const TemplatesSvg = () => {
           x2="149.312"
           y2="235.674"
           stroke="#BDC0C3"
-          stroke-width="0.132195"
+          strokeWidth="0.132195"
         />
         <rect
           x="36.1094"
@@ -367,10 +367,10 @@ const TemplatesSvg = () => {
         width="130.505"
         height="184.862"
         stroke="black"
-        stroke-opacity="0.09"
-        stroke-width="0.437111"
+        strokeOpacity="0.09"
+        strokeWidth="0.437111"
       />
-      <g clip-path="url(#clip1_1298_925)">
+      <g clipPath="url(#clip1_1298_925)">
         <rect
           x="183.355"
           y="90.4287"
@@ -518,7 +518,7 @@ const TemplatesSvg = () => {
           x2="355.287"
           y2="121.567"
           stroke="#BDC0C3"
-          stroke-width="0.133556"
+          strokeWidth="0.133556"
         />
         <rect
           x="240.918"
@@ -678,7 +678,7 @@ const TemplatesSvg = () => {
           x2="355.287"
           y2="201.967"
           stroke="#BDC0C3"
-          stroke-width="0.133556"
+          strokeWidth="0.133556"
         />
         <rect
           x="240.918"
@@ -831,8 +831,8 @@ const TemplatesSvg = () => {
         width="131.854"
         height="186.771"
         stroke="black"
-        stroke-opacity="0.09"
-        stroke-width="0.437111"
+        strokeOpacity="0.09"
+        strokeWidth="0.437111"
       />
       <rect
         x="338.375"
@@ -847,8 +847,8 @@ const TemplatesSvg = () => {
         width="130.505"
         height="184.862"
         stroke="black"
-        stroke-opacity="0.09"
-        stroke-width="0.437111"
+        strokeOpacity="0.09"
+        strokeWidth="0.437111"
       />
       <line
         x1="344.805"
@@ -856,7 +856,7 @@ const TemplatesSvg = () => {
         x2="462.895"
         y2="97.3509"
         stroke="#BDC0C3"
-        stroke-width="0.132195"
+        strokeWidth="0.132195"
       />
       <rect
         x="344.805"
@@ -904,7 +904,7 @@ const TemplatesSvg = () => {
         x2="458.007"
         y2="128.681"
         stroke="#BDC0C3"
-        stroke-width="0.132195"
+        strokeWidth="0.132195"
       />
       <rect
         x="344.805"
@@ -1064,7 +1064,7 @@ const TemplatesSvg = () => {
         x2="458.007"
         y2="208.262"
         stroke="#BDC0C3"
-        stroke-width="0.132195"
+        strokeWidth="0.132195"
       />
       <rect
         x="344.805"
@@ -1220,8 +1220,8 @@ const TemplatesSvg = () => {
         x2="114.895"
         y2="59"
         stroke="#F3F6F7"
-        stroke-width="8"
-        stroke-linecap="round"
+        strokeWidth="8"
+        strokeLinecap="round"
       />
       <defs>
         <pattern

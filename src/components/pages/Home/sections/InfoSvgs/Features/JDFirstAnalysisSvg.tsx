@@ -21,7 +21,7 @@ const JDFirstAnalysisSvg = () => {
         height="370.027"
         rx="32.3829"
         stroke="#D6DDEB"
-        stroke-width="0.414474"
+        strokeWidth="0.414474"
       />
       <line
         x1="28.7909"
@@ -29,8 +29,8 @@ const JDFirstAnalysisSvg = () => {
         x2="406.048"
         y2="205.86"
         stroke="#F3F6F7"
-        stroke-width="9.77706"
-        stroke-linecap="round"
+        strokeWidth="9.77706"
+        strokeLinecap="round"
       />
       <line
         x1="28.7909"
@@ -38,8 +38,8 @@ const JDFirstAnalysisSvg = () => {
         x2="406.048"
         y2="224.328"
         stroke="#F3F6F7"
-        stroke-width="9.77706"
-        stroke-linecap="round"
+        strokeWidth="9.77706"
+        strokeLinecap="round"
       />
       <line
         x1="28.7909"
@@ -47,8 +47,8 @@ const JDFirstAnalysisSvg = () => {
         x2="271.121"
         y2="242.796"
         stroke="#F3F6F7"
-        stroke-width="9.77706"
-        stroke-linecap="round"
+        strokeWidth="9.77706"
+        strokeLinecap="round"
       />
       <rect
         x="177.108"
@@ -56,9 +56,9 @@ const JDFirstAnalysisSvg = () => {
         width="151.175"
         height="24.4426"
         fill="#A0EFA8"
-        fill-opacity="0.44"
+        fillOpacity="0.44"
         stroke="#54BC60"
-        stroke-width="0.54317"
+        strokeWidth="0.54317"
       />
       <rect
         x="177.035"
@@ -94,9 +94,9 @@ const JDFirstAnalysisSvg = () => {
         width="68.7059"
         height="24.4426"
         fill="#005EFF"
-        fill-opacity="0.44"
+        fillOpacity="0.44"
         stroke="#005EFF"
-        stroke-width="0.54317"
+        strokeWidth="0.54317"
       />
       <rect
         x="21.2109"
@@ -132,9 +132,9 @@ const JDFirstAnalysisSvg = () => {
         width="85.4856"
         height="24.4426"
         fill="#FF4A03"
-        fill-opacity="0.44"
+        fillOpacity="0.44"
         stroke="#FF4A03"
-        stroke-width="0.54317"
+        strokeWidth="0.54317"
       />
       <rect
         x="93.0703"
@@ -175,8 +175,8 @@ const JDFirstAnalysisSvg = () => {
         x2="458.229"
         y2="32.091"
         stroke="#F3F6F7"
-        stroke-width="9.77706"
-        stroke-linecap="round"
+        strokeWidth="9.77706"
+        strokeLinecap="round"
       />
       <line
         x1="76.9237"
@@ -184,8 +184,8 @@ const JDFirstAnalysisSvg = () => {
         x2="229.788"
         y2="47.2999"
         stroke="#F3F6F7"
-        stroke-width="9.77706"
-        stroke-linecap="round"
+        strokeWidth="9.77706"
+        strokeLinecap="round"
       />
       <defs>
         <linearGradient
@@ -196,8 +196,8 @@ const JDFirstAnalysisSvg = () => {
           y2="198.389"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#2C313F" />
-          <stop offset="1" stop-color="#7380A5" stop-opacity="0.35" />
+          <stop stopColor="#2C313F" />
+          <stop offset="1" stopColor="#7380A5" stopOpacity="0.35" />
         </linearGradient>
       </defs>
     </svg>
