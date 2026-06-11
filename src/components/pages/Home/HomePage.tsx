@@ -1,25 +1,30 @@
-import { useRef } from "react";
+import { useRef, lazy, Suspense } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { useGSAP } from "@gsap/react";
+import { Link } from "@tanstack/react-router";
+
+// Keep your Hero static so it renders immediately without a layout shift
 import HeroSection from "./sections/HeroSection";
-import SubHeroSection from "./sections/SubHeroSection";
-import HowItWorksSection from "./sections/HowItWorksSection";
-import InfoGraphicSection from "./sections/InfoGraphicSection";
-import FeaturesSection from "./sections/FeaturesSection";
-import PlansSection from "./sections/PlansSection";
-import SubFooterSection from "./sections/SubFooterSection";
-import FooterSection from "./sections/FooterSection";
 import AppLogo from "#/components/layouts/AppLogo";
 import type { AppUser } from "#/routes/__root";
-import { Link } from "@tanstack/react-router";
+
+// Lazy load every component below the fold
+const SubHeroSection = lazy(() => import("./sections/SubHeroSection"));
+const HowItWorksSection = lazy(() => import("./sections/HowItWorksSection"));
+const InfoGraphicSection = lazy(() => import("./sections/InfoGraphicSection"));
+const FeaturesSection = lazy(() => import("./sections/FeaturesSection"));
+const PlansSection = lazy(() => import("./sections/PlansSection"));
+const SubFooterSection = lazy(() => import("./sections/SubFooterSection"));
+const FooterSection = lazy(() => import("./sections/FooterSection"));
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
 
 interface HomePageProps {
   user: AppUser | null;
 }
+
 export default function HomePage({ user }: HomePageProps) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -46,6 +51,10 @@ export default function HomePage({ user }: HomePageProps) {
         normalizeScroll: false,
       });
 
+      // CRITICAL FOR LAZY LOADING + GSAP:
+      // Refresh calculations whenever lazy elements finish entering the DOM
+      ScrollTrigger.refresh();
+
       return () => smoother.kill();
     },
     { scope: wrapperRef },
@@ -55,9 +64,7 @@ export default function HomePage({ user }: HomePageProps) {
     <div id="smooth-wrapper" ref={wrapperRef}>
       <nav
         className="fixed top-5 right-5 flex items-center bg-white rounded-full z-20 p-1 gap-x-4 pl-5 border border-black/5"
-        style={{
-          boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-        }}
+        style={{ boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px" }}
       >
         <button
           onClick={() => scrollToSection("#hero")}
@@ -65,7 +72,6 @@ export default function HomePage({ user }: HomePageProps) {
         >
           <AppLogo secondaryColor="#3E4850" showTagLine={false} />
         </button>
-
         <button
           type="button"
           onClick={() => scrollToSection("#features")}
@@ -105,15 +111,22 @@ export default function HomePage({ user }: HomePageProps) {
           </Link>
         )}
       </nav>
+
       <div id="smooth-content" ref={contentRef}>
         <HeroSection />
-        <SubHeroSection />
-        <HowItWorksSection />
-        <InfoGraphicSection />
-        <FeaturesSection />
-        <PlansSection />
-        <SubFooterSection />
-        <FooterSection user={user} scrollToSection={scrollToSection} />
+
+        {/* Wrap your lazy sections in Suspense so the build breaks them into separate chunks */}
+        <Suspense
+          fallback={<div className="h-40 w-full bg-white animate-pulse" />}
+        >
+          <SubHeroSection />
+          <HowItWorksSection />
+          <InfoGraphicSection />
+          <FeaturesSection />
+          <PlansSection />
+          <SubFooterSection />
+          <FooterSection user={user} scrollToSection={scrollToSection} />
+        </Suspense>
       </div>
     </div>
   );
