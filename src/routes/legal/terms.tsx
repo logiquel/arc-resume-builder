@@ -2,11 +2,12 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createFileRoute, useMatches, useRouter } from "@tanstack/react-router";
 import { ArrowUp } from "lucide-react";
 import { Icon } from "@iconify/react";
-import AppBreadcrumb from "#/components/layouts/AppBreadcrumb";
+import AppBreadcrumb from "../../components/layouts/AppBreadcrumb";
 
 export const Route = createFileRoute("/legal/terms")({
   staticData: {
     pageLabel: "Terms & Condition",
+    pageDescription: "",
   },
   component: TermsPage,
 });
