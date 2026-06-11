@@ -1,16 +1,9 @@
 // AppLayout.tsx
-import {
-  Outlet,
-  useMatches,
-  useRouter,
-  useRouterState,
-} from "@tanstack/react-router";
+import { Outlet, useMatches, useRouter } from "@tanstack/react-router";
 import { Icon } from "@iconify/react";
 import LogiquelWordMark from "../common/LogiquelWordMark";
-import { getActiveRoute } from "#/config/route.config";
 import Sidebar from "./Sidebar";
 import AppBreadcrumb from "./AppBreadcrumb";
-import { usePageMeta } from "#/hooks/usePageMeta";
 
 const AppLayout = () => {
   const router = useRouter();
