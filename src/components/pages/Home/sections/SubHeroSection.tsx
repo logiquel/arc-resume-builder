@@ -177,7 +177,7 @@ const SubHeroSection = () => {
           <div className="relative flex justify-center">
             {/* subtle glow */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-[500px] w-[500px] rounded-full bg-brand/5 blur-3xl" />
+              <div className="h-125 w-125 rounded-full bg-brand/5 blur-3xl" />
             </div>
 
             <div className="relative w-full max-w-4xl">
